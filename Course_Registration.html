@@ -296,20 +296,98 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
 .ad-mode{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--a-warnb);color:var(--a-warn);white-space:nowrap}
 .ad-mode.on{background:var(--a-okb);color:var(--a-ok)}
 @media(max-width:900px){.ad-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-grid2{grid-template-columns:1fr}.ad-top{padding:0 12px;gap:10px}.ad-brand span{display:none}.ad-user #ad-who{display:none}.ad-main{padding:16px 12px 50px}.ad-kv{grid-template-columns:1fr}.ad-kv dt{font-weight:600;color:var(--text)}}
+@media(max-width:760px){
+  .ad-top{flex-wrap:wrap;height:auto;padding:8px 12px 0;row-gap:6px}
+  .ad-user{gap:6px}.ad-user .ad-mode{display:none}.ad-user .ad-btn{padding:6px 10px}
+  .ad-tabs{order:3;width:100%;height:42px;overflow-x:auto;scrollbar-width:none}
+  .ad-tabs::-webkit-scrollbar{display:none}
+  .ad-tabs button{flex:none;padding:0 12px}
+  .ad-toolbar .ad-select{flex:1 1 140px}
+}
 /* overview */
 .ov-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ov-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:-4px 0 16px}
+.ov-flabel{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--mute);font-size:13px}
+.ov-flabel .ad-select{width:auto;padding:7px 10px}
+.ov-scope{font-size:12.5px}
 .ov-seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
 .ov-seg button{border:0;background:transparent;color:var(--mute);padding:7px 12px;font-weight:600;cursor:pointer}
 .ov-seg button.on{background:var(--pri);color:#fff}
+.ov-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+.ov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.ov-span2{grid-column:span 2}
+.ov-card{padding:18px 18px 16px;min-width:0}
+.ov-card h3{margin:0;font-size:15px}
+.ov-cap{margin:2px 0 14px;font-size:12.5px;min-height:1em}
+.ov-empty{padding:28px 0;text-align:center;margin:0}
+.ov-sw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:none}
+.ov-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 12px;padding:0;list-style:none;font-size:12.5px;color:var(--mute)}
+.ov-lg-item,.ov-legend li{display:inline-flex;align-items:center;gap:7px}
+.ov-legend-col{flex-direction:column;gap:8px;margin:16px 0 0}
+.ov-legend-col li{display:flex;justify-content:flex-start}
+.ov-legend-col b{margin-left:auto;color:var(--text);font-variant-numeric:tabular-nums}
+/* tall segmented bar */
+.ov-tall{display:flex;gap:2px;height:28px}
+.ov-tall-part{min-width:3px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:visible;cursor:default;outline:none}
+.ov-tall-part.hot,.ov-tall-part:focus-visible{box-shadow:0 0 0 2px var(--card),0 0 0 4px rgba(255,255,255,.55)}
+/* columns over time */
+.ov-cols{position:relative;padding:0 0 22px 28px}
+.ov-cols-plot{position:relative;height:190px}
+.ov-grid-h{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line)}
+.ov-tick-y{position:absolute;right:calc(100% + 6px);top:-8px;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.ov-cols-row{position:absolute;inset:0;display:flex;gap:2px}
+.ov-col{position:relative;flex:1;min-width:0;cursor:default;outline:none;border-radius:4px}
+.ov-col i{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(24px,72%);background:#3987e5;border-radius:4px 4px 0 0;transition:filter .15s}
+.ov-col i.zero{display:none}
+.ov-col.hot,.ov-col:focus-visible{background:rgba(255,255,255,.05)}
+.ov-col.hot i,.ov-col:focus-visible i{filter:brightness(1.25)}
+.ov-cap-v{position:absolute;left:50%;transform:translateX(-50%);font-size:11.5px;font-weight:700;color:var(--text)}
+.ov-cols-x{position:absolute;left:28px;right:0;bottom:0;height:16px}
+.ov-cols-x span{position:absolute;transform:translateX(-50%);font-size:11px;color:var(--mute);white-space:nowrap}
+.ov-cols-x span:first-child{transform:none}
+.ov-cols-x span:last-child:not(:first-child){transform:translateX(-100%)}
+/* horizontal bars */
+.ov-hbars{display:flex;flex-direction:column;gap:10px}
+.ov-hrow{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:12px;align-items:center}
+.ov-hlabel{font-size:12.5px;color:var(--text);line-height:1.3}
+.ov-htrack{position:relative;height:18px;margin-right:34px}
+.ov-grid-v{position:absolute;top:-5px;bottom:-5px;width:0;border-left:1px solid var(--line)}
+.ov-hbar{position:relative;display:flex;gap:2px;height:18px;min-width:0}
+.ov-hseg{min-width:2px;height:100%;cursor:default;outline:none}
+.ov-hseg:last-child{border-radius:0 4px 4px 0}
+.ov-one{border-radius:0 4px 4px 0;cursor:default;outline:none}
+.ov-hseg.hot,.ov-hseg:focus-visible,.ov-one.hot,.ov-one:focus-visible{filter:brightness(1.25);box-shadow:0 0 0 2px var(--card),0 0 0 3px rgba(255,255,255,.5)}
+.ov-hval{position:absolute;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.ov-haxis .ov-htrack{height:14px}
+.ov-tick-x{position:absolute;transform:translateX(-50%);font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.ov-rank .ov-hrow{grid-template-columns:minmax(90px,40%) 1fr}
+/* tooltip */
+.ov-tip{position:fixed;z-index:60;pointer-events:none;background:#0b1220;border:1px solid var(--line2);border-radius:8px;padding:7px 10px;box-shadow:0 8px 24px rgba(0,0,0,.45);font-size:12.5px;max-width:260px}
+.ov-tip b{display:block;color:#fff;font-size:13px}
+.ov-tip span{color:var(--mute)}
+/* course summary table */
+.ov-tabletitle{margin:0 0 10px;font-size:15px}
 .ov-table td,.ov-table th{white-space:nowrap}
 .ov-table tbody tr.ov-click{cursor:pointer}
 .ov-table tfoot td{border-top:1px solid var(--line2);background:#0f1a30}
 .ov-done{color:#4ade80}.ov-prog{color:#fbbf24}.ov-none{color:#f87171}
 .ov-bar{display:inline-flex;vertical-align:middle;width:calc(100% - 52px);height:8px;border-radius:999px;background:var(--line);overflow:hidden}
-.ov-bar i{display:block;height:100%}.ov-bar i.d{background:#22c55e}.ov-bar i.p{background:#f59e0b}.ov-bar i.n{background:#ef4444}
+.ov-bar i{display:block;height:100%}.ov-bar i.d{background:#0ca30c}.ov-bar i.p{background:#fab219}.ov-bar i.n{background:#d03b3b}
 .ov-pct{display:inline-block;width:46px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .ov-note{margin:12px 2px 0;font-size:12.5px}
-.ov-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:1100px){.ov-grid{grid-template-columns:1fr 1fr}.ov-span2{grid-column:span 2}}
+@media(max-width:760px){.ov-grid{grid-template-columns:1fr}.ov-span2{grid-column:auto}.ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* printed report: white page, controls hidden, colours kept */
+@media print{
+  :root{--bg:#fff;--bg2:#fff;--card:#fff;--card2:#f4f5f7;--text:#111;--mute:#555;--line:#ddd;--line2:#ccc;--field:#fff}
+  body{background:#fff!important}
+  .ad-top,.ov-tools,.ov-seg,.ad-btn,.ov-tip,.swal2-container,#progress{display:none!important}
+  #ad,.ad-card,.ad-stat,.ad-tablewrap,.ad-table th,.ov-table tfoot td{background:#fff!important;color:#111!important;box-shadow:none!important}
+  .ad-main{padding:0!important;max-width:none!important}
+  .ov-card,.ad-stat,.ad-tablewrap{break-inside:avoid;border-color:#ccc!important}
+  .ov-done{color:#0a7d0a!important}.ov-prog{color:#a86b00!important}.ov-none{color:#b42323!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 /* badge check */
 .bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .bc-drop{display:block;border:1.5px dashed var(--line2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
@@ -556,9 +634,41 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     <main class="ad-main">
       <div id="ad-ov">
         <div class="ad-h"><div><h2>Overview</h2><span class="ad-muted" id="ov-sub">Course-wise registrations and skill-badge completion</span></div>
-          <div class="ov-tools"><div class="ov-seg" role="group" aria-label="Group by"><button type="button" data-g="course" class="on">By course</button><button type="button" data-g="google">By Google course</button></div>
-          <button type="button" class="ad-btn" id="ov-refresh">&#8635; Refresh</button><button type="button" class="ad-btn ad-primary" id="ov-check">Check badges now</button></div></div>
+          <div class="ov-tools">
+            <button type="button" class="ad-btn" id="ov-csv">Export summary</button>
+            <button type="button" class="ad-btn" id="ov-print">Print report</button>
+            <button type="button" class="ad-btn" id="ov-refresh">&#8635; Refresh</button>
+            <button type="button" class="ad-btn ad-primary" id="ov-check">Check badges now</button>
+          </div></div>
+        <div class="ov-filters" role="group" aria-label="Filters">
+          <label class="ov-flabel">Period
+            <select class="ad-select" id="ov-range"><option value="all">All time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select></label>
+          <div class="ov-seg" role="group" aria-label="Group by"><button type="button" data-g="course" class="on">By course</button><button type="button" data-g="google">By Google course</button></div>
+          <span class="ad-muted ov-scope" id="ov-scope"></span>
+        </div>
         <div class="ad-stats ov-kpis" id="ov-kpis"></div>
+
+        <div class="ov-grid">
+          <section class="ad-card ov-card" aria-labelledby="ovc-split-h">
+            <h3 id="ovc-split-h">Badge completion</h3><p class="ad-muted ov-cap" id="ovc-split-cap"></p>
+            <div id="ovc-split"></div>
+          </section>
+          <section class="ad-card ov-card ov-span2" aria-labelledby="ovc-time-h">
+            <h3 id="ovc-time-h">Registrations over time</h3><p class="ad-muted ov-cap" id="ovc-time-cap"></p>
+            <div id="ovc-time"></div>
+          </section>
+          <section class="ad-card ov-card ov-span2" aria-labelledby="ovc-course-h">
+            <h3 id="ovc-course-h">Completion by course</h3><p class="ad-muted ov-cap">Registrations per course, split by badge status</p>
+            <div id="ovc-legend" class="ov-legend"></div>
+            <div id="ovc-course"></div>
+          </section>
+          <section class="ad-card ov-card" aria-labelledby="ovc-google-h">
+            <h3 id="ovc-google-h">Registrations by Google course</h3><p class="ad-muted ov-cap">Ranked, largest first</p>
+            <div id="ovc-google"></div>
+          </section>
+        </div>
+
+        <h3 class="ov-tabletitle">Course summary</h3>
         <div class="ad-tablewrap">
           <table class="ad-table ov-table">
             <thead><tr><th id="ov-gh">Course</th><th>Registered</th><th>Completed</th><th>In progress</th><th>Not started</th><th title="Never badge-checked, no requirement set, or the profile could not be read">Not checked</th><th style="width:26%">Completion</th></tr></thead>
@@ -567,6 +677,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
           </table>
         </div>
         <p class="ad-muted ov-note"><b>Completed</b> = every required badge for the course is on the student&#8217;s public profile. <b>Pending</b> = in progress + not started + not checked. Results come from the latest <b>Badge check</b> run.</p>
+        <div class="ov-tip" id="ov-tip" role="tooltip" hidden></div>
       </div>
 
       <div id="ad-regs" hidden>
@@ -750,7 +861,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     im.src=u;});}
   function saveAs(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();}
   function downloadCsv(rows){
-    var h=Object.keys(rows[0]);
+    var h=[];rows.forEach(function(r){Object.keys(r).forEach(function(k){if(k.charAt(0)!=='_'&&h.indexOf(k)<0)h.push(k);});});
     var csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
     saveAs(new Blob(['\ufeff'+csv],{type:'text/csv'}),'Course_Registrations.csv');
   }
@@ -781,7 +892,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     ['Verification Status','status'],['Reviewed At','reviewed_at'],['Admin Note','admin_note'],
     ['Badge Status','badge_status'],['Badges Done','badges_done'],['Badges Required','badges_required'],['Badge Checked At','badge_checked_at']];
   var COL={};FIELDS.forEach(function(f){COL[f[0]]=f[1];});
-  function rowToRec(row){var r={};FIELDS.forEach(function(f){r[f[0]]=row[f[1]]==null?'':row[f[1]];});r['Submitted At']=row.created_at?new Date(row.created_at).toLocaleString():'';return r;}
+  function rowToRec(row){var r={};FIELDS.forEach(function(f){r[f[0]]=row[f[1]]==null?'':row[f[1]];});r['Submitted At']=row.created_at?new Date(row.created_at).toLocaleString():'';r._ts=Date.parse(row.created_at)||'';return r;}
   function recToRow(r){
     return {ref_no:r['Ref No'],course:r['Course']||'-',mapped_course:r['Mapped Google Course']||'-',full_name:r['Full Name']||'-',email:r['Email']||'-',phone:r['Contact Number']||null,
       gender:r['Gender']||null,grad_year:r['Year Of Graduation']?String(r['Year Of Graduation']):null,organisation:r['Organisation']||'-',profile_url:r['Profile URL']||'-',
@@ -1306,23 +1417,145 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       });
   });
   /* ================= Overview dashboard ================= */
-  var OV={group:'course'};
+  var OV={group:'course',range:'all'};
+  /* status palette (fixed): good / warning / critical + neutral gray for "not checked"; text inside fills is white, near-black on warning */
+  var ST=[{k:'done',label:'Completed',color:'#0ca30c',ink:'#fff'},{k:'prog',label:'In progress',color:'#fab219',ink:'#0b0b0b'},{k:'none',label:'Not started',color:'#d03b3b',ink:'#fff'},{k:'unk',label:'Not checked',color:'#64748b',ink:'#fff'}];
+  var SERIES_BLUE='#3987e5';
   function badgeBucket(r){var b=r['Badge Status'];return b==='Complete'?'done':b==='In progress'?'prog':b==='Not started'?'none':'unk';}
   function pct(a,b){return b?Math.round(a/b*100):0;}
-  function renderOverview(){
-    var all=loadRecs(),byGoogle=OV.group==='google',groups={},order=[];
+  /* when a registration was made: stored time, else the time encoded in its REG- reference, else the display date */
+  function recTime(r){
+    if(r._ts)return +r._ts;
+    var m=/^REG-([0-9A-Z]+)[0-9A-Z]{2}$/.exec(r['Ref No']||'');
+    if(m){var t=parseInt(m[1],36);if(t>1.5e12&&t<4e12)return t;}
+    var d=Date.parse(r['Submitted At']);return isNaN(d)?NaN:d;
+  }
+  function ovRecs(){
+    var all=loadRecs();if(OV.range==='all')return all;
+    var from=Date.now()-(+OV.range)*86400000;
+    return all.filter(function(r){var t=recTime(r);return !isNaN(t)&&t>=from;});
+  }
+  function count(list){var c={total:list.length,done:0,prog:0,none:0,unk:0};list.forEach(function(r){c[badgeBucket(r)]++;});c.pending=c.total-c.done;return c;}
+  function groupsOf(list){
+    var byGoogle=OV.group==='google',groups={},order=[];
     if(byGoogle)TRACKS.forEach(function(t){groups[t]=[];order.push(t);});else Object.keys(MAP).forEach(function(k){groups[k]=[];order.push(k);});
-    all.forEach(function(r){var k=byGoogle?(r['Mapped Google Course']||'Other'):(r['Course']||'Other');if(!groups[k]){groups[k]=[];order.push(k);}groups[k].push(r);});
-    function count(list){var c={total:list.length,done:0,prog:0,none:0,unk:0};list.forEach(function(r){c[badgeBucket(r)]++;});c.pending=c.total-c.done;return c;}
-    var T=count(all),lastChecked='';
-    all.forEach(function(r){var t=Date.parse(String(r['Badge Checked At']).replace(' ','T'));if(!isNaN(t)&&(!lastChecked||t>lastChecked))lastChecked=t;});
-    $a('ov-sub').textContent=T.total?'Course-wise registrations and skill-badge completion · '+(lastChecked?'badges last checked '+new Date(lastChecked).toLocaleString():'badges not checked yet'):'No registrations yet';
+    list.forEach(function(r){var k=byGoogle?(r['Mapped Google Course']||'Other'):(r['Course']||'Other');if(!groups[k]){groups[k]=[];order.push(k);}groups[k].push(r);});
+    return {groups:groups,order:order,byGoogle:byGoogle};
+  }
+  /* small DOM builder: text always goes in through textContent */
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function niceMax(v,ticks){
+    if(v<=0)return {max:ticks,step:1};
+    var raw=v/ticks,mag=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/mag,step=(n<=1?1:n<=2?2:n<=5?5:10)*mag;
+    step=Math.max(1,Math.round(step));return {max:Math.ceil(v/step)*step,step:step};
+  }
+  function tipOn(node,value,label){node.setAttribute('data-tipv',value);node.setAttribute('data-tipl',label);if(!node.hasAttribute('tabindex'))node.tabIndex=0;node.setAttribute('aria-label',value+' · '+label);}
+  function fmtDay(t){return new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short'});}
+  function emptyNote(box,msg){box.textContent='';box.appendChild(el('p','ad-muted ov-empty',msg));}
+
+  /* 1) tall segmented bar: one whole (all registrations) split by badge status */
+  function chartSplit(c){
+    var box=$a('ovc-split');box.textContent='';
+    $a('ovc-split-cap').textContent=c.total?c.total+' registration'+(c.total===1?'':'s')+' · '+pct(c.done,c.total)+'% completed':'';
+    if(!c.total)return emptyNote(box,'No registrations in this period.');
+    var bar=el('div','ov-tall');bar.setAttribute('role','img');
+    bar.setAttribute('aria-label','Badge completion: '+ST.map(function(s){return s.label+' '+c[s.k];}).join(', '));
+    ST.forEach(function(s){
+      if(!c[s.k])return;
+      var b=el('div','ov-tall-part');b.style.flexGrow=c[s.k];b.style.background=s.color;b.style.color=s.ink;
+      var lab=el('span',null,pct(c[s.k],c.total)+'%');b.appendChild(lab);
+      tipOn(b,c[s.k]+' ('+pct(c[s.k],c.total)+'%)',s.label);bar.appendChild(b);
+    });
+    box.appendChild(bar);
+    var lg=el('ul','ov-legend ov-legend-col');
+    ST.forEach(function(s){var li=el('li');var sw=el('i','ov-sw');sw.style.background=s.color;li.appendChild(sw);li.appendChild(el('span',null,s.label));li.appendChild(el('b',null,String(c[s.k])));lg.appendChild(li);});
+    box.appendChild(lg);
+    requestAnimationFrame(function(){bar.querySelectorAll('.ov-tall-part').forEach(function(p){var s=p.firstChild;if(s&&s.scrollWidth>p.clientWidth-10)s.style.visibility='hidden';});});
+  }
+
+  /* 2) column chart: registrations per day (or per week for long periods) */
+  function chartTime(list){
+    var box=$a('ovc-time');box.textContent='';
+    var times=list.map(recTime).filter(function(t){return !isNaN(t);});
+    if(!times.length){$a('ovc-time-cap').textContent='';return emptyNote(box,'No registrations in this period.');}
+    var day=86400000,today=new Date();today.setHours(0,0,0,0);var end=today.getTime()+day;
+    var start=OV.range==='all'?(function(){var d=new Date(Math.min.apply(null,times));d.setHours(0,0,0,0);return d.getTime();})():end-(+OV.range)*day;
+    var span=Math.max(1,Math.round((end-start)/day)),weekly=span>45,bin=weekly?7*day:day;
+    if(!weekly&&span<7){start=end-7*day;span=7;}
+    var n=Math.ceil((end-start)/bin),bins=[];for(var i=0;i<n;i++)bins.push({t:start+i*bin,v:0});
+    times.forEach(function(t){var i=Math.floor((t-start)/bin);if(i>=0&&i<n)bins[i].v++;});
+    $a('ovc-time-cap').textContent=(weekly?'Per week':'Per day')+' · '+times.length+' registration'+(times.length===1?'':'s');
+    var peak=Math.max.apply(null,bins.map(function(b){return b.v;})),nm=niceMax(peak,4);
+    var wrap=el('div','ov-cols');var plot=el('div','ov-cols-plot');
+    for(var g=0;g<=nm.max;g+=nm.step){var gl=el('div','ov-grid-h');gl.style.bottom=(g/nm.max*100)+'%';var tk=el('span','ov-tick-y',String(g));gl.appendChild(tk);plot.appendChild(gl);}
+    var row=el('div','ov-cols-row');var peakDone=false;
+    bins.forEach(function(b){
+      var slot=el('div','ov-col');var bar=el('i');bar.style.height=(b.v/nm.max*100)+'%';
+      if(b.v===0)bar.className='zero';
+      if(b.v===peak&&peak>0&&!peakDone){var cap=el('span','ov-cap-v',String(b.v));slot.appendChild(cap);cap.style.bottom='calc('+(b.v/nm.max*100)+'% + 4px)';peakDone=true;}
+      slot.appendChild(bar);
+      tipOn(slot,b.v+' registration'+(b.v===1?'':'s'),weekly?'Week of '+fmtDay(b.t):fmtDay(b.t));
+      row.appendChild(slot);
+    });
+    plot.appendChild(row);wrap.appendChild(plot);
+    var xa=el('div','ov-cols-x');[0,Math.floor((n-1)/2),n-1].filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(i){var s=el('span',null,(weekly?'Wk ':'')+fmtDay(bins[i].t));s.style.left=((i+.5)/n*100)+'%';xa.appendChild(s);});
+    wrap.appendChild(xa);box.appendChild(wrap);
+  }
+
+  /* 3) stacked horizontal bars: per course, split by badge status, shared count axis */
+  function chartCourses(G){
+    var box=$a('ovc-course'),lg=$a('ovc-legend');box.textContent='';lg.textContent='';
+    $a('ovc-course-h').textContent=G.byGoogle?'Completion by Google course':'Completion by course';
+    ST.forEach(function(s){var li=el('span','ov-lg-item');var sw=el('i','ov-sw');sw.style.background=s.color;li.appendChild(sw);li.appendChild(el('span',null,s.label));lg.appendChild(li);});
+    var cs=G.order.map(function(k){return {k:k,c:count(G.groups[k])};});
+    var max=Math.max.apply(null,cs.map(function(x){return x.c.total;}));
+    if(!max)return emptyNote(box,'No registrations in this period.');
+    var nm=niceMax(max,4),list=el('div','ov-hbars');
+    cs.forEach(function(x){
+      var r=el('div','ov-hrow');r.appendChild(el('div','ov-hlabel',x.k));
+      var track=el('div','ov-htrack');
+      for(var g=0;g<=nm.max;g+=nm.step){var gl=el('i','ov-grid-v');gl.style.left=(g/nm.max*100)+'%';track.appendChild(gl);}
+      var bar=el('div','ov-hbar');bar.style.width=(x.c.total/nm.max*100)+'%';
+      ST.forEach(function(s){if(!x.c[s.k])return;var seg=el('div','ov-hseg');seg.style.flexGrow=x.c[s.k];seg.style.background=s.color;
+        tipOn(seg,x.c[s.k]+' '+s.label.toLowerCase()+' ('+pct(x.c[s.k],x.c.total)+'%)',x.k);bar.appendChild(seg);});
+      track.appendChild(bar);
+      var v=el('span','ov-hval',String(x.c.total));v.style.left='calc('+(x.c.total/nm.max*100)+'% + 6px)';track.appendChild(v);
+      r.appendChild(track);list.appendChild(r);
+    });
+    var ax=el('div','ov-hrow ov-haxis');ax.appendChild(el('div','ov-hlabel'));var at=el('div','ov-htrack');
+    for(var g=0;g<=nm.max;g+=nm.step){var t=el('span','ov-tick-x',String(g));t.style.left=(g/nm.max*100)+'%';at.appendChild(t);}
+    ax.appendChild(at);list.appendChild(ax);box.appendChild(list);
+  }
+
+  /* 4) ranked bars: registrations per Google course, one hue, value at the tip */
+  function chartGoogle(list){
+    var box=$a('ovc-google');box.textContent='';
+    var counts=TRACKS.map(function(t){return {k:t,v:list.filter(function(r){return r['Mapped Google Course']===t;}).length};}).sort(function(a,b){return b.v-a.v;});
+    var max=counts.length?counts[0].v:0;
+    if(!max)return emptyNote(box,'No registrations in this period.');
+    var wrap=el('div','ov-hbars ov-rank');
+    counts.forEach(function(x){
+      var r=el('div','ov-hrow');r.appendChild(el('div','ov-hlabel',x.k));
+      var track=el('div','ov-htrack');var bar=el('div','ov-hbar ov-one');bar.style.width=(x.v/max*88)+'%';bar.style.background=SERIES_BLUE;
+      if(x.v)tipOn(bar,x.v+' registration'+(x.v===1?'':'s')+' ('+pct(x.v,list.length)+'%)',x.k);
+      track.appendChild(bar);var v=el('span','ov-hval',String(x.v));v.style.left='calc('+(x.v/max*88)+'% + 6px)';track.appendChild(v);
+      r.appendChild(track);wrap.appendChild(r);
+    });
+    box.appendChild(wrap);
+  }
+
+  function renderOverview(){
+    var all=loadRecs(),list=ovRecs(),G=groupsOf(list),T=count(list),lastChecked=0;
+    all.forEach(function(r){var t=Date.parse(String(r['Badge Checked At']).replace(' ','T'));if(!isNaN(t)&&t>lastChecked)lastChecked=t;});
+    $a('ov-sub').textContent=all.length?'Course-wise registrations and skill-badge completion · '+(lastChecked?'badges last checked '+new Date(lastChecked).toLocaleString():'badges not checked yet'):'No registrations yet';
+    $a('ov-scope').textContent=OV.range==='all'?'Showing all '+all.length+' registration'+(all.length===1?'':'s'):'Showing '+list.length+' of '+all.length+' registrations · last '+OV.range+' days';
     var kp=[['Total registrations',T.total,''],['Completed',T.done,'k-ver'],['Pending',T.pending,'k-pen'],['Not checked yet',T.unk,'k-rev'],['Completion rate',pct(T.done,T.total)+'%','']];
     $a('ov-kpis').innerHTML=kp.map(function(k){return '<div class="ad-stat '+k[2]+'" style="cursor:default"><b>'+k[1]+'</b><span>'+k[0]+'</span></div>';}).join('');
-    $a('ov-gh').textContent=byGoogle?'Google course':'Course';
-    $a('ov-rows').innerHTML=order.map(function(k){
-      var c=count(groups[k]),sub=byGoogle?Object.keys(MAP).filter(function(m){return MAP[m].indexOf(k)>-1;}).join(', '):(MAP[k]||[]).join(' / ');
-      return '<tr'+(byGoogle?'':' class="ov-click" data-course="'+esc(k)+'" title="Show these registrations"')+'><td><div class="ad-name">'+esc(k)+'</div><div class="ad-sub">'+esc(sub)+'</div></td>'+
+    chartSplit(T);chartTime(list);chartCourses(G);chartGoogle(list);
+    $a('ov-gh').textContent=G.byGoogle?'Google course':'Course';
+    $a('ov-rows').innerHTML=G.order.map(function(k){
+      var c=count(G.groups[k]),sub=G.byGoogle?Object.keys(MAP).filter(function(m){return MAP[m].indexOf(k)>-1;}).join(', '):(MAP[k]||[]).join(' / ');
+      return '<tr'+(G.byGoogle?'':' class="ov-click" data-course="'+esc(k)+'" title="Show these registrations"')+'><td><div class="ad-name">'+esc(k)+'</div><div class="ad-sub">'+esc(sub)+'</div></td>'+
         '<td><b>'+c.total+'</b></td><td class="ov-done">'+c.done+'</td><td class="ov-prog">'+c.prog+'</td><td class="ov-none">'+c.none+'</td><td class="ad-muted">'+c.unk+'</td>'+
         '<td><div class="ov-bar" title="'+c.done+' completed, '+c.prog+' in progress, '+c.none+' not started, '+c.unk+' not checked">'+
           (c.total?'<i class="d" style="width:'+pct(c.done,c.total)+'%"></i><i class="p" style="width:'+pct(c.prog,c.total)+'%"></i><i class="n" style="width:'+pct(c.none,c.total)+'%"></i>':'')+
@@ -1330,10 +1563,40 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     }).join('');
     $a('ov-foot').innerHTML='<tr><td><b>All courses</b></td><td><b>'+T.total+'</b></td><td class="ov-done"><b>'+T.done+'</b></td><td class="ov-prog"><b>'+T.prog+'</b></td><td class="ov-none"><b>'+T.none+'</b></td><td class="ad-muted"><b>'+T.unk+'</b></td><td><b>'+(T.total?pct(T.done,T.total)+'% complete':'—')+'</b></td></tr>';
   }
-  document.querySelectorAll('.ov-seg button').forEach(function(b){b.addEventListener('click',function(){OV.group=b.getAttribute('data-g');document.querySelectorAll('.ov-seg button').forEach(function(x){x.classList.toggle('on',x===b);});renderOverview();});});
+  /* one tooltip for every chart: value first, label second; same on hover and keyboard focus */
+  (function(){
+    var tip=$a('ov-tip'),cur=null;
+    function show(node,x,y){
+      tip.textContent='';tip.appendChild(el('b',null,node.getAttribute('data-tipv')));tip.appendChild(el('span',null,node.getAttribute('data-tipl')));
+      tip.hidden=false;var w=tip.offsetWidth,h=tip.offsetHeight;
+      tip.style.left=Math.max(8,Math.min(innerWidth-w-8,x-w/2))+'px';tip.style.top=Math.max(8,y-h-12)+'px';
+      if(cur&&cur!==node)cur.classList.remove('hot');cur=node;node.classList.add('hot');
+    }
+    function hide(){tip.hidden=true;if(cur)cur.classList.remove('hot');cur=null;}
+    var ov=$a('ad-ov');
+    var byKey=false;
+    function atNode(n){var r=n.getBoundingClientRect();show(n,r.left+r.width/2,r.top);}
+    ov.addEventListener('pointermove',function(e){byKey=false;var n=e.target.closest&&e.target.closest('[data-tipv]');if(n)show(n,e.clientX,e.clientY);else if(cur)hide();});
+    ov.addEventListener('pointerleave',function(){if(!byKey)hide();});
+    ov.addEventListener('focusin',function(e){var n=e.target.closest&&e.target.closest('[data-tipv]');if(!n)return;byKey=true;atNode(n);});
+    ov.addEventListener('focusout',function(){byKey=false;hide();});
+    /* scrolling moves the page under the pointer: a hover tooltip closes, a keyboard one follows its mark */
+    window.addEventListener('scroll',function(){if(!cur)return;if(byKey)atNode(cur);else hide();},{passive:true});
+  })();
+  document.querySelectorAll('#ad-ov .ov-seg button').forEach(function(b){b.addEventListener('click',function(){OV.group=b.getAttribute('data-g');document.querySelectorAll('#ad-ov .ov-seg button').forEach(function(x){x.classList.toggle('on',x===b);});renderOverview();});});
+  $a('ov-range').addEventListener('change',function(){OV.range=this.value;renderOverview();});
+  var ovResize=null;window.addEventListener('resize',function(){clearTimeout(ovResize);ovResize=setTimeout(function(){if(!$a('ad-ov').hidden&&A.loaded)renderOverview();},200);});
   $a('ov-refresh').addEventListener('click',function(){if(guard())reload().then(function(){toast('success','Overview refreshed');});});
   $a('ov-check').addEventListener('click',function(){if(!guard())return;tab('badges');setTimeout(function(){$a('bc-regs').click();},50);});
   $a('ov-rows').addEventListener('click',function(e){var tr=e.target.closest('tr[data-course]');if(!tr||!guard())return;A.view={q:'',course:tr.getAttribute('data-course'),status:''};tab('regs');});
+  $a('ov-csv').addEventListener('click',function(){
+    if(!guard())return;
+    var list=ovRecs(),G=groupsOf(list),rows=G.order.map(function(k){var c=count(G.groups[k]);return {'Course':k,'Registered':c.total,'Completed':c.done,'In progress':c.prog,'Not started':c.none,'Not checked':c.unk,'Pending':c.pending,'Completion %':pct(c.done,c.total)};});
+    var T=count(list);rows.push({'Course':'All courses','Registered':T.total,'Completed':T.done,'In progress':T.prog,'Not started':T.none,'Not checked':T.unk,'Pending':T.pending,'Completion %':pct(T.done,T.total)});
+    var h=Object.keys(rows[0]),csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    saveAs(new Blob(['﻿'+csv],{type:'text/csv'}),'Course_Summary'+(OV.range==='all'?'':'_last_'+OV.range+'_days')+'.csv');toast('success','Summary exported');
+  });
+  $a('ov-print').addEventListener('click',function(){if(guard())window.print();});
   /* ================= Badge completion check =================
      Admin uploads a CSV (or uses registered students). For each public profile the earned skill badges are
      read and compared with the badges required for that student's Google course. */
@@ -2050,7 +2313,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&r.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
       var name=f.name.value.trim(),refNo=newRef();
       step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Screenshot matches<br>⏳ Saving your registration…');
-      var rec={'Ref No':refNo,'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
+      var rec={'Ref No':refNo,_ts:Date.now(),'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
         'Profile Name':link.name||'','Profile Badges':typeof link.badges==='number'?link.badges:'',
         'Email Check':ec.gmail?'Valid Gmail ID':'Valid email','Profile Link Check':'Opens (auto-checked)',
         'Screenshot Check':(r.by==='email'?'Email':'Profile link')+' found in screenshot'+(r.exact?'':' (close match)'),'Verification Screenshot':refNo+'.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};

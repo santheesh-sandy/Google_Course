@@ -15,7 +15,12 @@ Open **`Course_Registration.html`** in a browser. The admin area is at `Course_R
 - **One registration per email ID and per public profile link** (any course).
 
 ## Admin dashboard
-- **Overview** – total registrations, course-wise counts, badge completion vs pending, completion rate (by course or by Google course).
+- **Overview** – total registrations, completed, pending, not checked and completion rate, with charts:
+  - **Badge completion** – how all registrations split into completed / in progress / not started / not checked
+  - **Registrations over time** – per day (or per week for long periods)
+  - **Completion by course** – stacked bars per course (or per Google course)
+  - **Registrations by Google course** – ranked bars
+  - Period filter (all time / last 7, 30, 90 days) that scopes every number and chart, hover / keyboard tooltips, a course summary table, **Export summary** (CSV) and **Print report**.
 - **Registrations** – search, filters, review panel with the screenshot, verify / reject, notes, bulk actions, CSV and screenshot ZIP export, duplicate detection and clean-up.
 - **Badge check** – upload a CSV (or use registered students); each public profile is read and compared with the skill badges required for the student's course. Results are saved for the Overview.
 - **Settings** – change the admin password, data export, delete all.
