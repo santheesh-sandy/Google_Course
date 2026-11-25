@@ -171,8 +171,17 @@ a{color:#7fb0ff}
 .swal2-styled.swal2-confirm,.swal2-styled.swal2-cancel,.swal2-styled.swal2-deny{border-radius:8px!important;font-weight:600!important}
 .swal2-validation-message{background:var(--badb)!important;color:#fca5a5!important}
 .swal2-timer-progress-bar{background:var(--pri)!important}
-.swal2-popup.swal2-toast{background:#16213a!important;border:1px solid var(--line2)}
-.swal2-container.swal2-backdrop-show{background:rgba(2,6,16,.7)!important}
+/* dim the page only behind real dialogs, never behind a toast */
+.swal2-container.swal2-backdrop-show:not(.swal2-top-end):not(.swal2-top-start):not(.swal2-bottom-end):not(.swal2-bottom-start){background:rgba(2,6,16,.7)!important}
+body.swal2-toast-shown .swal2-container{background:transparent!important;backdrop-filter:none!important}
+/* toasts sit below the admin top bar so they never cover Logout / View form */
+body.swal2-toast-shown .swal2-container.swal2-top-end{top:64px!important;padding-top:6px!important}
+/* compact toast */
+.swal2-popup.swal2-toast{background:#16213a!important;border:1px solid var(--line2);border-radius:10px!important;padding:10px 14px!important;width:auto!important;max-width:360px;box-shadow:0 10px 30px rgba(0,0,0,.45)!important;font-size:14px!important}
+.swal2-popup.swal2-toast .swal2-html-container{margin:0!important;padding:0!important;font-size:14px!important;display:flex!important;align-items:center;gap:10px;text-align:left!important;color:var(--text)!important;line-height:1.35}
+.swal2-popup.swal2-toast .swal2-timer-progress-bar-container{border-radius:0 0 10px 10px}
+.tst{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;background:#3b82f6}
+.tst-success{background:#16a34a}.tst-error{background:#dc2626}.tst-warning{background:#d97706}
 .swal2-icon.swal2-success [class^=swal2-success-circular-line],.swal2-icon.swal2-success .swal2-success-fix{background:#111a2e!important}
 
 /* ================= Admin (full page) ================= */
@@ -389,7 +398,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 /* badge check */
-.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
 .bc-drop{display:block;border:1.5px dashed var(--line2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
 .bc-drop:hover,.bc-drop.over{border-color:var(--pri);background:rgba(59,130,246,.06)}
 .bc-drop svg{color:#7fb0ff;display:block;margin:0 auto 6px}
@@ -491,12 +500,12 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
           <circle cx="330" cy="330" r="13" fill="rgba(34,197,94,.15)"/><path d="m324 330 4.5 4.5 8-9" fill="none" stroke="#22c55e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
           <rect x="352" y="323" width="84" height="8" rx="4" fill="#cbd5e1"/>
         </g>
-        <!-- cloud tag -->
-        <g class="float d3">
+        <!-- cloud tag (sits below the badge row so it never hides a badge) -->
+        <g transform="translate(-2 74)"><g class="float d3">
           <rect x="6" y="236" width="128" height="44" rx="10" fill="#111a2e" stroke="#2c3b5c"/>
           <path d="M31 266c-5 0-8-3-8-7s3-7 7-7c1-4 5-7 9-7 5 0 9 3 9 8 4 0 7 3 7 6s-3 7-7 7z" fill="#3b82f6"/>
           <rect x="66" y="251" width="54" height="7" rx="3.5" fill="#cbd5e1"/><rect x="66" y="263" width="36" height="6" rx="3" fill="#475569"/>
-        </g>
+        </g></g>
       </svg>
     </div>
   </div>
@@ -1080,7 +1089,12 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   var STATUSES=['Pending','Verified','Rejected'];
   var A={view:{q:'',course:'',status:''},sel:{},open:null,list:[],shotUrl:'',all:[],loaded:false};
   function $a(id){return document.getElementById(id);}
-  function toast(icon,title){if(window.Swal)Swal.fire({toast:true,position:'top-end',icon:icon,title:title,timer:1800,timerProgressBar:true,showConfirmButton:false});}
+  function toast(icon,title){
+    if(!window.Swal)return;
+    var mark={success:'✓',error:'!',warning:'!',info:'i'}[icon]||'i';
+    Swal.fire({toast:true,position:'top-end',html:'<span class="tst tst-'+esc(icon)+'" aria-hidden="true">'+mark+'</span><span class="tst-t">'+esc(title)+'</span>',
+      timer:2200,timerProgressBar:true,showConfirmButton:false,customClass:{popup:'tst-pop'}});
+  }
   function confirmBox(o){
     if(!window.Swal)return Promise.resolve(confirm((o.title||'')+'\n'+(o.text||'')));
     return Swal.fire(Object.assign({icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',focusCancel:true},o)).then(function(r){return r.isConfirmed;});
