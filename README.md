@@ -23,6 +23,7 @@ Open **`Course_Registration.html`** in a browser. The admin area is at `Course_R
   - Period filter (all time / last 7, 30, 90 days) that scopes every number and chart, hover / keyboard tooltips, a course summary table, **Export summary** (CSV) and **Print report**.
 - **Registrations** – search, filters, review panel with the screenshot, verify / reject, notes, bulk actions, CSV and screenshot ZIP export, duplicate detection and clean-up.
 - **Badge check** – upload a CSV (or use registered students); each public profile is read and compared with the skill badges required for the student's course. Results are saved for the Overview.
+  - **Course-wise badge summary** – per Google course: students checked / completed / pending / errors, badges earned vs pending and completion %; click a course for each required badge. **Download summary CSV** gives one row per course, one per required badge, and an all-courses total.
 - **Settings** – change the admin password, data export, delete all.
 
 ## Storage

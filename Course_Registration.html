@@ -397,6 +397,16 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   .ov-done{color:#0a7d0a!important}.ov-prog{color:#a86b00!important}.ov-none{color:#b42323!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+.bc-sum{margin:2px 0 22px}
+.bc-sumhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.bc-sumhead h3{margin:0;font-size:15px}
+.bc-sumtable td,.bc-sumtable th{white-space:nowrap}
+.bc-sumtable tr.bc-sumclick{cursor:pointer}
+.bc-sumtable tr.bc-sumclick:focus-visible{outline:2px solid var(--pri);outline-offset:-2px}
+.bc-sumtable tr.bc-badgerow td{background:#0e1729;font-size:13px}
+.bc-bname{padding-left:18px;white-space:normal;max-width:360px;color:var(--text)}
+.bc-sumtable tfoot td{border-top:1px solid var(--line2);background:#0f1a30;font-weight:600}
+.bc-perstudent{margin:0 0 10px;font-size:15px}
 /* badge check */
 .bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
 .bc-drop{display:block;border:1.5px dashed var(--line2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
@@ -750,6 +760,17 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
             <div class="bc-actions"><button type="button" class="ad-btn ad-primary" id="bc-start">Start check</button><button type="button" class="ad-btn" id="bc-stop" hidden>Stop</button><button type="button" class="ad-btn" id="bc-export" hidden>Export results CSV</button></div></div>
           <div class="bc-prog" aria-hidden="true"><i id="bc-bar"></i></div>
           <div class="ad-stats bc-stats" id="bc-stats"></div>
+          <div class="bc-sum" id="bc-sum" hidden>
+            <div class="bc-sumhead"><div><h3>Course-wise badge summary</h3><span class="ad-muted" id="bc-sumsub">Click a course to see each required badge</span></div>
+              <button type="button" class="ad-btn ad-primary" id="bc-sumcsv">Download summary CSV</button></div>
+            <div class="ad-tablewrap">
+              <table class="ad-table bc-sumtable">
+                <thead><tr><th>Google course</th><th>Students checked</th><th>Completed</th><th>Pending</th><th>Errors</th><th>Badges earned</th><th>Badges pending</th><th style="width:20%">Completion</th></tr></thead>
+                <tbody id="bc-sumrows"></tbody><tfoot id="bc-sumfoot"></tfoot>
+              </table>
+            </div>
+          </div>
+          <h3 class="bc-perstudent" id="bc-perstudent" hidden>Per student</h3>
           <div class="ad-toolbar"><input class="ad-input" id="bc-q" type="search" placeholder="Search name, email, course…"><select class="ad-select" id="bc-f"><option value="">All results</option><option value="Complete">Complete</option><option value="In progress">In progress</option><option value="Not started">Not started</option><option value="No requirement set">No requirement set</option><option value="Error">Errors</option></select></div>
           <div class="ad-tablewrap"><table class="ad-table bc-table"><thead><tr><th>Student</th><th>Course</th><th>Result</th><th>Required badges</th><th>Total badges</th><th></th></tr></thead><tbody id="bc-rows"></tbody></table></div>
         </div>
@@ -1758,6 +1779,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     var rows=BC.rows,done=rows.filter(function(r){return r.state==='done';}).length,cnt={};
     rows.forEach(function(r){if(r.status)cnt[r.status]=(cnt[r.status]||0)+1;});
     $a('bc-run').hidden=!rows.length;
+    renderBcSummary();
     $a('bc-title').textContent=BC.running?'Checking profiles…':done===rows.length&&rows.length?'Check complete':'Ready to check';
     if(!BC.running||!/busy/.test($a('bc-sub').textContent)){
       var left=rows.length-done;
@@ -1849,6 +1871,69 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   $a('bc-q').addEventListener('input',function(){BC.view.q=this.value;renderBc();});
   $a('bc-f').addEventListener('change',function(){BC.view.f=this.value;renderBc();});
   $a('bc-rows').addEventListener('click',function(e){var b=e.target.closest('[data-bo]');if(!b)return;var i=+b.getAttribute('data-bo');BC.open[i]=!BC.open[i];renderBc();});
+  /* ---- course-wise badge summary: per Google course and per required badge ---- */
+  BC.sumOpen={};
+  function bcSummary(){
+    var by={},order=[];
+    function grp(t){if(!by[t]){by[t]={track:t,students:0,complete:0,pending:0,errors:0,noReq:0,req:0,earned:0,badges:{},badgeOrder:[]};order.push(t);}return by[t];}
+    BC.rows.forEach(function(r){
+      if(r.state!=='done')return;
+      var t=r.track||(r.tracks&&r.tracks.length===1?r.tracks[0]:'')||'Course not recognised',g=grp(t);
+      if(r.status==='Error'){g.errors++;return;}
+      g.students++;
+      if(r.status==='Complete')g.complete++;else g.pending++;
+      if(r.status==='No requirement set'){g.noReq++;return;}
+      var need=r.need||[],doneSet={};(r.done||[]).forEach(function(d){doneSet[normB(d)]=1;});
+      g.req+=need.length;g.earned+=(r.done||[]).length;
+      need.forEach(function(n){var k=normB(n);if(!g.badges[k]){g.badges[k]={name:n,done:0,pending:0};g.badgeOrder.push(k);}if(doneSet[k])g.badges[k].done++;else g.badges[k].pending++;});
+    });
+    var T={track:'All courses',students:0,complete:0,pending:0,errors:0,req:0,earned:0};
+    order.forEach(function(t){var g=by[t];['students','complete','pending','errors','req','earned'].forEach(function(k){T[k]+=g[k];});});
+    return {groups:order.map(function(t){return by[t];}),total:T};
+  }
+  function renderBcSummary(){
+    var done=BC.rows.some(function(r){return r.state==='done';});
+    $a('bc-sum').hidden=!done;$a('bc-perstudent').hidden=!done;
+    if(!done)return;
+    var S=bcSummary(),body=$a('bc-sumrows');body.textContent='';
+    function cell(tr,txt,cls){var td=document.createElement('td');if(cls)td.className=cls;td.textContent=txt;tr.appendChild(td);return td;}
+    function bar(td,p){var w=document.createElement('div');w.className='ov-bar';var i=document.createElement('i');i.className='d';i.style.width=p+'%';w.appendChild(i);td.appendChild(w);var sp=document.createElement('span');sp.className='ov-pct';sp.textContent=p+'%';td.appendChild(sp);}
+    S.groups.forEach(function(g){
+      var open=!!BC.sumOpen[g.track],hasB=g.badgeOrder.length>0;
+      var tr=document.createElement('tr');tr.className='bc-sumrow'+(hasB?' bc-sumclick':'');if(hasB){tr.tabIndex=0;tr.setAttribute('aria-expanded',open?'true':'false');tr.setAttribute('data-track',g.track);}
+      var td=cell(tr,'');var nm=document.createElement('div');nm.className='ad-name';nm.textContent=(hasB?(open?'▾ ':'▸ '):'')+g.track;td.appendChild(nm);
+      var sub=document.createElement('div');sub.className='ad-sub';sub.textContent=hasB?g.badgeOrder.length+' required badge'+(g.badgeOrder.length===1?'':'s'):(g.students?'No required badges set':'');td.appendChild(sub);
+      cell(tr,String(g.students));cell(tr,String(g.complete),'ov-done');cell(tr,String(g.pending),'ov-prog');cell(tr,String(g.errors),g.errors?'ov-none':'ad-muted');
+      cell(tr,g.req?String(g.earned):'—');cell(tr,g.req?String(g.req-g.earned):'—');
+      var c=cell(tr,'');if(g.req)bar(c,pct(g.earned,g.req));else c.textContent='—';
+      body.appendChild(tr);
+      if(open)g.badgeOrder.forEach(function(k){
+        var b=g.badges[k],br=document.createElement('tr');br.className='bc-badgerow';
+        var t1=cell(br,'');var bn=document.createElement('div');bn.className='bc-bname';bn.textContent=b.name;t1.appendChild(bn);
+        cell(br,String(b.done+b.pending));cell(br,String(b.done),'ov-done');cell(br,String(b.pending),'ov-prog');cell(br,'');cell(br,String(b.done));cell(br,String(b.pending));
+        var c2=cell(br,'');bar(c2,pct(b.done,b.done+b.pending));body.appendChild(br);
+      });
+    });
+    var T=S.total,ft=$a('bc-sumfoot');ft.textContent='';var fr=document.createElement('tr');
+    cell(fr,'All courses').style.fontWeight='700';cell(fr,String(T.students));cell(fr,String(T.complete),'ov-done');cell(fr,String(T.pending),'ov-prog');cell(fr,String(T.errors),T.errors?'ov-none':'ad-muted');
+    cell(fr,T.req?String(T.earned):'—');cell(fr,T.req?String(T.req-T.earned):'—');var fc=cell(fr,'');if(T.req)bar(fc,pct(T.earned,T.req));else fc.textContent='—';
+    ft.appendChild(fr);
+    $a('bc-sumsub').textContent=T.students+' student'+(T.students===1?'':'s')+' checked · '+T.complete+' completed · '+T.pending+' pending'+(S.groups.some(function(g){return g.badgeOrder.length;})?' · click a course to see each required badge':'');
+  }
+  $a('bc-sumrows').addEventListener('click',function(e){var tr=e.target.closest('tr[data-track]');if(!tr)return;var t=tr.getAttribute('data-track');BC.sumOpen[t]=!BC.sumOpen[t];renderBcSummary();});
+  $a('bc-sumrows').addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr[data-track]')){e.preventDefault();e.target.click();var t=e.target.getAttribute('data-track');setTimeout(function(){var n=document.querySelector('#bc-sumrows tr[data-track="'+CSS.escape(t)+'"]');if(n)n.focus();},0);}});
+  $a('bc-sumcsv').addEventListener('click',function(){
+    if(!guard())return;
+    var S=bcSummary(),rows=[],stamp2=new Date().toLocaleString();
+    function line(course,badge,o){rows.push({'Google Course':course,'Badge':badge,'Students Checked':o.students,'Students Completed':o.complete,'Students Pending':o.pending,'Errors':o.errors,'Required Badges (total)':o.req,'Badges Earned':o.earned,'Badges Pending':o.req===''?'':o.req-o.earned,'Completion %':o.req?pct(o.earned,o.req):'','Checked At':stamp2});}
+    S.groups.forEach(function(g){
+      line(g.track,'ALL REQUIRED BADGES',{students:g.students,complete:g.complete,pending:g.pending,errors:g.errors,req:g.req||'',earned:g.req?g.earned:''});
+      g.badgeOrder.forEach(function(k){var b=g.badges[k],n=b.done+b.pending;line(g.track,b.name,{students:n,complete:b.done,pending:b.pending,errors:'',req:n,earned:b.done});});
+    });
+    var T=S.total;line('All courses','ALL REQUIRED BADGES',{students:T.students,complete:T.complete,pending:T.pending,errors:T.errors,req:T.req||'',earned:T.req?T.earned:''});
+    var h=Object.keys(rows[0]),csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v==null?'':v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    saveAs(new Blob(['\ufeff'+csv],{type:'text/csv'}),'Badge_Summary_by_Course.csv');toast('success','Course-wise summary downloaded');
+  });
   $a('bc-export').addEventListener('click',function(){
     var out=BC.rows.filter(function(r){return r.state==='done';}).map(function(r){
       var need=r.need||[],doneSet={};(r.done||[]).forEach(function(d){doneSet[normB(d)]=1;});
