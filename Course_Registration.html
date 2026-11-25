@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Course Registration</title>
+<style>
+/* ================= Theme: corporate navy ================= */
+:root{--bg:#0b1220;--bg2:#0f172a;--card:#111a2e;--card2:#16213a;--text:#e6ebf5;--mute:#93a1bd;--line:#22304d;--line2:#2c3b5c;
+  --pri:#3b82f6;--pri-h:#2563eb;--pri-soft:rgba(59,130,246,.12);--ok:#22c55e;--okb:rgba(34,197,94,.12);--req:#f87171;--badb:rgba(248,113,113,.12);--warn:#f59e0b;--warnb:rgba(245,158,11,.12);
+  --field:#0e1729;--focus:0 0 0 3px rgba(59,130,246,.35);--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);--r:12px;
+  color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:#7fb0ff}
+::selection{background:rgba(59,130,246,.4)}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:50;background:var(--pri)}
+.glass{background:var(--card);border:1px solid var(--line)}
+/* ---------- header / hero ---------- */
+.hero{position:relative;background:radial-gradient(900px 420px at 85% 0%,rgba(59,130,246,.16),transparent 70%),linear-gradient(180deg,#0e1830 0%,var(--bg) 100%);border-bottom:1px solid var(--line);padding:0 6% 64px}
+.topbar{position:relative;display:flex;align-items:center;justify-content:space-between;padding:18px 0;max-width:1180px;margin:0 auto;border-bottom:1px solid rgba(255,255,255,.06)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:.1px}
+.brand .logo{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--pri)}
+.topnav{display:flex;align-items:center;gap:6px}
+.topnav a{color:var(--mute);text-decoration:none;font-weight:600;font-size:14px;padding:8px 12px;border-radius:8px;transition:color .15s,background .15s}
+.topnav a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.topnav a.cta-sm{color:#fff;background:var(--pri);margin-left:6px}
+.topnav a.cta-sm:hover{background:var(--pri-h)}
+.hero-in{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;max-width:1180px;margin:52px auto 0}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:rgba(255,255,255,.03);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--mute);letter-spacing:.2px}
+.eyebrow .dotlive{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.hero h1{font-size:clamp(32px,4.4vw,50px);line-height:1.12;margin:18px 0 14px;letter-spacing:-1px;font-weight:700}
+.hero h1 .accent{color:#7fb0ff}
+.hero p.lead{font-size:17px;max-width:540px;color:var(--mute);margin:0 0 28px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn-pri,.btn-sec{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:12px 22px;font-weight:600;font-size:15px;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
+.btn-pri{background:var(--pri);color:#fff}
+.btn-pri:hover{background:var(--pri-h)}
+.btn-pri .arr{transition:transform .2s}.btn-pri:hover .arr{transform:translateX(3px)}
+.btn-sec{color:var(--text);border:1px solid var(--line2);background:transparent}
+.btn-sec:hover{border-color:#4b5f88;background:rgba(255,255,255,.03)}
+.stats{display:flex;flex-wrap:wrap;gap:0;margin:36px 0 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:var(--r);background:rgba(255,255,255,.02);max-width:520px}
+.stats li{flex:1;min-width:120px;padding:14px 18px;border-left:1px solid var(--line)}
+.stats li:first-child{border-left:0}
+.stats b{display:block;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.stats span{font-size:12.5px;color:var(--mute)}
+.hero-art svg{width:100%;height:auto;max-width:500px;display:block;margin:0 auto}
+.float{animation:float 7s ease-in-out infinite}
+.float.d2{animation-delay:-2.3s}.float.d3{animation-delay:-4.6s}
+@keyframes float{50%{transform:translateY(-6px)}}
+.bar-fill{animation:fillbar 4s ease-in-out infinite}
+@keyframes fillbar{0%{width:40px}60%,100%{width:190px}}
+/* ---------- sections ---------- */
+.wrap{width:88%;max-width:1180px;margin:0 auto}
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:56px 0 18px}
+.sec-h .kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7fb0ff;margin:0 0 6px}
+.sec-h h2{margin:0;font-size:clamp(22px,2.4vw,28px);letter-spacing:-.4px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.step{border-radius:var(--r);padding:20px;transition:border-color .2s,transform .2s}
+.step:hover{border-color:var(--line2);transform:translateY(-2px)}
+.step .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.step .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#7fb0ff;background:var(--pri-soft);border:1px solid rgba(59,130,246,.25)}
+.step .n{font-size:12px;font-weight:700;color:var(--mute);letter-spacing:.06em}
+.step h3{margin:0 0 4px;font-size:16px}
+.step p{margin:0;color:var(--mute);font-size:14px}
+.reg{padding:8px 0 80px}
+.reg-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:24px;align-items:start}
+/* help */
+.help{position:sticky;top:20px;display:flex;flex-direction:column;gap:10px}
+.acc{border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.acc[open]{border-color:var(--line2)}
+.acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:15px 16px;font-weight:600;font-size:14.5px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary:hover{background:rgba(255,255,255,.02)}
+.acc summary .num{flex:none;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;background:var(--card2);border:1px solid var(--line2);color:var(--mute);font-size:12px}
+.acc[open] summary .num{background:var(--pri);border-color:var(--pri);color:#fff}
+.acc summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);transition:transform .25s}
+.acc[open] summary::after{transform:rotate(-135deg)}
+.acc .body{padding:0 16px 16px 52px;color:var(--mute);font-size:14px;animation:open .25s ease}
+@keyframes open{from{opacity:0;transform:translateY(-4px)}}
+.acc ol{margin:0;padding-left:18px}.acc li{margin-bottom:6px}.acc b{color:var(--text)}
+.tip{border-radius:var(--r);padding:14px 16px;font-size:13.5px;color:var(--mute);display:flex;gap:12px;background:var(--pri-soft);border:1px solid rgba(59,130,246,.25)}
+.tip svg{flex:none;margin-top:2px;color:#7fb0ff}
+/* form card */
+.card{border-radius:14px;box-shadow:var(--shadow);padding:28px}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.card-h h3{margin:0;font-size:17px}
+.card-h .secure{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mute)}
+.stepper{display:flex;gap:8px;margin-bottom:6px}
+.stepper button{flex:1;display:flex;align-items:center;gap:10px;border:0;background:none;padding:6px 0;cursor:pointer;color:var(--mute);font:600 13.5px/1.2 inherit;text-align:left}
+.stepper button:disabled{cursor:default}
+.stepper .dot{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line2);font-size:12.5px;transition:background .25s,border-color .25s,color .25s}
+.stepper button.on{color:var(--text)}
+.stepper button.on .dot{border-color:var(--pri);background:var(--pri);color:#fff}
+.stepper button.done .dot{border-color:var(--ok);background:var(--ok);color:#fff}
+.bar{height:4px;border-radius:999px;background:var(--line);overflow:hidden;margin:8px 0 24px}
+.bar i{display:block;height:100%;width:33%;border-radius:inherit;background:var(--pri);transition:width .4s ease}
+.fs{border:0;margin:0;padding:0;min-width:0}
+.fs[hidden]{display:none}
+.fs.enter{animation:slideIn .3s ease}
+.fs.enter.back{animation-name:slideBack}
+@keyframes slideIn{from{opacity:0;transform:translateX(14px)}}
+@keyframes slideBack{from{opacity:0;transform:translateX(-14px)}}
+.fs legend{font-size:19px;font-weight:700;margin-bottom:2px;padding:0}
+.fs .hint{color:var(--mute);margin:0 0 18px;font-size:13.5px}
+.fs .hint b{color:var(--text)}
+.course-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;border-radius:var(--r)}
+.course{position:relative;text-align:left;border:1px solid var(--line2);background:var(--field);border-radius:10px;padding:13px 14px 12px;cursor:pointer;color:var(--text);font:inherit;transition:border-color .15s,background .15s}
+.course:hover{border-color:#4b5f88;background:#121d33}
+.course:focus-visible{outline:none;box-shadow:var(--focus)}
+.course.on{border-color:var(--pri);background:rgba(59,130,246,.10);box-shadow:inset 0 0 0 1px var(--pri)}
+.course.on::after{content:"";position:absolute;top:12px;right:12px;width:16px;height:16px;border-radius:50%;background:var(--pri) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4.5 8.2 2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat}
+.course b{display:block;font-size:14px;font-weight:600;line-height:1.35;padding-right:24px}
+.course span{display:block;color:var(--mute);font-size:12.5px;margin-top:3px}
+.fld{display:block;margin-bottom:16px}
+.fld>span{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;color:#cdd6e8}
+.fld>span i,.req-star{color:var(--req);font-style:normal}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#f input[type=text],#f input[type=email],#f input[type=tel],#f input[type=url],#f select{width:100%;height:44px;padding:0 13px;border:1px solid var(--line2);border-radius:8px;background:var(--field);color:var(--text);font:15px inherit;outline:none;transition:border-color .15s,box-shadow .15s}
+#f input:hover,#f select:hover{border-color:#4b5f88}
+#f input:focus,#f select:focus{border-color:var(--pri);box-shadow:var(--focus)}
+#f ::placeholder{color:#64748b}
+#f select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+#f select option{background:#111a2e;color:var(--text)}
+#f .err,.course-grid.err,.drop.err{border-color:var(--req)!important;box-shadow:0 0 0 3px rgba(248,113,113,.22)!important;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.vstat{font-size:13px;margin:7px 0 0;padding:7px 11px;border-radius:8px;background:var(--pri-soft);color:#bcd3ff;animation:open .2s}
+.vstat[hidden]{display:none}
+.vstat.ok{background:var(--okb);color:#86efac}
+.vstat.bad{background:var(--badb);color:#fca5a5}
+.drop{display:block;border:1.5px dashed var(--line2);border-radius:10px;padding:22px;text-align:center;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
+.drop:hover,.drop.over,.drop:focus-visible{border-color:var(--pri);background:rgba(59,130,246,.06);outline:none}
+.drop .up{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--pri-soft);color:#7fb0ff;margin-bottom:8px}
+.drop b{display:block;font-weight:600}
+.drop small{color:var(--mute)}
+.drop .fname{display:block;margin-top:6px;font-weight:600;color:#7fb0ff;word-break:break-all}
+#prev{display:block;max-width:100%;max-height:190px;margin:12px auto 0;border-radius:8px;border:1px solid var(--line2);animation:open .25s}
+#prev[hidden]{display:none}
+.agree{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;margin:18px 0 4px;cursor:pointer;color:#cdd6e8}
+.agree input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--pri)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:8px;padding:11px 22px;font:600 14.5px inherit;cursor:pointer;transition:background .15s,opacity .15s;color:#fff}
+.btn.pri{background:var(--pri);margin-left:auto}
+.btn.pri:hover{background:var(--pri-h)}
+.btn.pri:disabled{opacity:.6;cursor:wait}
+.btn.go{background:#16a34a}
+.btn.go:hover{background:#15803d}
+.btn.ghost{background:none;color:var(--mute);padding-left:4px}
+.btn.ghost:hover{color:var(--text)}
+/* footer */
+.foot{border-top:1px solid var(--line);background:var(--bg2)}
+.foot-in{width:88%;max-width:1180px;margin:0 auto;padding:20px 0;display:flex;justify-content:space-between;gap:12px;color:var(--mute);font-size:13px}
+.foot a{color:var(--mute);text-decoration:none}
+.foot a:hover{color:var(--text)}
+/* reveal on scroll (subtle) */
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+.steps .step.reveal:nth-child(2){transition-delay:.06s}.steps .step.reveal:nth-child(3){transition-delay:.12s}.steps .step.reveal:nth-child(4){transition-delay:.18s}
+@media (max-width:960px){.hero-in{grid-template-columns:1fr;margin-top:36px}.hero-art{order:-1;max-width:360px;margin:0 auto}.steps{grid-template-columns:1fr 1fr}.reg-grid{grid-template-columns:1fr}.help{position:static;order:2}.topnav a:not(.cta-sm){display:none}}
+@media (max-width:560px){.hero{padding:0 5% 44px}.steps{grid-template-columns:1fr}.course-grid,.row2{grid-template-columns:1fr}.card{padding:20px}.stepper button span.lbl{display:none}.stepper button{justify-content:center}.hero-art{max-width:280px}.stats li{min-width:0;padding:12px}.brand .bt{display:none}}
+
+/* ================= SweetAlert ================= */
+.swal2-popup{background:#111a2e!important;color:var(--text)!important;border:1px solid var(--line2);border-radius:14px!important;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.swal2-title{color:var(--text)!important;font-size:1.45em!important}
+.swal2-html-container{color:#b6c2da!important;font-size:1em!important}
+.swal2-html-container b{color:#fff}
+.swal2-input,.swal2-textarea{background:var(--field)!important;color:var(--text)!important;border:1px solid var(--line2)!important;border-radius:8px!important}
+.swal2-input:focus{box-shadow:var(--focus)!important;border-color:var(--pri)!important}
+.swal2-styled.swal2-confirm,.swal2-styled.swal2-cancel,.swal2-styled.swal2-deny{border-radius:8px!important;font-weight:600!important}
+.swal2-validation-message{background:var(--badb)!important;color:#fca5a5!important}
+.swal2-timer-progress-bar{background:var(--pri)!important}
+.swal2-popup.swal2-toast{background:#16213a!important;border:1px solid var(--line2)}
+.swal2-container.swal2-backdrop-show{background:rgba(2,6,16,.7)!important}
+.swal2-icon.swal2-success [class^=swal2-success-circular-line],.swal2-icon.swal2-success .swal2-success-fix{background:#111a2e!important}
+
+/* ================= Admin (full page) ================= */
+body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,body.admin-mode #progress{display:none}
+#ad{--a-card:var(--card);--a-text:var(--text);--a-mute:var(--mute);--a-line:var(--line);--a-pri:var(--pri);--a-pri2:var(--pri-soft);--a-ok:#4ade80;--a-okb:var(--okb);--a-bad:#f87171;--a-badb:var(--badb);--a-warn:#fbbf24;--a-warnb:var(--warnb);
+  min-height:100vh;color:var(--a-text);font:14px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+#ad[hidden],#ad [hidden]{display:none!important}
+#ad button,#ad input,#ad select,#ad textarea{font:inherit;color:inherit}
+#ad a{color:#7fb0ff}
+.ad-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--card2);border-radius:8px;padding:7px 13px;cursor:pointer;font-weight:600;white-space:nowrap;text-decoration:none;color:var(--text);transition:background .15s,border-color .15s}
+.ad-btn:hover{background:#1b2846;border-color:#4b5f88}
+.ad-btn:disabled{opacity:.45;cursor:not-allowed}
+.ad-primary{background:var(--pri);border-color:var(--pri);color:#fff!important}
+.ad-primary:hover{background:var(--pri-h);border-color:var(--pri-h)}
+.ad-good{background:#16a34a;border-color:#16a34a;color:#fff!important}
+.ad-good:hover{background:#15803d;border-color:#15803d}
+.ad-danger{background:#dc2626;border-color:#dc2626;color:#fff!important}
+.ad-danger:hover{background:#b91c1c;border-color:#b91c1c}
+.ad-ghost-danger{color:#fca5a5!important}
+.ad-warnbtn{color:#fbbf24!important;border-color:rgba(245,158,11,.45)}
+.ad-warnbtn:hover{background:rgba(245,158,11,.1)}
+.ad-block{width:100%;justify-content:center;padding:11px}
+.ad-input,.ad-select,.ad-textarea{width:100%;border:1px solid var(--line2);border-radius:8px;padding:9px 12px;background:var(--field);outline:none;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.ad-select option{background:#111a2e}
+.ad-input:focus,.ad-select:focus,.ad-textarea:focus{border-color:var(--pri);box-shadow:var(--focus)}
+.ad-muted{color:var(--a-mute)}
+.ad-err{background:var(--a-badb);color:#fca5a5;border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:9px 12px;margin:4px 0 14px}
+/* login */
+.ad-login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(800px 400px at 50% 0%,rgba(59,130,246,.12),transparent 70%)}
+.ad-card{background:var(--a-card);border:1px solid var(--a-line);border-radius:14px;box-shadow:var(--shadow)}
+.ad-login .ad-card{width:min(400px,100%);padding:32px 30px;animation:rise .4s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.ad-logo{width:44px;height:44px;border-radius:10px;background:var(--pri);color:#fff;display:grid;place-items:center;margin-bottom:16px}
+.ad-login h1{font-size:21px;margin:0 0 2px}
+.ad-login p{margin:0 0 22px}
+.ad-field{display:block;margin-bottom:14px;font-weight:600;font-size:13.5px}
+.ad-field .ad-input{margin-top:6px;font-weight:400;font-size:14px}
+.ad-pw{position:relative;display:block}
+.ad-pw .ad-input{padding-right:64px}
+.ad-pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);margin-top:3px;border:0;background:none;color:#7fb0ff;cursor:pointer;font-weight:600;padding:4px 8px}
+.ad-back{display:block;text-align:center;margin-top:16px;text-decoration:none;font-size:13.5px}
+/* app shell */
+.ad-top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;background:var(--bg2);border-bottom:1px solid var(--a-line);padding:0 24px;height:58px}
+.ad-brand{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.ad-brand::before{content:"";width:26px;height:26px;border-radius:7px;background:var(--pri)}
+.ad-brand span{background:var(--card2);border:1px solid var(--line2);color:var(--mute);border-radius:6px;padding:1px 7px;font-size:11.5px}
+.ad-tabs{display:flex;gap:2px;height:100%}
+.ad-tabs button{position:relative;border:0;background:none;padding:0 14px;cursor:pointer;font-weight:600;color:var(--a-mute);transition:color .15s}
+.ad-tabs button:hover{color:var(--text)}
+.ad-tabs button.on{color:var(--text)}
+.ad-tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--pri)}
+.ad-user{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ad-main{max-width:1280px;margin:0 auto;padding:24px 24px 60px;animation:rise .3s ease}
+.ad-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ad-h h2{margin:0;font-size:20px;letter-spacing:-.3px}
+.ad-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.ad-stat{position:relative;text-align:left;border:1px solid var(--a-line);background:var(--a-card);border-radius:12px;padding:14px 16px;cursor:pointer;color:var(--text);transition:border-color .15s,background .15s}
+.ad-stat::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:#64748b}
+.ad-stat:hover{border-color:var(--line2);background:#14203a}
+.ad-stat.on{border-color:var(--pri);box-shadow:inset 0 0 0 1px var(--pri)}
+.ad-stat b{display:block;font-size:26px;line-height:1.15;font-weight:700;font-variant-numeric:tabular-nums}
+.ad-stat span{color:var(--a-mute);font-weight:600;font-size:12.5px}
+.ad-stat::before{background:var(--pri)}
+.ad-stat.k-pen::before{background:#f59e0b}.ad-stat.k-ver::before{background:#22c55e}.ad-stat.k-rej::before{background:#ef4444}.ad-stat.k-rev::before{background:#a78bfa}
+.ad-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.ad-toolbar .ad-input{flex:1 1 200px;width:auto;min-width:160px}
+.ad-toolbar .ad-select{width:auto;flex:0 1 190px;min-width:140px}
+.ad-toolbar .ad-sp{flex:1}
+.ad-bulk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--a-pri2);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:8px 12px;margin-bottom:12px;animation:rise .2s}
+.ad-tablewrap{background:var(--a-card);border:1px solid var(--a-line);border-radius:12px;overflow:auto}
+.ad-table{width:100%;border-collapse:collapse;min-width:880px}
+.ad-table th{position:sticky;top:0;background:#0f1a30;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--a-mute);padding:11px 12px;border-bottom:1px solid var(--a-line)}
+.ad-table td{padding:12px;border-bottom:1px solid var(--a-line);vertical-align:middle}
+.ad-table tbody tr:last-child td{border-bottom:0}
+.ad-table tbody tr{cursor:pointer;transition:background .12s}
+.ad-table tbody tr:hover{background:#14203a}
+.ad-table tbody tr.sel{background:rgba(59,130,246,.10)}
+.ad-table td.ad-cb,.ad-table th.ad-cb{width:36px;cursor:default}
+.ad-table input[type=checkbox]{width:15px;height:15px;accent-color:var(--pri)}
+.ad-name{font-weight:600}
+.ad-sub{color:var(--a-mute);font-size:12.5px}
+.ad-pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.ad-pill.Pending{background:var(--a-warnb);color:var(--a-warn)}
+.ad-pill.Verified{background:var(--a-okb);color:var(--a-ok)}
+.ad-pill.Rejected{background:var(--a-badb);color:var(--a-bad)}
+.ad-chk{display:inline-block;border-radius:5px;padding:1px 7px;margin:1px 3px 1px 0;font-size:11.5px;font-weight:600;background:var(--a-okb);color:var(--a-ok);white-space:nowrap}
+.ad-chk.no{background:var(--a-warnb);color:var(--a-warn)}
+.ad-chk.none{background:var(--card2);color:var(--a-mute)}
+.ad-empty{padding:54px 20px;text-align:center;color:var(--a-mute)}
+.ad-empty b{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
+.ad-foot{display:flex;justify-content:space-between;align-items:center;color:var(--a-mute);padding:10px 2px;font-size:13px}
+/* drawer */
+.ad-shade{position:fixed;inset:0;background:rgba(2,6,16,.6);z-index:40;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.ad-drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--bg2);border-left:1px solid var(--line2);z-index:41;display:flex;flex-direction:column;box-shadow:-16px 0 40px rgba(0,0,0,.45);animation:adIn .25s ease}
+@keyframes adIn{from{transform:translateX(24px);opacity:.4}}
+.ad-dh{display:flex;align-items:flex-start;gap:10px;padding:18px 20px;border-bottom:1px solid var(--a-line)}
+.ad-dh h3{margin:0;font-size:18px}
+.ad-x{margin-left:auto;border:1px solid var(--line2);background:var(--card2);border-radius:8px;width:32px;height:32px;font-size:20px;line-height:1;cursor:pointer;color:var(--a-mute);transition:background .15s,color .15s}
+.ad-x:hover{background:#1b2846;color:#fff}
+.ad-db{flex:1;overflow:auto;padding:18px 20px}
+.ad-sec{margin-bottom:22px}
+.ad-sec h4{margin:0 0 9px;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--a-mute)}
+.ad-kv{display:grid;grid-template-columns:150px 1fr;gap:7px 12px;margin:0}
+.ad-kv dt{color:var(--a-mute)}
+.ad-kv dd{margin:0;word-break:break-word}
+.ad-checks ul{margin:0;padding:0}
+.ad-checks li{list-style:none;margin:0 0 7px;padding-left:26px;position:relative}
+.ad-checks li::before{position:absolute;left:0;top:2px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:700}
+.ad-checks li.ok::before{content:"✓";background:var(--a-okb);color:var(--a-ok)}
+.ad-checks li.no::before{content:"!";background:var(--a-warnb);color:var(--a-warn)}
+.ad-shot{display:block;width:100%;border:1px solid var(--line2);border-radius:8px;cursor:zoom-in;background:var(--card2);min-height:80px}
+.ad-df{border-top:1px solid var(--a-line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ad-df .ad-sp{flex:1}
+/* settings */
+.ad-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ad-panel{padding:22px}
+.ad-panel h3{margin:0 0 4px;font-size:15.5px}
+.ad-panel p{margin:0 0 16px}
+.ad-danger-zone{border-color:rgba(248,113,113,.3)}
+.ad-mode{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--a-warnb);color:var(--a-warn);white-space:nowrap}
+.ad-mode.on{background:var(--a-okb);color:var(--a-ok)}
+@media(max-width:900px){.ad-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-grid2{grid-template-columns:1fr}.ad-top{padding:0 12px;gap:10px}.ad-brand span{display:none}.ad-user #ad-who{display:none}.ad-main{padding:16px 12px 50px}.ad-kv{grid-template-columns:1fr}.ad-kv dt{font-weight:600;color:var(--text)}}
+/* overview */
+.ov-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ov-seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.ov-seg button{border:0;background:transparent;color:var(--mute);padding:7px 12px;font-weight:600;cursor:pointer}
+.ov-seg button.on{background:var(--pri);color:#fff}
+.ov-table td,.ov-table th{white-space:nowrap}
+.ov-table tbody tr.ov-click{cursor:pointer}
+.ov-table tfoot td{border-top:1px solid var(--line2);background:#0f1a30}
+.ov-done{color:#4ade80}.ov-prog{color:#fbbf24}.ov-none{color:#f87171}
+.ov-bar{display:inline-flex;vertical-align:middle;width:calc(100% - 52px);height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.ov-bar i{display:block;height:100%}.ov-bar i.d{background:#22c55e}.ov-bar i.p{background:#f59e0b}.ov-bar i.n{background:#ef4444}
+.ov-pct{display:inline-block;width:46px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.ov-note{margin:12px 2px 0;font-size:12.5px}
+.ov-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+/* badge check */
+.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.bc-drop{display:block;border:1.5px dashed var(--line2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
+.bc-drop:hover,.bc-drop.over{border-color:var(--pri);background:rgba(59,130,246,.06)}
+.bc-drop svg{color:#7fb0ff;display:block;margin:0 auto 6px}
+.bc-drop b{display:block;font-weight:600}
+.bc-drop small{color:var(--mute)}
+.bc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bc-req{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--field)}
+.bc-req summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:10px;padding:10px 12px;font-size:13.5px}
+.bc-req summary::-webkit-details-marker{display:none}
+.bc-req[open] summary{border-bottom:1px solid var(--line)}
+.bc-req textarea{border:0;border-radius:0 0 10px 10px;resize:vertical;font-size:13px}
+.bc-runhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.bc-runhead .bc-actions{margin-top:0}
+.bc-prog{height:4px;border-radius:999px;background:var(--line);overflow:hidden;margin-bottom:16px}
+.bc-prog i{display:block;height:100%;width:0;background:var(--pri);transition:width .4s ease}
+.bc-pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;background:var(--card2);color:var(--mute)}
+.bc-pill.Complete{background:var(--okb);color:#4ade80}
+.bc-pill.Inprogress{background:var(--warnb);color:#fbbf24}
+.bc-pill.Notstarted{background:var(--badb);color:#f87171}
+.bc-pill.Error{background:var(--badb);color:#fca5a5}
+.bc-pill.Norequirementset{background:var(--pri-soft);color:#93c5fd}
+.bc-pill.run{background:var(--pri-soft);color:#93c5fd;animation:bcpulse 1.2s ease-in-out infinite}
+@keyframes bcpulse{50%{opacity:.5}}
+.bc-mini{width:90px;height:5px;border-radius:999px;background:var(--line);overflow:hidden;margin-bottom:3px}
+.bc-mini i{display:block;height:100%;background:#22c55e}
+.bc-table tbody tr{cursor:default}
+.bc-detail td{background:#0e1729}
+.bc-dgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:4px 2px}
+.bc-dgrid h4{margin:0 0 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--mute)}
+.bc-list{list-style:none;margin:0;padding:0;max-height:260px;overflow:auto}
+.bc-list li{padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.bc-list li.ok{color:#4ade80}
+.bc-list li.miss{color:#f87171}
+.bc-list.earned li.ok{color:var(--text)}
+.bc-list.earned li.ok::before{content:"★ ";color:#fbbf24}
+@media(max-width:900px){.bc-grid,.bc-dgrid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+<header class="hero">
+  <nav class="topbar" aria-label="Main">
+    <div class="brand"><span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4 7l8-4 8 4-8 4z M7 9.5V15c0 1.7 2.2 3 5 3s5-1.3 5-3V9.5"/></svg></span><span class="bt">Skills Course Registration</span></div>
+    <div class="topnav">
+      <a href="#how">How it works</a>
+      <a href="#help">Help</a>
+      <a href="#register" class="cta-sm">Register</a>
+    </div>
+  </nav>
+  <div class="hero-in">
+    <div class="hero-text reveal">
+      <span class="eyebrow"><span class="dotlive"></span>Registrations open · Free programme</span>
+      <h1>Build job-ready skills in <span class="accent">Google Cloud &amp; AI</span></h1>
+      <p class="lead">Register for a Google Skills learning path mapped to your course. Your details are verified automatically, so enrolment takes only a few minutes.</p>
+      <div class="cta">
+        <a class="btn-pri" href="#register">Start registration <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn-sec" href="#help">Registration guide</a>
+      </div>
+      <ul class="stats">
+        <li><b data-count="8" id="course-count">8</b><span>Courses available</span></li>
+        <li><b data-count="3">3</b><span>Steps to register</span></li>
+        <li><b data-count="100" data-suffix="%">100%</b><span>Auto-verified</span></li>
+      </ul>
+    </div>
+    <div class="hero-art reveal" aria-hidden="true">
+      <svg viewBox="0 0 520 400">
+        <defs>
+          <linearGradient id="gScreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16223d"/><stop offset="1" stop-color="#111a2e"/></linearGradient>
+        </defs>
+        <!-- dashboard window -->
+        <g class="float">
+          <rect x="40" y="40" width="400" height="270" rx="14" fill="url(#gScreen)" stroke="#2c3b5c"/>
+          <rect x="40" y="40" width="400" height="36" rx="14" fill="#16213a"/><rect x="40" y="62" width="400" height="14" fill="#16213a"/>
+          <circle cx="62" cy="58" r="5" fill="#2c3b5c"/><circle cx="80" cy="58" r="5" fill="#2c3b5c"/><circle cx="98" cy="58" r="5" fill="#2c3b5c"/>
+          <rect x="130" y="51" width="180" height="14" rx="7" fill="#0e1729" stroke="#22304d"/>
+          <!-- profile -->
+          <circle cx="92" cy="118" r="24" fill="#1d2d52"/>
+          <circle cx="92" cy="111" r="9" fill="#3b82f6"/><path d="M76 132c4-9 28-9 32 0" fill="#3b82f6"/>
+          <rect x="130" y="102" width="150" height="11" rx="5.5" fill="#cbd5e1"/>
+          <rect x="130" y="121" width="96" height="8" rx="4" fill="#475569"/>
+          <rect x="350" y="104" width="66" height="24" rx="12" fill="rgba(34,197,94,.15)"/><circle cx="364" cy="116" r="4" fill="#22c55e"/><rect x="373" y="112" width="34" height="8" rx="4" fill="#22c55e" opacity=".8"/>
+          <!-- progress -->
+          <rect x="68" y="166" width="348" height="8" rx="4" fill="#22304d"/>
+          <rect class="bar-fill" x="68" y="166" width="190" height="8" rx="4" fill="#3b82f6"/>
+          <!-- badges row -->
+          <g fill="#16213a" stroke="#2c3b5c"><rect x="68" y="194" width="78" height="92" rx="10"/><rect x="158" y="194" width="78" height="92" rx="10"/><rect x="248" y="194" width="78" height="92" rx="10"/><rect x="338" y="194" width="78" height="92" rx="10"/></g>
+          <path d="M107 212l16 9v18l-16 9-16-9v-18z" fill="#3b82f6"/>
+          <path d="M197 212l16 9v18l-16 9-16-9v-18z" fill="#22c55e"/>
+          <path d="M287 212l16 9v18l-16 9-16-9v-18z" fill="#f59e0b"/>
+          <path d="M377 212l16 9v18l-16 9-16-9v-18z" fill="#334155"/>
+          <g fill="#475569"><rect x="84" y="262" width="46" height="6" rx="3"/><rect x="174" y="262" width="46" height="6" rx="3"/><rect x="264" y="262" width="46" height="6" rx="3"/><rect x="354" y="262" width="46" height="6" rx="3"/></g>
+        </g>
+        <!-- verification card -->
+        <g class="float d2">
+          <rect x="300" y="262" width="190" height="96" rx="12" fill="#111a2e" stroke="#2c3b5c"/>
+          <circle cx="330" cy="292" r="13" fill="rgba(34,197,94,.15)"/><path d="m324 292 4.5 4.5 8-9" fill="none" stroke="#22c55e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="352" y="285" width="110" height="8" rx="4" fill="#cbd5e1"/>
+          <circle cx="330" cy="330" r="13" fill="rgba(34,197,94,.15)"/><path d="m324 330 4.5 4.5 8-9" fill="none" stroke="#22c55e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="352" y="323" width="84" height="8" rx="4" fill="#cbd5e1"/>
+        </g>
+        <!-- cloud tag -->
+        <g class="float d3">
+          <rect x="6" y="236" width="128" height="44" rx="10" fill="#111a2e" stroke="#2c3b5c"/>
+          <path d="M31 266c-5 0-8-3-8-7s3-7 7-7c1-4 5-7 9-7 5 0 9 3 9 8 4 0 7 3 7 6s-3 7-7 7z" fill="#3b82f6"/>
+          <rect x="66" y="251" width="54" height="7" rx="3.5" fill="#cbd5e1"/><rect x="66" y="263" width="36" height="6" rx="3" fill="#475569"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="sec-h reveal" id="how"><div><p class="kicker">How it works</p><h2>Four steps to your skill badges</h2></div></div>
+    <section class="steps" aria-label="How it works">
+      <div class="step glass reveal"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg></div><span class="n">01</span></div><h3>Create an account</h3><p>Sign up free at skills.google with your email ID.</p></div>
+      <div class="step glass reveal"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></div><span class="n">02</span></div><h3>Share your profile</h3><p>Make your profile public and copy its link.</p></div>
+      <div class="step glass reveal"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div><span class="n">03</span></div><h3>Register &amp; verify</h3><p>Complete the form below. Checks run instantly.</p></div>
+      <div class="step glass reveal"><div class="top"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg></div><span class="n">04</span></div><h3>Earn skill badges</h3><p>Accept the invitation and start your learning path.</p></div>
+    </section>
+
+    <div class="sec-h reveal" id="register"><div><p class="kicker">Enrolment</p><h2>Course registration</h2></div><span class="ad-muted" style="color:var(--mute);font-size:13.5px">Fields marked <span class="req-star">*</span> are required</span></div>
+    <section class="reg">
+      <div class="reg-grid">
+        <aside class="help reveal" id="help" aria-label="Registration guide">
+          <details class="acc glass" open>
+            <summary><span class="num">1</span>Create your free Skills account</summary>
+            <div class="body"><ol>
+              <li>Go to <a href="https://www.skills.google/" target="_blank" rel="noopener">skills.google</a> and click <b>Join</b>.</li>
+              <li>Sign up with the <b>same email ID</b> you enter in this form.</li>
+              <li>Open the verification email and confirm your account.</li>
+            </ol></div>
+          </details>
+          <details class="acc glass">
+            <summary><span class="num">2</span>Get your public profile link</summary>
+            <div class="body"><ol>
+              <li>Log in and open <a href="https://www.skills.google/profile/" target="_blank" rel="noopener">skills.google/profile</a>.</li>
+              <li>Click <b>Make profile public</b> (confirm if asked).</li>
+              <li>Copy the link from the address bar. It looks like <b>skills.google/public_profiles/…</b></li>
+            </ol>
+            <p style="margin:10px 0 0"><a href="https://www.youtube.com/watch?v=C7Zb3cqEkwA" target="_blank" rel="noopener">Watch the 1-minute video guide ↗</a></p></div>
+          </details>
+          <details class="acc glass">
+            <summary><span class="num">3</span>Which screenshot to upload</summary>
+            <div class="body">A full screenshot of your Skills <b>account settings</b> page showing your email ID, <b>or</b> your public profile page with the link visible in the address bar.</div>
+          </details>
+          <div class="tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Your email ID, profile link and screenshot are verified automatically. Only verified registrations are accepted.</span></div>
+        </aside>
+
+        <div class="card glass reveal">
+          <div class="card-h"><h3>Registration form</h3><span class="secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Secure &amp; verified</span></div>
+          <div class="stepper" role="list">
+            <button type="button" role="listitem" data-go="1" class="on"><span class="dot">1</span><span class="lbl">Course</span></button>
+            <button type="button" role="listitem" data-go="2" disabled><span class="dot">2</span><span class="lbl">Your details</span></button>
+            <button type="button" role="listitem" data-go="3" disabled><span class="dot">3</span><span class="lbl">Verification</span></button>
+          </div>
+          <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+
+          <form id="f" novalidate>
+            <fieldset class="fs" data-step="1">
+              <legend>Choose your course</legend>
+              <p class="hint">Selected: <b id="sel">none yet</b></p>
+              <div class="course-grid" id="course-grid" role="group" aria-label="Courses"></div>
+              <select name="course" id="course" class="sr-only" tabindex="-1" aria-hidden="true"><option value="">Select Course</option></select>
+              <label class="fld"><span>Mapped Google course <i>*</i></span><select name="gcourse" id="gcourse"><option value="">Choose a course above first</option></select></label>
+              <div class="nav"><button type="button" class="btn pri" data-next="2">Continue <span aria-hidden="true">→</span></button></div>
+            </fieldset>
+
+            <fieldset class="fs" data-step="2" hidden>
+              <legend>Your details</legend>
+              <p class="hint">Use the same email ID as your Google Skills account.</p>
+              <label class="fld"><span>Full name <i>*</i></span><input type="text" name="name" autocomplete="name" placeholder="e.g. Priya Sharma"></label>
+              <label class="fld"><span>Registered email ID <i>*</i></span><input type="email" name="email" autocomplete="email" placeholder="name@gmail.com"><div class="vstat" id="email-stat" hidden></div></label>
+              <div class="row2">
+                <label class="fld"><span>Mobile number</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210"><div class="vstat" id="phone-stat" hidden></div></label>
+                <label class="fld"><span>Gender</span><select name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></label>
+              </div>
+              <div class="row2">
+                <label class="fld"><span>Organisation / Institution <i>*</i></span><input type="text" name="org" autocomplete="organization" placeholder="College or company"></label>
+                <label class="fld"><span>Year of graduation</span><select name="year" id="year"><option value="">Select</option></select></label>
+              </div>
+              <div class="nav"><button type="button" class="btn ghost" data-next="1">← Back</button><button type="button" class="btn pri" data-next="3">Continue <span aria-hidden="true">→</span></button></div>
+            </fieldset>
+
+            <fieldset class="fs" data-step="3" hidden>
+              <legend>Verify your Skills account</legend>
+              <p class="hint">Your profile link and screenshot are checked as you go.</p>
+              <label class="fld"><span>Public profile link <i>*</i></span><input type="url" name="url" autocomplete="url" placeholder="https://www.skills.google/public_profiles/…"><div class="vstat" id="url-stat" hidden></div></label>
+              <div class="fld"><span>Screenshot of your Skills account <i>*</i></span>
+                <label class="drop" id="drop">
+                  <input type="file" name="shot" id="shot" class="sr-only" accept="image/png,image/jpeg,image/webp">
+                  <span class="up"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/><path d="M12 3v13M7 8l5-5 5 5"/></svg></span>
+                  <b>Drag and drop, or click to upload</b>
+                  <small>PNG or JPG · must show your email ID or profile link</small>
+                  <span class="fname" id="fname"></span>
+                </label>
+                <img id="prev" alt="Screenshot preview" hidden>
+                <div class="vstat" id="shot-stat" hidden></div>
+              </div>
+              <label class="agree"><input type="checkbox" name="terms"><span>I agree to the <a href="#" id="terms-link">Terms and Conditions</a></span></label>
+              <div class="nav"><button type="button" class="btn ghost" data-next="2">← Back</button><button type="submit" class="btn pri go">Verify &amp; submit</button></div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer class="foot"><div class="foot-in"><span>© Skills Course Registration</span><a href="#admin" id="adm">Admin login</a></div></footer>
+
+<!-- ================= Admin (full page, opened with #admin) ================= -->
+<div id="ad" hidden>
+  <section class="ad-login" id="ad-login" hidden>
+    <form class="ad-card" id="ad-lf" novalidate autocomplete="on">
+      <div class="ad-logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+      <h1>Admin Login</h1>
+      <p class="ad-muted">Course Registration dashboard <span id="ad-lmode"></span></p>
+      <label class="ad-field"><span id="ad-ulbl">Admin email</span><input class="ad-input" id="ad-u" name="email" type="email" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="admin@example.com"></label>
+      <label class="ad-field">Password<span class="ad-pw"><input class="ad-input" id="ad-p" name="password" type="password" autocomplete="current-password"><button type="button" id="ad-eye" aria-label="Show password">Show</button></span></label>
+      <div class="ad-err" id="ad-lerr" role="alert" hidden></div>
+      <button class="ad-btn ad-primary ad-block" id="ad-lbtn" type="submit">Login</button>
+      <a href="#" class="ad-back" id="ad-home1">← Back to registration form</a>
+    </form>
+  </section>
+
+  <section id="ad-app" hidden>
+    <header class="ad-top">
+      <div class="ad-brand">Course Registration <span>Admin</span></div>
+      <nav class="ad-tabs" aria-label="Admin sections">
+        <button type="button" data-tab="ov" class="on">Overview</button>
+        <button type="button" data-tab="regs">Registrations</button>
+        <button type="button" data-tab="badges">Badge check</button>
+        <button type="button" data-tab="settings">Settings</button>
+      </nav>
+      <div class="ad-user">
+        <span class="ad-muted" id="ad-who"></span>
+        <a href="#" class="ad-btn" id="ad-home2">View form</a>
+        <button type="button" class="ad-btn" id="ad-out">Logout</button>
+      </div>
+    </header>
+    <main class="ad-main">
+      <div id="ad-ov">
+        <div class="ad-h"><div><h2>Overview</h2><span class="ad-muted" id="ov-sub">Course-wise registrations and skill-badge completion</span></div>
+          <div class="ov-tools"><div class="ov-seg" role="group" aria-label="Group by"><button type="button" data-g="course" class="on">By course</button><button type="button" data-g="google">By Google course</button></div>
+          <button type="button" class="ad-btn" id="ov-refresh">&#8635; Refresh</button><button type="button" class="ad-btn ad-primary" id="ov-check">Check badges now</button></div></div>
+        <div class="ad-stats ov-kpis" id="ov-kpis"></div>
+        <div class="ad-tablewrap">
+          <table class="ad-table ov-table">
+            <thead><tr><th id="ov-gh">Course</th><th>Registered</th><th>Completed</th><th>In progress</th><th>Not started</th><th title="Never badge-checked, no requirement set, or the profile could not be read">Not checked</th><th style="width:26%">Completion</th></tr></thead>
+            <tbody id="ov-rows"></tbody>
+            <tfoot id="ov-foot"></tfoot>
+          </table>
+        </div>
+        <p class="ad-muted ov-note"><b>Completed</b> = every required badge for the course is on the student&#8217;s public profile. <b>Pending</b> = in progress + not started + not checked. Results come from the latest <b>Badge check</b> run.</p>
+      </div>
+
+      <div id="ad-regs" hidden>
+        <div class="ad-h"><h2>Registrations</h2><span class="ad-muted" id="ad-updated"></span></div>
+        <div class="ad-stats" id="ad-stats"></div>
+        <div class="ad-toolbar">
+          <input class="ad-input" id="ad-q" type="search" placeholder="Search name, email, organisation, ref no…">
+          <select class="ad-select" id="ad-c"><option value="">All courses</option></select>
+          <select class="ad-select" id="ad-s"><option value="">All statuses</option><option>Pending</option><option>Verified</option><option>Rejected</option><option value="review">Needs review</option></select>
+          <span class="ad-sp"></span>
+          <button type="button" class="ad-btn ad-warnbtn" id="ad-dups" hidden>⚠ Duplicates</button>
+          <button type="button" class="ad-btn" id="ad-refresh" title="Load the latest registrations">↻ Refresh</button>
+          <button type="button" class="ad-btn" id="ad-csv">Export CSV</button>
+          <button type="button" class="ad-btn" id="ad-zip">Screenshots ZIP</button>
+        </div>
+        <div class="ad-bulk" id="ad-bulk" hidden>
+          <b id="ad-bulkn"></b>
+          <button type="button" class="ad-btn ad-good" data-bulk="Verified">Mark Verified</button>
+          <button type="button" class="ad-btn" data-bulk="Rejected">Mark Rejected</button>
+          <button type="button" class="ad-btn" data-bulk="Pending">Mark Pending</button>
+          <button type="button" class="ad-btn ad-ghost-danger" data-bulk="delete">Delete</button>
+          <button type="button" class="ad-btn" data-bulk="clear">Clear selection</button>
+        </div>
+        <div class="ad-tablewrap">
+          <table class="ad-table">
+            <thead><tr><th class="ad-cb"><input type="checkbox" id="ad-all" aria-label="Select all"></th><th>Student</th><th>Course</th><th>Auto-checks</th><th>Status</th><th>Submitted</th></tr></thead>
+            <tbody id="ad-rows"></tbody>
+          </table>
+          <div class="ad-empty" id="ad-empty" hidden></div>
+        </div>
+        <div class="ad-foot"><span id="ad-count"></span><span>Click a row to review it</span></div>
+      </div>
+
+      <div id="ad-badges" hidden>
+        <div class="ad-h"><div><h2>Badge completion check</h2><span class="ad-muted">Reads each student’s public profile and checks the skill badges required for their course.</span></div></div>
+        <div class="bc-grid">
+          <div class="ad-card ad-panel">
+            <h3>1. Choose students</h3>
+            <p class="ad-muted">Upload a CSV with a <b>profile link</b> column (and ideally <b>name</b>, <b>email</b>, <b>course</b>), or check everyone who registered.</p>
+            <label class="bc-drop" id="bc-drop">
+              <input type="file" id="bc-file" accept=".csv,text/csv" class="sr-only">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+              <b>Drop a CSV file here or click to choose</b>
+              <small id="bc-fname">Columns are detected automatically</small>
+            </label>
+            <div class="bc-actions">
+              <button type="button" class="ad-btn" id="bc-regs">Use registered students</button>
+              <button type="button" class="ad-btn" id="bc-sample">Download sample CSV</button>
+            </div>
+            <div class="bc-default"><label class="ad-field" style="margin:14px 0 0">Course for rows without a course column
+              <select class="ad-select" id="bc-defc"><option value="">— Ask / skip —</option></select></label></div>
+          </div>
+          <div class="ad-card ad-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>2. Required badges per course</h3><button type="button" class="ad-btn" id="bc-reqsave">Save</button></div>
+            <p class="ad-muted">One badge name per line. A course is <b>complete</b> when every listed badge is on the profile. Leave empty to only count badges.</p>
+            <div id="bc-reqs"></div>
+          </div>
+        </div>
+        <div class="ad-card ad-panel bc-run" id="bc-run" hidden>
+          <div class="bc-runhead"><div><h3 id="bc-title">Ready to check</h3><span class="ad-muted" id="bc-sub"></span></div>
+            <div class="bc-actions"><button type="button" class="ad-btn ad-primary" id="bc-start">Start check</button><button type="button" class="ad-btn" id="bc-stop" hidden>Stop</button><button type="button" class="ad-btn" id="bc-export" hidden>Export results CSV</button></div></div>
+          <div class="bc-prog" aria-hidden="true"><i id="bc-bar"></i></div>
+          <div class="ad-stats bc-stats" id="bc-stats"></div>
+          <div class="ad-toolbar"><input class="ad-input" id="bc-q" type="search" placeholder="Search name, email, course…"><select class="ad-select" id="bc-f"><option value="">All results</option><option value="Complete">Complete</option><option value="In progress">In progress</option><option value="Not started">Not started</option><option value="No requirement set">No requirement set</option><option value="Error">Errors</option></select></div>
+          <div class="ad-tablewrap"><table class="ad-table bc-table"><thead><tr><th>Student</th><th>Course</th><th>Result</th><th>Required badges</th><th>Total badges</th><th></th></tr></thead><tbody id="bc-rows"></tbody></table></div>
+        </div>
+      </div>
+
+      <div id="ad-settings" hidden>
+        <div class="ad-h"><h2>Settings</h2></div>
+        <div class="ad-grid2">
+          <form class="ad-card ad-panel" id="ad-cl" novalidate>
+            <h3>Change password</h3>
+            <p class="ad-muted">Signed in as <b id="cl-email"></b>. <span id="cl-where"></span></p>
+            <label class="ad-field">Current password<input class="ad-input" id="cl-old" type="password" autocomplete="current-password"></label>
+            <label class="ad-field">New password <span class="ad-muted">(min 8 characters)</span><input class="ad-input" id="cl-p1" type="password" autocomplete="new-password"></label>
+            <label class="ad-field">Confirm new password<input class="ad-input" id="cl-p2" type="password" autocomplete="new-password"></label>
+            <div class="ad-err" id="cl-err" role="alert" hidden></div>
+            <button class="ad-btn ad-primary" type="submit">Update password</button>
+          </form>
+          <div>
+            <div class="ad-card ad-panel" style="margin-bottom:16px">
+              <h3>Data</h3>
+              <p class="ad-muted" id="ad-dataw"></p>
+              <p id="ad-datainfo"></p>
+              <button type="button" class="ad-btn" id="ad-csv2">Export CSV</button>
+              <button type="button" class="ad-btn" id="ad-zip2">Screenshots ZIP</button>
+            </div>
+            <div class="ad-card ad-panel" id="ad-mig" style="margin-bottom:16px" hidden>
+              <h3>Upload browser data</h3>
+              <p class="ad-muted" id="ad-mign"></p>
+              <button type="button" class="ad-btn ad-primary" id="ad-migbtn">Upload to Supabase</button>
+            </div>
+            <div class="ad-card ad-panel ad-danger-zone">
+              <h3>Danger zone</h3>
+              <p class="ad-muted">Permanently delete every registration and screenshot from Supabase.</p>
+              <button type="button" class="ad-btn ad-danger" id="ad-wipe">Delete all registrations</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <div class="ad-shade" id="ad-shade" hidden></div>
+  <aside class="ad-drawer" id="ad-drawer" role="dialog" aria-modal="true" aria-labelledby="ad-dname" hidden>
+    <div class="ad-dh">
+      <div><h3 id="ad-dname"></h3><div class="ad-sub" id="ad-dsub"></div></div>
+      <button type="button" class="ad-x" id="ad-dclose" aria-label="Close">×</button>
+    </div>
+    <div class="ad-db" id="ad-dbody"></div>
+    <div class="ad-df">
+      <button type="button" class="ad-btn" id="ad-prev" aria-label="Previous registration">‹ Prev</button>
+      <button type="button" class="ad-btn" id="ad-next" aria-label="Next registration">Next ›</button>
+      <span class="ad-sp"></span>
+      <button type="button" class="ad-btn ad-ghost-danger" id="ad-del">Delete</button>
+      <button type="button" class="ad-btn" id="ad-rej">Reject</button>
+      <button type="button" class="ad-btn ad-good" id="ad-ver">Verify</button>
+    </div>
+  </aside>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.14.5/sweetalert2.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  var KEY='course_registrations',BTN='#3b82f6';
+  /* ---- Live profile-link check, no server needed: the free r.jina.ai page reader fetches the
+     public profile page for us (browsers cannot read other sites directly). Only the public
+     profile URL is sent. Only registrations that pass every check can be submitted. */
+  var READER='https://r.jina.ai/';
+  /* ---- Supabase (project "Google course"): registrations + screenshots are stored online.
+     Only the PUBLISHABLE key belongs here. Never put the secret key in this page.
+     Security is enforced by the database rules in supabase_setup.sql:
+     students can only add a registration; only admins (Supabase Auth users listed in public.admins)
+     can read, change or delete. */
+  var SB_URL='https://wgtodgmlnafvarknbgpx.supabase.co';
+  var SB_KEY='sb_publishable_gy6aZMKty_i72mEGOxsD6g_LTvyy_-D';
+  var BUCKET='screenshots',IDLE_MIN=30,ACT_KEY='gc_admin_last_active';
+  var sbClient=null;
+  function sb(){
+    if(!sbClient){
+      if(!window.supabase||!window.supabase.createClient)throw new Error('Supabase library not loaded');
+      sbClient=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'gc-admin-auth'}});
+    }
+    return sbClient;
+  }
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
+  /* Course -> mapped Google course(s) */
+  var MAP={
+    'IT Network System Administration':['Data Analytics'],
+    'Cybersecurity Essentials':['Cybersecurity'],
+    'IOT & Sensor Integration':['Data Analytics','Cybersecurity'],
+    'IOT – Home Automation & PLC – Industrial Automation':['Data Analytics'],
+    'Robotics and Cobotics':['GenAI'],
+    'IC Chip Design & Verification – Level 1':['Cloud Engineering','GenAI'],
+    'IOT Application (ESP32)':['GCCF'],
+    'Sensor Interfacing Techniques':['Cloud Engineering']
+  };
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}}
+  function save(a){try{localStorage.setItem(KEY,JSON.stringify(a));return true;}catch(e){return false;}}
+  function say(icon,title,text){
+    if(window.Swal)return Swal.fire({icon:icon,title:title,text:text,confirmButtonColor:BTN});
+    alert(title+(text?'\n'+text:''));return Promise.resolve();
+  }
+  /* screenshots live in IndexedDB (much larger quota than localStorage) */
+  function idb(){return new Promise(function(res,rej){var q=indexedDB.open('courseReg',1);q.onupgradeneeded=function(){q.result.createObjectStore('shots');};q.onsuccess=function(){res(q.result);};q.onerror=function(){rej(q.error);};});}
+  function putShot(k,blob){return idb().then(function(db){return new Promise(function(res,rej){var t=db.transaction('shots','readwrite');t.objectStore('shots').put(blob,k);t.oncomplete=res;t.onerror=function(){rej(t.error);};});});}
+  function getShots(){return idb().then(function(db){return new Promise(function(res,rej){var out=[],rq=db.transaction('shots','readonly').objectStore('shots').openCursor();rq.onsuccess=function(){var c=rq.result;if(c){out.push({name:c.key,blob:c.value});c.continue();}else res(out);};rq.onerror=function(){rej(rq.error);};});});}
+  function shotOp(mode,fn){return idb().then(function(db){return new Promise(function(res,rej){var t=db.transaction('shots',mode),out;var q=fn(t.objectStore('shots'));if(q)q.onsuccess=function(){out=q.result;};t.oncomplete=function(){res(out);};t.onerror=function(){rej(t.error);};});});}
+  function getShot(k){return shotOp('readonly',function(s){return s.get(k);});}
+  function delShot(k){return shotOp('readwrite',function(s){s.delete(k);});}
+  function clearShots(){return shotOp('readwrite',function(s){s.clear();});}
+  function compress(file){return new Promise(function(res,rej){
+    var u=URL.createObjectURL(file),im=new Image();
+    im.onerror=function(){rej(new Error('bad image'));};
+    im.onload=function(){var k=Math.min(1,1400/Math.max(im.width,im.height)),cv=document.createElement('canvas');
+      cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
+      var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(im,0,0,cv.width,cv.height);
+      URL.revokeObjectURL(u);cv.toBlob(function(b){b?res(b):rej(new Error('compress failed'));},'image/jpeg',.8);};
+    im.src=u;});}
+  function saveAs(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();}
+  function downloadCsv(rows){
+    var h=Object.keys(rows[0]);
+    var csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    saveAs(new Blob(['\ufeff'+csv],{type:'text/csv'}),'Course_Registrations.csv');
+  }
+  /* ================= Data layer =================
+     Supabase is used automatically once supabase_setup.sql has been run in the project.
+     Until then (or if STORAGE is set to 'local') everything is kept in this browser. */
+  var STORAGE='auto';   /* 'auto' | 'cloud' | 'local' */
+  var MODE=null,modeP=null;
+  function detectMode(){
+    if(MODE)return Promise.resolve(MODE);
+    if(STORAGE!=='auto'){MODE=STORAGE;return Promise.resolve(MODE);}
+    if(modeP)return modeP;
+    var c;try{c=sb();}catch(e){return Promise.resolve('local');}
+    modeP=c.rpc('registration_conflict',{p_email:'setup-check@example.com',p_profile:'-'}).then(function(x){
+      modeP=null;
+      if(!x.error){MODE='cloud';return MODE;}
+      if(/^PGRST2|^42/.test(String(x.error.code||''))){MODE='local';return MODE;}   /* database not set up yet */
+      return 'cloud';   /* temporary network problem: never fall back silently */
+    },function(){modeP=null;return 'cloud';});
+    return modeP;
+  }
+  function ok(res){if(res&&res.error)throw res.error;return res;}
+  function newRef(){return 'REG-'+Date.now().toString(36).toUpperCase()+Math.floor(Math.random()*1296).toString(36).toUpperCase().padStart(2,'0');}
+  /* database column <-> label used on screen and in the CSV */
+  var FIELDS=[['Ref No','ref_no'],['Submitted At','created_at'],['Course','course'],['Mapped Google Course','mapped_course'],['Full Name','full_name'],['Email','email'],
+    ['Contact Number','phone'],['Gender','gender'],['Year Of Graduation','grad_year'],['Organisation','organisation'],['Profile URL','profile_url'],['Profile Name','profile_name'],
+    ['Profile Badges','profile_badges'],['Email Check','email_check'],['Profile Link Check','link_check'],['Screenshot Check','screenshot_check'],['Verification Screenshot','screenshot_path'],
+    ['Verification Status','status'],['Reviewed At','reviewed_at'],['Admin Note','admin_note'],
+    ['Badge Status','badge_status'],['Badges Done','badges_done'],['Badges Required','badges_required'],['Badge Checked At','badge_checked_at']];
+  var COL={};FIELDS.forEach(function(f){COL[f[0]]=f[1];});
+  function rowToRec(row){var r={};FIELDS.forEach(function(f){r[f[0]]=row[f[1]]==null?'':row[f[1]];});r['Submitted At']=row.created_at?new Date(row.created_at).toLocaleString():'';return r;}
+  function recToRow(r){
+    return {ref_no:r['Ref No'],course:r['Course']||'-',mapped_course:r['Mapped Google Course']||'-',full_name:r['Full Name']||'-',email:r['Email']||'-',phone:r['Contact Number']||null,
+      gender:r['Gender']||null,grad_year:r['Year Of Graduation']?String(r['Year Of Graduation']):null,organisation:r['Organisation']||'-',profile_url:r['Profile URL']||'-',
+      profile_name:r['Profile Name']||null,profile_badges:parseInt(r['Profile Badges'],10)||null,email_check:r['Email Check']||null,link_check:r['Profile Link Check']||null,
+      screenshot_check:r['Screenshot Check']||null,screenshot_path:r['Verification Screenshot']||null,
+      status:['Pending','Verified','Rejected'].indexOf(r['Verification Status'])>-1?r['Verification Status']:'Pending',reviewed_at:r['Reviewed At']||null,admin_note:r['Admin Note']||null,
+      badge_status:r['Badge Status']||null,badges_done:r['Badges Done']===''||r['Badges Done']==null?null:+r['Badges Done'],badges_required:r['Badges Required']===''||r['Badges Required']==null?null:+r['Badges Required'],badge_checked_at:r['Badge Checked At']||null};
+  }
+  function patchToRow(p){var o={};Object.keys(p).forEach(function(k){o[COL[k]]=p[k]===''?null:p[k];});return o;}
+  function localRecs(){
+    var all=load(),changed=false;
+    all.forEach(function(r,i){if(!r['Ref No']){r['Ref No']='REG-OLD-'+String(i+1).padStart(3,'0');changed=true;}if(!r['Verification Status']){r['Verification Status']='Pending';changed=true;}});
+    if(changed)save(all);
+    return all;
+  }
+  function removeFiles(paths){paths=paths.filter(Boolean);if(!paths.length)return Promise.resolve();return sb().storage.from(BUCKET).remove(paths).then(ok);}
+  /* the profile ID identifies a profile regardless of skills.google / cloudskillsboost.google, query strings, case */
+  function profileKey(url){var m=String(url||'').match(/\/public_profiles\/([A-Za-z0-9-]{8,64})/);return m?m[1].toLowerCase():'';}
+  var DUP_MSG={email:'This email ID is already registered. Each email ID can register only once.',profile:'This public profile link is already registered. Each Skills profile can register only once.'};
+  var Data={
+    /* one registration per email ID and per public profile link: resolves to 'email', 'profile' or null */
+    conflict:function(email,url){
+      var em=String(email||'').trim().toLowerCase(),pk=profileKey(url);
+      return detectMode().then(function(m){
+        if(m==='local'){
+          var all=localRecs();
+          if(em&&all.some(function(r){return String(r['Email']).trim().toLowerCase()===em;}))return 'email';
+          if(pk&&all.some(function(r){return profileKey(r['Profile URL'])===pk;}))return 'profile';
+          return null;
+        }
+        return sb().rpc('registration_conflict',{p_email:em||'',p_profile:pk?'https://www.skills.google/public_profiles/'+pk:''}).then(ok).then(function(x){return x.data||null;});
+      });
+    },
+    /* rec uses the on-screen labels; 'Verification Screenshot' is the file name */
+    add:function(rec,blob){
+      return detectMode().then(function(m){
+        var path=rec['Verification Screenshot'];
+        if(m==='local'){
+          return putShot(path,blob).then(function(){
+            var all=localRecs();
+            var em=rec['Email'].trim().toLowerCase(),pk=profileKey(rec['Profile URL']);
+            if(all.some(function(r){return String(r['Email']).trim().toLowerCase()===em;})){delShot(path).catch(function(){});throw {dup:'email'};}
+            if(pk&&all.some(function(r){return profileKey(r['Profile URL'])===pk;})){delShot(path).catch(function(){});throw {dup:'profile'};}
+            all.push(rec);
+            if(!save(all)){delShot(path).catch(function(){});throw new Error('this browser’s storage is full');}
+          });
+        }
+        return sb().storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',upsert:false}).then(ok).then(function(){
+          return sb().from('registrations').insert(recToRow(rec));
+        }).then(function(res){if(res.error){if(res.error.code==='23505')throw {dup:/profile/i.test(res.error.message||'')?'profile':'email'};throw res.error;}});
+      });
+    },
+    list:function(){
+      return detectMode().then(function(m){
+        if(m==='local')return localRecs();
+        return sb().from('registrations').select('*').order('created_at',{ascending:true}).limit(10000).then(ok).then(function(res){return res.data.map(rowToRec);});
+      });
+    },
+    update:function(refs,patch){
+      if(MODE==='local'){var all=localRecs();all.forEach(function(r){if(refs.indexOf(r['Ref No'])>-1)Object.assign(r,patch);});if(!save(all))return Promise.reject(new Error('Could not save in this browser'));return Promise.resolve();}
+      return sb().from('registrations').update(patchToRow(patch)).in('ref_no',refs).then(ok);
+    },
+    remove:function(recs){
+      var refs=recs.map(function(r){return r['Ref No'];}),paths=recs.map(function(r){return r['Verification Screenshot'];}).filter(Boolean);
+      if(MODE==='local'){save(localRecs().filter(function(r){return refs.indexOf(r['Ref No'])<0;}));paths.forEach(function(p){delShot(p).catch(function(){});});return Promise.resolve();}
+      return sb().from('registrations').delete().in('ref_no',refs).then(ok).then(function(){return removeFiles(paths).catch(function(e){console.error(e);});});
+    },
+    removeAll:function(recs){
+      if(MODE==='local'){save([]);return clearShots().catch(function(){});}
+      var paths=recs.map(function(r){return r['Verification Screenshot'];}).filter(Boolean);
+      return sb().from('registrations').delete().not('id','is',null).then(ok).then(function(){
+        var c=Promise.resolve();
+        for(var i=0;i<paths.length;i+=100)(function(part){c=c.then(function(){return removeFiles(part).catch(function(e){console.error(e);});});})(paths.slice(i,i+100));
+        return c;
+      });
+    },
+    /* resolves to a URL for <img>, or '' when there is no screenshot */
+    shotUrl:function(rec){
+      var p=rec['Verification Screenshot'];if(!p)return Promise.resolve('');
+      if(MODE==='local')return getShot(p).then(function(b){return b?URL.createObjectURL(b):'';});
+      return sb().storage.from(BUCKET).createSignedUrl(p,600).then(function(res){return res.error||!res.data?'':res.data.signedUrl;});
+    },
+    shotBlob:function(rec){
+      var p=rec['Verification Screenshot'];if(!p)return Promise.resolve(null);
+      if(MODE==='local')return getShot(p).then(function(b){return b||null;});
+      return sb().storage.from(BUCKET).download(p).then(function(res){return res.error?null:res.data;});
+    }
+  };
+
+  /* ================= Admin sign-in =================
+     Online: Supabase Auth (admin email + password, only emails listed in public.admins).
+     Browser-only: username + password checked against a salted SHA-256 hash (default username: admin). */
+  var CRED_KEY='course_admin_cred',LOCAL_SESS='gc_admin_local',LOCK_KEY='course_admin_lock',MAX_TRIES=5,LOCK_MIN=5;
+  var DEFAULT_CRED={user:'admin',hash:'5c453d5965b9f0e7428eb5e424214a9a8afc345bcaa32d139c38ce8e1bdc4458'};
+  function sha256(str){
+    var K=[],H=[],p=2,n=0;
+    function frac(x){return ((x-Math.floor(x))*4294967296)|0;}
+    while(n<64){var pr=true;for(var d=2;d*d<=p;d++)if(p%d===0){pr=false;break;}if(pr){if(n<8)H[n]=frac(Math.pow(p,1/2));K[n]=frac(Math.pow(p,1/3));n++;}p++;}
+    var b=Array.prototype.slice.call(new TextEncoder().encode(str)),l=b.length*8;
+    b.push(0x80);while(b.length%64!==56)b.push(0);
+    for(var i=7;i>=0;i--)b.push(i>3?0:(l>>>(i*8))&255);
+    function r(x,s){return (x>>>s)|(x<<(32-s));}
+    for(var o=0;o<b.length;o+=64){
+      var w=[],j;
+      for(j=0;j<16;j++)w[j]=(b[o+4*j]<<24)|(b[o+4*j+1]<<16)|(b[o+4*j+2]<<8)|b[o+4*j+3];
+      for(j=16;j<64;j++){var s0=r(w[j-15],7)^r(w[j-15],18)^(w[j-15]>>>3),s1=r(w[j-2],17)^r(w[j-2],19)^(w[j-2]>>>10);w[j]=(w[j-16]+s0+w[j-7]+s1)|0;}
+      var a=H[0],bb=H[1],c=H[2],dd=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+      for(j=0;j<64;j++){
+        var t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[j]+w[j])|0;
+        var t2=((r(a,2)^r(a,13)^r(a,22))+((a&bb)^(a&c)^(bb&c)))|0;
+        h=g;g=f;f=e;e=(dd+t1)|0;dd=c;c=bb;bb=a;a=(t1+t2)|0;
+      }
+      H[0]=(H[0]+a)|0;H[1]=(H[1]+bb)|0;H[2]=(H[2]+c)|0;H[3]=(H[3]+dd)|0;H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h)|0;
+    }
+    return H.map(function(x){return ('0000000'+(x>>>0).toString(16)).slice(-8);}).join('');
+  }
+  function credHash(u,p){return sha256('cr-admin|'+u+'|'+p);}
+  function getCred(){try{var c=JSON.parse(localStorage.getItem(CRED_KEY)||'null');if(c&&c.user&&c.hash)return c;}catch(e){}return DEFAULT_CRED;}
+  function lockState(){try{return JSON.parse(localStorage.getItem(LOCK_KEY)||'{"n":0,"until":0}');}catch(e){return {n:0,until:0};}}
+  function setLock(s){try{localStorage.setItem(LOCK_KEY,JSON.stringify(s));}catch(e){}}
+  function touchSession(){try{sessionStorage.setItem(ACT_KEY,String(Date.now()));}catch(e){}}
+  function idleExpired(){var t=0;try{t=Number(sessionStorage.getItem(ACT_KEY)||0);}catch(e){}return !t||Date.now()-t>IDLE_MIN*60000;}
+  var Auth={
+    /* 'ok' | 'none' | 'expired' — sets Auth.user */
+    user:null,
+    check:function(){
+      return detectMode().then(function(m){
+        if(m==='local'){
+          var on=false;try{on=sessionStorage.getItem(LOCAL_SESS)==='1';}catch(e){}
+          if(!on)return 'none';
+          if(idleExpired())return Auth.logout().then(function(){return 'expired';});
+          Auth.user={name:getCred().user};touchSession();return 'ok';
+        }
+        var c;try{c=sb();}catch(e){return 'none';}
+        return c.auth.getSession().then(function(r){
+          var s=r.data&&r.data.session;if(!s)return 'none';
+          if(idleExpired())return Auth.logout().then(function(){return 'expired';});
+          return c.rpc('is_admin').then(function(x){
+            if(x.error||!x.data)return Auth.logout().then(function(){return 'none';});
+            Auth.user={name:s.user.email,email:s.user.email};touchSession();return 'ok';
+          });
+        });
+      }).catch(function(){return 'none';});
+    },
+    login:function(u,p){
+      return detectMode().then(function(m){
+        if(m==='local'){
+          var lk=lockState();
+          if(lk.until>Date.now())throw new Error('Too many wrong attempts. Try again in '+Math.ceil((lk.until-Date.now())/60000)+' minute(s).');
+          var c=getCred();
+          if(u===c.user&&credHash(u,p)===c.hash){setLock({n:0,until:0});try{sessionStorage.setItem(LOCAL_SESS,'1');}catch(e){}Auth.user={name:u};touchSession();return;}
+          var s=lockState();s.n=(s.n||0)+1;
+          if(s.n>=MAX_TRIES){setLock({n:0,until:Date.now()+LOCK_MIN*60000});throw new Error('Too many wrong attempts. Login is locked for '+LOCK_MIN+' minutes.');}
+          setLock(s);throw new Error('Incorrect username or password. '+(MAX_TRIES-s.n)+' attempt'+(MAX_TRIES-s.n>1?'s':'')+' left.');
+        }
+        var cl=sb(),user=null;
+        return cl.auth.signInWithPassword({email:u,password:p}).then(function(r){
+          if(r.error){var msg=r.error.message||'';throw new Error(/invalid login|invalid credentials/i.test(msg)?'Incorrect email or password.':/rate|too many/i.test(msg)?'Too many attempts. Please wait a few minutes and try again.':msg);}
+          user=r.data.user;return cl.rpc('is_admin');
+        }).then(function(x){
+          if(x.error)throw x.error;
+          if(!x.data)return Auth.logout().then(function(){throw new Error('This account is not an admin.');});
+          Auth.user={name:user.email,email:user.email};touchSession();
+        });
+      });
+    },
+    logout:function(){
+      Auth.user=null;
+      try{sessionStorage.removeItem(ACT_KEY);sessionStorage.removeItem(LOCAL_SESS);}catch(e){}
+      if(MODE==='local')return Promise.resolve();
+      try{return sb().auth.signOut().catch(function(){});}catch(e){return Promise.resolve();}
+    },
+    changePassword:function(old,p1){
+      if(MODE==='local'){
+        var c=getCred();
+        if(credHash(c.user,old)!==c.hash)return Promise.reject({cur:true});
+        try{localStorage.setItem(CRED_KEY,JSON.stringify({user:c.user,hash:credHash(c.user,p1)}));}catch(e){return Promise.reject(new Error('Could not save in this browser.'));}
+        return Promise.resolve();
+      }
+      var cl=sb();
+      return cl.auth.signInWithPassword({email:Auth.user.email,password:old}).then(function(r){if(r.error)throw {cur:true};return cl.auth.updateUser({password:p1});}).then(ok);
+    }
+  };
+  /* ================= Admin app (full page at #admin) ================= */
+  var STATUSES=['Pending','Verified','Rejected'];
+  var A={view:{q:'',course:'',status:''},sel:{},open:null,list:[],shotUrl:'',all:[],loaded:false};
+  function $a(id){return document.getElementById(id);}
+  function toast(icon,title){if(window.Swal)Swal.fire({toast:true,position:'top-end',icon:icon,title:title,timer:1800,timerProgressBar:true,showConfirmButton:false});}
+  function confirmBox(o){
+    if(!window.Swal)return Promise.resolve(confirm((o.title||'')+'\n'+(o.text||'')));
+    return Swal.fire(Object.assign({icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',focusCancel:true},o)).then(function(r){return r.isConfirmed;});
+  }
+  function busyBox(title){if(window.Swal)Swal.fire({title:title,allowOutsideClick:false,allowEscapeKey:false,didOpen:function(){Swal.showLoading();}});}
+  function dbErr(what){return function(e){console.error(e);if(window.Swal&&Swal.isVisible())Swal.close();say('error',what,(e&&e.message)||'Please check your internet connection and try again.');};}
+  function loadRecs(){return A.all;}
+  function findRec(ref){return A.all.find(function(x){return x['Ref No']===ref;});}
+  function needsReview(r){return !r['Screenshot Check']||!/Opens/.test(r['Profile Link Check']||'')||/close/.test(r['Screenshot Check']||'');}
+  function stamp(){return new Date().toLocaleString();}
+  function freeShot(){if(A.shotUrl&&A.shotUrl.indexOf('blob:')===0)URL.revokeObjectURL(A.shotUrl);A.shotUrl='';}
+  function reload(silent){
+    if(!silent&&!A.loaded){$a('ad-rows').innerHTML='';var em=$a('ad-empty');em.hidden=false;em.innerHTML='<b>Loading registrations…</b>';}
+    return Data.list().then(function(all){A.all=all;A.loaded=true;if(!$a('ad-ov').hidden)renderOverview();if(!$a('ad-regs').hidden)renderRegs();if(!$a('ad-settings').hidden)renderSettings();})
+      .catch(silent?function(e){console.error(e);}:dbErr('Could not load registrations'));
+  }
+  function modeBadge(){return MODE==='cloud'?'<span class="ad-mode on">● Online · Supabase</span>':'<span class="ad-mode">● This browser only</span>';}
+
+  /* ---- routing: #admin shows the admin page, anything else the registration form ---- */
+  function route(){
+    var isAdmin=location.hash==='#admin';
+    document.body.classList.toggle('admin-mode',isAdmin);
+    $a('ad').hidden=!isAdmin;
+    if(!isAdmin){closeDrawer();document.title='Course Registration';return;}
+    document.title='Admin · Course Registration';
+    window.scrollTo(0,0);
+    if(!$a('ad-app').hidden&&Auth.user)return;
+    Auth.check().then(function(st){
+      if(st==='ok')showApp();
+      else showLogin(st==='expired'?'Your session expired. Please log in again.':'');
+    });
+  }
+  function goHome(e){if(e)e.preventDefault();closeDrawer();history.pushState('',document.title,location.pathname+location.search);route();}
+  window.addEventListener('hashchange',route);
+  $a('ad-home1').addEventListener('click',goHome);
+  $a('ad-home2').addEventListener('click',goHome);
+
+  /* ---- login ---- */
+  function showLogin(msg){
+    $a('ad-app').hidden=true;$a('ad-login').hidden=false;closeDrawer();
+    $a('ad-p').value='';loginErr(msg||'');
+    var b=$a('ad-lbtn');b.disabled=false;b.textContent='Login';
+    detectMode().then(function(m){
+      var cloud=m==='cloud',u=$a('ad-u');
+      $a('ad-ulbl').textContent=cloud?'Admin email':'Username';
+      u.type=cloud?'email':'text';u.placeholder=cloud?'admin@example.com':'admin';
+      $a('ad-lmode').innerHTML=modeBadge();
+      setTimeout(function(){(u.value?$a('ad-p'):u).focus();},30);
+    });
+  }
+  function loginErr(m){var e=$a('ad-lerr');e.hidden=!m;e.textContent=m||'';}
+  $a('ad-eye').addEventListener('click',function(){var p=$a('ad-p'),show=p.type==='password';p.type=show?'text':'password';this.textContent=show?'Hide':'Show';this.setAttribute('aria-label',show?'Hide password':'Show password');p.focus();});
+  $a('ad-lf').addEventListener('submit',function(e){
+    e.preventDefault();
+    var u=$a('ad-u').value.trim(),p=$a('ad-p').value,btn=$a('ad-lbtn');
+    if(!u||!p){loginErr('Please enter your '+(MODE==='cloud'?'admin email':'username')+' and password.');(u?$a('ad-p'):$a('ad-u')).focus();return;}
+    btn.disabled=true;btn.textContent='Signing in…';loginErr('');
+    Auth.login(u,p).then(function(){$a('ad-p').value='';showApp();toast('success','Welcome back');})
+      .catch(function(err){loginErr((err&&err.message)||'Login failed. Please try again.');$a('ad-p').value='';$a('ad-p').focus();})
+      .then(function(){btn.disabled=false;btn.textContent='Login';});
+  });
+  $a('ad-out').addEventListener('click',function(){Auth.logout().then(function(){A.all=[];A.loaded=false;A.sel={};A.counted=false;showLogin();toast('success','Logged out');});});
+  ['click','keydown','input'].forEach(function(ev){document.addEventListener(ev,function(){if(Auth.user&&location.hash==='#admin')touchSession();});});
+  setInterval(function(){
+    if(location.hash!=='#admin'||!Auth.user)return;
+    if(idleExpired())return Auth.logout().then(function(){showLogin('Your session expired. Please log in again.');});
+    if((!$a('ad-regs').hidden||!$a('ad-ov').hidden)&&$a('ad-drawer').hidden&&!Object.keys(A.sel).length&&!(window.Swal&&Swal.isVisible()))reload(true); /* keep the list fresh */
+  },30000);
+  function guard(){if(Auth.user&&!idleExpired())return true;Auth.logout().then(function(){showLogin('Your session expired. Please log in again.');});return false;}
+
+  /* ---- app shell ---- */
+  function showApp(){
+    $a('ad-login').hidden=true;$a('ad-app').hidden=false;
+    $a('ad-who').innerHTML=modeBadge()+' '+esc(Auth.user?Auth.user.name:'');
+    var cs=$a('ad-c');if(cs.options.length<2)Object.keys(MAP).forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;cs.appendChild(o);});
+    tab('ov');reload();
+  }
+  function tab(name){
+    document.querySelectorAll('.ad-tabs button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')===name);});
+    $a('ad-ov').hidden=name!=='ov';$a('ad-regs').hidden=name!=='regs';$a('ad-badges').hidden=name!=='badges';$a('ad-settings').hidden=name!=='settings';
+    if(name==='ov'){if(A.loaded)renderOverview();}else if(name==='regs'){if(A.loaded)renderRegs();}else if(name==='badges')renderBadges();else renderSettings();
+  }
+  document.querySelectorAll('.ad-tabs button').forEach(function(b){b.addEventListener('click',function(){if(guard())tab(b.getAttribute('data-tab'));});});
+
+  /* ---- registrations list ---- */
+  function filtered(all){
+    var q=A.view.q.trim().toLowerCase();
+    return all.filter(function(r){
+      if(A.view.course&&r['Course']!==A.view.course)return false;
+      if(A.view.status==='review'){if(!needsReview(r))return false;}
+      else if(A.view.status&&r['Verification Status']!==A.view.status)return false;
+      return !q||[r['Ref No'],r['Full Name'],r['Email'],r['Organisation'],r['Contact Number'],r['Profile Name']].join(' ').toLowerCase().indexOf(q)>-1;
+    }).reverse();
+  }
+  function checkBadges(r){
+    if(!r['Screenshot Check'])return '<span class="ad-chk none">No auto-checks</span>';
+    var linkOk=/Opens/.test(r['Profile Link Check']||''),shotClose=/close/.test(r['Screenshot Check']);
+    return '<span class="ad-chk" title="'+esc(r['Email Check'])+'">✓ Email</span>'+
+      '<span class="ad-chk'+(linkOk?'':' no')+'" title="'+esc(r['Profile Link Check'])+'">'+(linkOk?'✓ Link':'! Link')+'</span>'+
+      '<span class="ad-chk'+(shotClose?' no':'')+'" title="'+esc(r['Screenshot Check'])+'">'+(shotClose?'! ':'✓ ')+'Screenshot</span>';
+  }
+  /* registrations that repeat an earlier email ID or profile link (records are oldest first) */
+  function findDups(all){
+    var byE={},byP={},out={};
+    all.forEach(function(r){
+      var e=String(r['Email']||'').trim().toLowerCase(),pk=profileKey(r['Profile URL']),of=null,why='';
+      if(e&&byE[e]){of=byE[e];why='email';}
+      if(pk&&byP[pk]){if(!of){of=byP[pk];why='profile link';}else if(byP[pk]===of)why='email and profile link';}
+      if(of)out[r['Ref No']]={of:of,why:why};
+      if(e&&!byE[e])byE[e]=r;if(pk&&!byP[pk])byP[pk]=r;
+    });
+    return out;
+  }
+  function renderRegs(){
+    var all=loadRecs(),cnt={Pending:0,Verified:0,Rejected:0},rev=0;
+    all.forEach(function(r){cnt[r['Verification Status']]=(cnt[r['Verification Status']]||0)+1;if(needsReview(r))rev++;});
+    var cards=[['','Total',all.length,''],['Pending','Pending',cnt.Pending,'k-pen'],['Verified','Verified',cnt.Verified,'k-ver'],['Rejected','Rejected',cnt.Rejected,'k-rej'],['review','Needs review',rev,'k-rev']];
+    $a('ad-stats').innerHTML=cards.map(function(c){return '<button type="button" class="ad-stat '+c[3]+(A.view.status===c[0]?' on':'')+'" data-st="'+c[0]+'"><b>'+c[2]+'</b><span>'+c[1]+'</span></button>';}).join('');
+    if(!A.counted){A.counted=true;document.querySelectorAll('#ad-stats b').forEach(function(b){countUp(b,b.textContent);});}
+    $a('ad-q').value=A.view.q;$a('ad-c').value=A.view.course;$a('ad-s').value=A.view.status;
+    var refs={};all.forEach(function(r){refs[r['Ref No']]=1;});
+    Object.keys(A.sel).forEach(function(k){if(!refs[k])delete A.sel[k];});
+    A.dups=findDups(all);var nd=Object.keys(A.dups).length;
+    $a('ad-dups').hidden=!nd;$a('ad-dups').textContent='⚠ '+nd+' duplicate'+(nd===1?'':'s');
+    A.list=filtered(all);
+    $a('ad-rows').innerHTML=A.list.map(function(r){var ref=r['Ref No'],on=!!A.sel[ref];
+      return '<tr data-ref="'+esc(ref)+'"'+(on?' class="sel"':'')+'>'+
+        '<td class="ad-cb"><input type="checkbox" data-cb="'+esc(ref)+'"'+(on?' checked':'')+' aria-label="Select '+esc(r['Full Name'])+'"></td>'+
+        '<td><div class="ad-name">'+esc(r['Full Name'])+(A.dups[ref]?' <span class="ad-chk no" title="Same '+esc(A.dups[ref].why)+' as '+esc(A.dups[ref].of['Ref No'])+'">Duplicate</span>':'')+'</div><div class="ad-sub">'+esc(r['Email'])+' · '+esc(ref)+'</div></td>'+
+        '<td>'+esc(r['Course'])+'<div class="ad-sub">'+esc(r['Mapped Google Course'])+(r['Organisation']?' · '+esc(r['Organisation']):'')+'</div></td>'+
+        '<td>'+checkBadges(r)+'</td>'+
+        '<td><span class="ad-pill '+esc(r['Verification Status'])+'">'+esc(r['Verification Status'])+'</span>'+(r['Badge Status']?'<div class="ad-sub" style="margin-top:4px">Badges: '+esc(r['Badge Status'])+(r['Badges Required']?' ('+esc(r['Badges Done'])+'/'+esc(r['Badges Required'])+')':'')+'</div>':'')+'</td>'+
+        '<td class="ad-sub">'+esc(r['Submitted At'])+'</td></tr>';}).join('');
+    var empty=$a('ad-empty');empty.hidden=!!A.list.length;
+    empty.innerHTML=all.length?'<b>No registrations match your filters</b>Try clearing the search or filters.':'<b>No registrations yet</b>New student registrations will appear here.';
+    $a('ad-count').textContent=A.list.length===all.length?all.length+' registration'+(all.length===1?'':'s'):'Showing '+A.list.length+' of '+all.length;
+    $a('ad-updated').textContent='Updated '+new Date().toLocaleTimeString();
+    var visSel=A.list.filter(function(r){return A.sel[r['Ref No']];}).length;
+    $a('ad-all').checked=!!A.list.length&&visSel===A.list.length;$a('ad-all').indeterminate=visSel>0&&visSel<A.list.length;
+    var n=Object.keys(A.sel).length;$a('ad-bulk').hidden=!n;$a('ad-bulkn').textContent=n+' selected';
+  }
+  $a('ad-stats').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;A.view.status=b.getAttribute('data-st');renderRegs();});
+  $a('ad-q').addEventListener('input',function(){A.view.q=this.value;renderRegs();});
+  $a('ad-c').addEventListener('change',function(){A.view.course=this.value;renderRegs();});
+  $a('ad-s').addEventListener('change',function(){A.view.status=this.value;renderRegs();});
+  $a('ad-dups').addEventListener('click',function(){
+    if(!guard())return;
+    var refs=Object.keys(A.dups||{});if(!refs.length)return;
+    var recs=refs.map(findRec).filter(Boolean);
+    var html='<div style="text-align:left;max-height:260px;overflow:auto"><p style="margin:0 0 10px">The <b>first</b> registration of each email ID and profile link is kept. These <b>'+recs.length+'</b> later registration'+(recs.length>1?'s':'')+' will be deleted:</p><ul style="padding-left:18px;margin:0">'+
+      recs.map(function(r){var d=A.dups[r['Ref No']];return '<li><b>'+esc(r['Full Name'])+'</b> · '+esc(r['Email'])+'<br><small>'+esc(r['Ref No'])+' · same '+esc(d.why)+' as '+esc(d.of['Ref No'])+' ('+esc(d.of['Full Name'])+')</small></li>';}).join('')+'</ul></div>';
+    confirmBox({title:'Remove duplicate registrations?',html:html,confirmButtonText:'Remove '+recs.length+' duplicate'+(recs.length>1?'s':''),width:'min(620px,96vw)'}).then(function(yes){
+      if(!yes)return;busyBox('Removing duplicates…');
+      Data.remove(recs).then(function(){refs.forEach(function(k){delete A.sel[k];});return reload();})
+        .then(function(){Swal.close();toast('success',recs.length+' duplicate'+(recs.length>1?'s':'')+' removed');}).catch(dbErr('Could not remove duplicates'));
+    });
+  });
+  $a('ad-refresh').addEventListener('click',function(){if(guard())reload().then(function(){toast('success','List refreshed');});});
+  $a('ad-all').addEventListener('change',function(){var on=this.checked;A.list.forEach(function(r){if(on)A.sel[r['Ref No']]=1;else delete A.sel[r['Ref No']];});renderRegs();});
+  $a('ad-rows').addEventListener('click',function(e){
+    if(!guard())return;
+    var cb=e.target.closest('[data-cb]');
+    if(cb){var k=cb.getAttribute('data-cb');if(cb.checked)A.sel[k]=1;else delete A.sel[k];renderRegs();return;}
+    if(e.target.closest('.ad-cb'))return;
+    var tr=e.target.closest('tr[data-ref]');if(tr)openDrawer(tr.getAttribute('data-ref'));
+  });
+  $a('ad-bulk').addEventListener('click',function(e){
+    var b=e.target.closest('[data-bulk]');if(!b||!guard())return;
+    var act=b.getAttribute('data-bulk'),refs=Object.keys(A.sel);
+    if(act==='clear'){A.sel={};return renderRegs();}
+    if(act==='delete'){
+      return confirmBox({title:'Delete '+refs.length+' registration'+(refs.length>1?'s':'')+'?',text:'This also deletes their screenshots. It cannot be undone.',confirmButtonText:'Delete'}).then(function(yes){
+        if(!yes)return;busyBox('Deleting…');
+        Data.remove(A.all.filter(function(r){return A.sel[r['Ref No']];}))
+          .then(function(){A.sel={};return reload();}).then(function(){Swal.close();toast('success',refs.length+' deleted');}).catch(dbErr('Could not delete'));
+      });
+    }
+    busyBox('Saving…');
+    Data.update(refs,{'Verification Status':act,'Reviewed At':stamp()})
+      .then(function(){A.sel={};return reload();}).then(function(){Swal.close();toast('success',refs.length+' marked '+act);}).catch(dbErr('Could not update'));
+  });
+  function exportCsv(){if(!guard())return;var all=loadRecs();if(!all.length)return say('info','Nothing to export','There are no registrations yet.');downloadCsv(all);toast('success','CSV downloaded');}
+  function exportZip(){
+    if(!guard())return;
+    var list=loadRecs().filter(function(r){return r['Verification Screenshot'];});
+    if(!list.length)return say('info','No screenshots','Nothing to download.');
+    if(!window.JSZip)return say('error','ZIP not available','The ZIP library could not load. Check your internet connection and reload.');
+    var z=new JSZip(),done=0,failed=0,chain=Promise.resolve();busyBox('Preparing '+list.length+' screenshots…');
+    list.forEach(function(r){chain=chain.then(function(){return Data.shotBlob(r).then(function(b){if(!b){failed++;return;}z.file(r['Ref No']+'_'+slug(r['Email'])+'.jpg',b);done++;});});});
+    chain.then(function(){return z.generateAsync({type:'blob'});}).then(function(b){Swal.close();saveAs(b,'Verification_Screenshots.zip');toast('success',done+' screenshots downloaded'+(failed?' ('+failed+' missing)':''));})
+      .catch(dbErr('Could not download screenshots'));
+  }
+  $a('ad-csv').addEventListener('click',exportCsv);$a('ad-csv2').addEventListener('click',exportCsv);
+  $a('ad-zip').addEventListener('click',exportZip);$a('ad-zip2').addEventListener('click',exportZip);
+
+  /* ---- review drawer ---- */
+  function kv(label,val,html){return val===''||val==null?'':'<dt>'+esc(label)+'</dt><dd>'+(html?val:esc(val))+'</dd>';}
+  function openDrawer(ref){
+    var r=findRec(ref);if(!r)return;
+    freeShot();A.open=ref;
+    $a('ad-dname').textContent=r['Full Name'];
+    $a('ad-dsub').innerHTML='<span class="ad-pill '+esc(r['Verification Status'])+'">'+esc(r['Verification Status'])+'</span> &nbsp;'+esc(ref);
+    var linkOk=/Opens/.test(r['Profile Link Check']||''),shotClose=/close/.test(r['Screenshot Check']||'');
+    var url=/^https?:\/\//i.test(r['Profile URL']||'')?r['Profile URL']:'';
+    $a('ad-dbody').innerHTML=
+      '<div class="ad-sec"><h4>Automatic checks</h4><div class="ad-checks"><ul>'+
+        (r['Screenshot Check']?
+          '<li class="ok">'+esc(r['Email Check'])+': '+esc(r['Email'])+'</li>'+
+          '<li class="'+(linkOk?'ok':'no')+'">Profile link: '+esc(r['Profile Link Check'])+(r['Profile Name']?' — <b>'+esc(r['Profile Name'])+'</b>'+(r['Profile Badges']!==''&&r['Profile Badges']!=null?', '+esc(r['Profile Badges'])+' badges':''):'')+'</li>'+
+          '<li class="'+(shotClose?'no':'ok')+'">'+esc(r['Screenshot Check'])+'</li>'
+        :'<li class="no">This registration was made before automatic checks were added.</li>')+
+      '</ul></div></div>'+
+      '<div class="ad-sec"><h4>Verification screenshot</h4><div id="ad-shotbox" class="ad-muted">Loading…</div></div>'+
+      '<div class="ad-sec"><h4>Student details</h4><dl class="ad-kv">'+
+        kv('Email',r['Email'])+kv('Contact number',r['Contact Number'])+kv('Gender',r['Gender'])+kv('Year of graduation',r['Year Of Graduation'])+
+        kv('Organisation',r['Organisation'])+kv('Course',r['Course'])+kv('Mapped Google course',r['Mapped Google Course'])+
+        kv('Profile link',url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open public profile ↗</a>':esc(r['Profile URL']),true)+
+        kv('Submitted',r['Submitted At'])+kv('Last reviewed',r['Reviewed At'])+
+      '</dl></div>'+
+      '<div class="ad-sec"><h4>Admin note</h4><textarea class="ad-textarea" id="ad-note" rows="3" maxlength="2000" placeholder="Optional note (saved automatically)">'+esc(r['Admin Note']||'')+'</textarea></div>';
+    $a('ad-note').addEventListener('change',function(){
+      if(!guard())return;var v=this.value.trim();
+      Data.update([ref],{'Admin Note':v}).then(function(){var x=findRec(ref);if(x)x['Admin Note']=v;toast('success','Note saved');}).catch(dbErr('Could not save the note'));
+    });
+    var box=$a('ad-shotbox');
+    Data.shotUrl(r).then(function(u){
+      if(A.open!==ref){if(u.indexOf('blob:')===0)URL.revokeObjectURL(u);return;}
+      if(!u){box.textContent=r['Verification Screenshot']?'Screenshot not found.':'No screenshot for this registration.';return;}
+      A.shotUrl=u;
+      box.innerHTML='<img class="ad-shot" alt="Verification screenshot of '+esc(r['Full Name'])+'" src="'+esc(u)+'"><div class="ad-sub" style="margin-top:6px">Click to enlarge · Check it shows <b>'+esc(r['Email'])+'</b> or the profile link.</div>';
+      box.querySelector('img').addEventListener('click',function(){if(window.Swal)Swal.fire({imageUrl:A.shotUrl,imageAlt:'Verification screenshot',width:'min(1400px,96vw)',showConfirmButton:false,showCloseButton:true});});
+    }).catch(function(){box.textContent='Could not load the screenshot.';});
+    var idx=A.list.findIndex(function(x){return x['Ref No']===ref;});
+    $a('ad-prev').disabled=idx<=0;$a('ad-next').disabled=idx<0||idx>=A.list.length-1;
+    $a('ad-ver').disabled=r['Verification Status']==='Verified';$a('ad-rej').disabled=r['Verification Status']==='Rejected';
+    $a('ad-shade').hidden=false;$a('ad-drawer').hidden=false;$a('ad-dclose').focus();
+  }
+  function closeDrawer(){$a('ad-drawer').hidden=true;$a('ad-shade').hidden=true;A.open=null;freeShot();}
+  function step(d){var idx=A.list.findIndex(function(x){return x['Ref No']===A.open;});var n=A.list[idx+d];if(n)openDrawer(n['Ref No']);}
+  function setStatus(st){
+    if(!guard())return;var ref=A.open,when=stamp();
+    var idx=A.list.findIndex(function(x){return x['Ref No']===ref;});
+    $a('ad-ver').disabled=$a('ad-rej').disabled=true;
+    Data.update([ref],{'Verification Status':st,'Reviewed At':when}).then(function(){
+      var x=findRec(ref);if(x){x['Verification Status']=st;x['Reviewed At']=when;}
+      renderRegs();toast('success','Marked '+st);
+      /* move on to the next registration in the list, so reviewing is one click per student */
+      var next=A.list.find(function(y,i){return i>=idx&&y['Ref No']!==ref;})||findRec(ref);
+      if(next)openDrawer(next['Ref No']);else closeDrawer();
+    }).catch(function(e){openDrawer(ref);dbErr('Could not update the status')(e);});
+  }
+  $a('ad-dclose').addEventListener('click',closeDrawer);
+  $a('ad-shade').addEventListener('click',closeDrawer);
+  $a('ad-prev').addEventListener('click',function(){step(-1);});
+  $a('ad-next').addEventListener('click',function(){step(1);});
+  $a('ad-ver').addEventListener('click',function(){setStatus('Verified');});
+  $a('ad-rej').addEventListener('click',function(){setStatus('Rejected');});
+  $a('ad-del').addEventListener('click',function(){
+    if(!guard())return;var ref=A.open,r=findRec(ref);if(!r)return;
+    confirmBox({title:'Delete this registration?',html:'<b>'+esc(r['Full Name'])+'</b> ('+esc(r['Email'])+') and the screenshot will be removed permanently.',confirmButtonText:'Delete'}).then(function(yes){
+      if(!yes)return;busyBox('Deleting…');
+      Data.remove([r]).then(function(){delete A.sel[ref];closeDrawer();return reload();}).then(function(){Swal.close();toast('success','Registration deleted');}).catch(dbErr('Could not delete'));
+    });
+  });
+  document.addEventListener('keydown',function(e){
+    var modal=window.Swal&&Swal.isVisible()&&!(Swal.getPopup()&&Swal.getPopup().classList.contains('swal2-toast'));
+    if($a('ad-drawer').hidden||modal)return;
+    if(e.key==='Escape')closeDrawer();
+    else if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){if(e.key==='ArrowDown'||e.key==='j')step(1);if(e.key==='ArrowUp'||e.key==='k')step(-1);}
+  });
+
+  /* ---- settings ---- */
+  function renderSettings(){
+    var all=loadRecs(),shots=all.filter(function(r){return r['Verification Screenshot'];}).length,cloud=MODE==='cloud';
+    $a('cl-email').textContent=Auth.user?Auth.user.name:'';
+    $a('cl-where').textContent=cloud?'Your password is managed securely by Supabase.':'Your password is stored only as a secure hash in this browser.';
+    ['cl-old','cl-p1','cl-p2'].forEach(function(id){$a(id).value='';});$a('cl-err').hidden=true;
+    $a('ad-dataw').innerHTML=cloud?'Registrations and screenshots are saved <b>online in Supabase</b>, so every admin sees them from any device.':
+      'Registrations are saved in <b>this browser only</b>. Run <b>supabase_setup.sql</b> in your Supabase project to collect registrations from every device.';
+    $a('ad-datainfo').innerHTML='<b>'+all.length+'</b> registration'+(all.length===1?'':'s')+' and <b>'+shots+'</b> screenshot'+(shots===1?'':'s')+' stored.';
+    var local=cloud?load().length:0;$a('ad-mig').hidden=!local;
+    $a('ad-mign').textContent=local+' registration'+(local===1?' is':'s are')+' still saved in this browser from before online saving was set up.';
+  }
+  $a('ad-cl').addEventListener('submit',function(e){
+    e.preventDefault();if(!guard())return;
+    var old=$a('cl-old').value,p1=$a('cl-p1').value,p2=$a('cl-p2').value,err=$a('cl-err');
+    function bad(m,el){err.hidden=false;err.textContent=m;if(el)el.focus();}
+    err.hidden=true;
+    if(!old)return bad('Enter your current password.',$a('cl-old'));
+    if(p1.length<8)return bad('New password must be at least 8 characters.',$a('cl-p1'));
+    if(p1===old)return bad('The new password is the same as the current one.',$a('cl-p1'));
+    if(p1!==p2)return bad('New passwords do not match.',$a('cl-p2'));
+    busyBox('Saving…');
+    Auth.changePassword(old,p1).then(function(){renderSettings();Swal.fire({icon:'success',title:'Password updated',text:'Use your new password next time you log in.',confirmButtonColor:BTN});})
+      .catch(function(x){Swal.close();if(x&&x.cur)return bad('Current password is incorrect.',$a('cl-old'));bad((x&&x.message)||'Could not update the password.');});
+  });
+  /* one-time move of registrations saved in this browser before Supabase was set up */
+  $a('ad-migbtn').addEventListener('click',function(){
+    if(!guard()||MODE!=='cloud')return;
+    var local=load();if(!local.length)return;
+    var done=0,dup=0,fail=0,moved={},chain=Promise.resolve();busyBox('Uploading '+local.length+' registrations…');
+    local.forEach(function(r,i){chain=chain.then(function(){
+      var ref=r['Ref No']||newRef(),path=null,d=Date.parse(r['Submitted At']);
+      var up=r['Verification Screenshot']?getShot(r['Verification Screenshot']).then(function(blob){
+        if(!blob)return;path=ref+'.jpg';
+        return sb().storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',upsert:true}).then(function(res){if(res.error)path=null;});
+      }).catch(function(){path=null;}):Promise.resolve();
+      return up.then(function(){
+        var row=recToRow(Object.assign({},r,{'Ref No':ref,'Verification Screenshot':path||''}));
+        if(!isNaN(d))row.created_at=new Date(d).toISOString();
+        return sb().from('registrations').insert(row);
+      }).then(function(res){
+        if(!res.error){done++;moved[i]=1;return;}
+        if(res.error.code==='23505'){dup++;moved[i]=1;}else fail++;
+        if(path)removeFiles([path]).catch(function(){});
+      });
+    });});
+    chain.then(function(){
+      local.forEach(function(r,i){if(moved[i]&&r['Verification Screenshot'])delShot(r['Verification Screenshot']).catch(function(){});});
+      save(local.filter(function(r,i){return !moved[i];}));return reload();
+    }).then(function(){
+      Swal.fire({icon:fail?'warning':'success',title:'Browser data uploaded',html:'<b>'+done+'</b> uploaded'+(dup?', <b>'+dup+'</b> already online (skipped)':'')+(fail?', <b>'+fail+'</b> failed (kept in this browser — try again)':'')+'.',confirmButtonColor:BTN});
+    }).catch(dbErr('Upload failed'));
+  });
+  $a('ad-wipe').addEventListener('click',function(){
+    if(!guard())return;var n=loadRecs().length;
+    if(!n)return say('info','Nothing to delete','There are no registrations.');
+    if(!window.Swal)return;
+    Swal.fire({icon:'warning',title:'Delete ALL registrations?',html:'This permanently removes <b>'+n+'</b> registration'+(n>1?'s':'')+' and all screenshots'+(MODE==='cloud'?' from Supabase for <b>every</b> admin':' from this browser')+'.<br><br>Type <b>DELETE</b> to confirm.',input:'text',inputPlaceholder:'DELETE',showCancelButton:true,confirmButtonText:'Delete all',confirmButtonColor:'#dc2626',focusCancel:true,
+      preConfirm:function(v){if(v!=='DELETE'){Swal.showValidationMessage('Type DELETE (in capitals) to confirm');return false;}return true;}})
+      .then(function(r){
+        if(!r.isConfirmed)return;busyBox('Deleting everything…');
+        Data.removeAll(loadRecs()).then(function(){A.sel={};return reload();}).then(function(){Swal.close();toast('success','All registrations deleted');}).catch(dbErr('Could not delete'));
+      });
+  });
+  /* ================= Overview dashboard ================= */
+  var OV={group:'course'};
+  function badgeBucket(r){var b=r['Badge Status'];return b==='Complete'?'done':b==='In progress'?'prog':b==='Not started'?'none':'unk';}
+  function pct(a,b){return b?Math.round(a/b*100):0;}
+  function renderOverview(){
+    var all=loadRecs(),byGoogle=OV.group==='google',groups={},order=[];
+    if(byGoogle)TRACKS.forEach(function(t){groups[t]=[];order.push(t);});else Object.keys(MAP).forEach(function(k){groups[k]=[];order.push(k);});
+    all.forEach(function(r){var k=byGoogle?(r['Mapped Google Course']||'Other'):(r['Course']||'Other');if(!groups[k]){groups[k]=[];order.push(k);}groups[k].push(r);});
+    function count(list){var c={total:list.length,done:0,prog:0,none:0,unk:0};list.forEach(function(r){c[badgeBucket(r)]++;});c.pending=c.total-c.done;return c;}
+    var T=count(all),lastChecked='';
+    all.forEach(function(r){var t=Date.parse(String(r['Badge Checked At']).replace(' ','T'));if(!isNaN(t)&&(!lastChecked||t>lastChecked))lastChecked=t;});
+    $a('ov-sub').textContent=T.total?'Course-wise registrations and skill-badge completion · '+(lastChecked?'badges last checked '+new Date(lastChecked).toLocaleString():'badges not checked yet'):'No registrations yet';
+    var kp=[['Total registrations',T.total,''],['Completed',T.done,'k-ver'],['Pending',T.pending,'k-pen'],['Not checked yet',T.unk,'k-rev'],['Completion rate',pct(T.done,T.total)+'%','']];
+    $a('ov-kpis').innerHTML=kp.map(function(k){return '<div class="ad-stat '+k[2]+'" style="cursor:default"><b>'+k[1]+'</b><span>'+k[0]+'</span></div>';}).join('');
+    $a('ov-gh').textContent=byGoogle?'Google course':'Course';
+    $a('ov-rows').innerHTML=order.map(function(k){
+      var c=count(groups[k]),sub=byGoogle?Object.keys(MAP).filter(function(m){return MAP[m].indexOf(k)>-1;}).join(', '):(MAP[k]||[]).join(' / ');
+      return '<tr'+(byGoogle?'':' class="ov-click" data-course="'+esc(k)+'" title="Show these registrations"')+'><td><div class="ad-name">'+esc(k)+'</div><div class="ad-sub">'+esc(sub)+'</div></td>'+
+        '<td><b>'+c.total+'</b></td><td class="ov-done">'+c.done+'</td><td class="ov-prog">'+c.prog+'</td><td class="ov-none">'+c.none+'</td><td class="ad-muted">'+c.unk+'</td>'+
+        '<td><div class="ov-bar" title="'+c.done+' completed, '+c.prog+' in progress, '+c.none+' not started, '+c.unk+' not checked">'+
+          (c.total?'<i class="d" style="width:'+pct(c.done,c.total)+'%"></i><i class="p" style="width:'+pct(c.prog,c.total)+'%"></i><i class="n" style="width:'+pct(c.none,c.total)+'%"></i>':'')+
+        '</div><span class="ov-pct">'+(c.total?pct(c.done,c.total)+'%':'—')+'</span></td></tr>';
+    }).join('');
+    $a('ov-foot').innerHTML='<tr><td><b>All courses</b></td><td><b>'+T.total+'</b></td><td class="ov-done"><b>'+T.done+'</b></td><td class="ov-prog"><b>'+T.prog+'</b></td><td class="ov-none"><b>'+T.none+'</b></td><td class="ad-muted"><b>'+T.unk+'</b></td><td><b>'+(T.total?pct(T.done,T.total)+'% complete':'—')+'</b></td></tr>';
+  }
+  document.querySelectorAll('.ov-seg button').forEach(function(b){b.addEventListener('click',function(){OV.group=b.getAttribute('data-g');document.querySelectorAll('.ov-seg button').forEach(function(x){x.classList.toggle('on',x===b);});renderOverview();});});
+  $a('ov-refresh').addEventListener('click',function(){if(guard())reload().then(function(){toast('success','Overview refreshed');});});
+  $a('ov-check').addEventListener('click',function(){if(!guard())return;tab('badges');setTimeout(function(){$a('bc-regs').click();},50);});
+  $a('ov-rows').addEventListener('click',function(e){var tr=e.target.closest('tr[data-course]');if(!tr||!guard())return;A.view={q:'',course:tr.getAttribute('data-course'),status:''};tab('regs');});
+  /* ================= Badge completion check =================
+     Admin uploads a CSV (or uses registered students). For each public profile the earned skill badges are
+     read and compared with the badges required for that student's Google course. */
+  var REQ_KEY='gc_badge_requirements',BC_GAP=3200;   /* free page reader: ~20 profiles per minute */
+  var TRACKS=[];Object.keys(MAP).forEach(function(k){MAP[k].forEach(function(t){if(TRACKS.indexOf(t)<0)TRACKS.push(t);});});
+  var BC={rows:[],running:false,stop:false,view:{q:'',f:''},open:{},source:''};
+  function wait(ms){return new Promise(function(r){setTimeout(r,ms);});}
+  function getReqs(){try{var o=JSON.parse(localStorage.getItem(REQ_KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}}
+  function setReqs(o){try{localStorage.setItem(REQ_KEY,JSON.stringify(o));return true;}catch(e){return false;}}
+  /* "[DEPRECATED] Feature Engineering" and "feature-engineering" both become "feature engineering" */
+  function normB(s){return String(s||'').toLowerCase().replace(/^\s*\[[^\]]*\]\s*/,'').replace(/[^a-z0-9]+/g,' ').trim();}
+  function resolveTracks(course){
+    var c=String(course||'').trim();if(!c)return [];
+    var keys=Object.keys(MAP),k=keys.find(function(x){return normB(x)===normB(c);});if(k)return MAP[k].slice();
+    var t=TRACKS.find(function(x){return normB(x)===normB(c);});if(t)return [t];
+    t=TRACKS.find(function(x){return (' '+normB(c)+' ').indexOf(' '+normB(x)+' ')>-1;});if(t)return [t];
+    return [];
+  }
+  /* ---- CSV ---- */
+  function parseCsv(text){
+    var rows=[],row=[],f='',q=false,i,ch;text=String(text).replace(/^﻿/,'');
+    for(i=0;i<text.length;i++){ch=text[i];
+      if(q){if(ch==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=ch;continue;}
+      if(ch==='"')q=true;else if(ch===','||ch===';'||ch==='\t'){row.push(f);f='';}
+      else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f='';}
+      else f+=ch;}
+    if(f!==''||row.length){row.push(f);rows.push(row);}
+    return rows.map(function(r){return r.map(function(x){return x.trim();});}).filter(function(r){return r.some(function(x){return x;});});
+  }
+  function rowsFromCsv(text){
+    var data=parseCsv(text);if(!data.length)throw new Error('The file is empty.');
+    var h=data[0].map(function(x){return x.toLowerCase();}),isUrl=function(v){return /public_profiles\//i.test(v);};
+    var col={url:-1,email:-1,name:-1,course:-1},hasHeader=!data[0].some(isUrl);
+    if(hasHeader){
+      h.forEach(function(x,i){
+        if(col.url<0&&/(profile|url|link)/.test(x)&&!/name/.test(x))col.url=i;
+        else if(col.email<0&&/mail/.test(x))col.email=i;
+        else if(col.course<0&&/(course|track|program|path)/.test(x))col.course=i;
+        else if(col.name<0&&/(name|student)/.test(x))col.name=i;
+      });
+      data=data.slice(1);
+    }
+    if(col.url<0){var probe=data.find(function(r){return r.some(isUrl);});if(probe)col.url=probe.findIndex(isUrl);}
+    if(col.url<0)throw new Error('No profile link column found. Add a column named “Profile URL” with links like https://www.skills.google/public_profiles/…');
+    return data.map(function(r){return {name:col.name>-1?r[col.name]||'':'',email:col.email>-1?r[col.email]||'':'',course:col.course>-1?r[col.course]||'':'',url:r[col.url]||''};})
+      .filter(function(r){return r.url||r.name||r.email;});
+  }
+  function prepRows(list){
+    var def=$a('bc-defc').value,seen={},out=[];BC.skipped=0;
+    list.forEach(function(r){
+      var u=checkProfileUrl(r.url),course=r.course||def,tracks=r.tracks||resolveTracks(course);
+      var pk=u.ok?'p:'+profileKey(u.url):'',ek=r.email?'e:'+String(r.email).trim().toLowerCase():'';
+      if((pk&&seen[pk])||(ek&&seen[ek])){BC.skipped++;return;}
+      if(pk)seen[pk]=1;if(ek)seen[ek]=1;
+      out.push({name:r.name,email:r.email,course:course,tracks:tracks,url:u.ok?u.url:r.url,urlOk:u.ok,urlErr:u.ok?'':u.err,state:'queued'});
+    });
+    return out;
+  }
+  /* ---- requirements editor ---- */
+  function renderReqs(){
+    var reqs=getReqs();
+    $a('bc-reqs').innerHTML=TRACKS.map(function(t,i){var n=(reqs[t]||[]).length;
+      return '<details class="bc-req"'+(i===0?' open':'')+'><summary><b>'+esc(t)+'</b><span class="ad-muted">'+(n?n+' required badge'+(n>1?'s':''):'not set')+'</span></summary>'+
+        '<textarea class="ad-textarea" rows="4" data-track="'+esc(t)+'" placeholder="e.g. Prepare Data for ML APIs on Google Cloud">'+esc((reqs[t]||[]).join('\n'))+'</textarea></details>';}).join('');
+  }
+  function saveReqs(silent){
+    var o={};document.querySelectorAll('#bc-reqs textarea').forEach(function(t){o[t.getAttribute('data-track')]=t.value.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);});
+    if(!setReqs(o))return say('error','Could not save','Browser storage is not available.');
+    renderReqs();if(BC.rows.length)BC.rows.forEach(function(r){if(r.prof)evaluate(r);});renderBc();
+    if(!silent)toast('success','Requirements saved');
+  }
+  /* ---- checking ---- */
+  function fetchProfile(url){
+    var tries=0;
+    function go(){
+      tries++;
+      return fetch(READER+url,{headers:{Accept:'text/plain'}}).then(function(r){
+        if((r.status===429||r.status>=500)&&tries<4){$a('bc-sub').textContent='Checker is busy, waiting a moment…';return wait(12000*tries).then(go);}
+        if(!r.ok)throw new Error('Profile checker returned '+r.status);
+        return r.text().then(function(md){return parseProfile(md,url);});
+      },function(e){if(tries<3)return wait(4000).then(go);throw e;});
+    }
+    return go();
+  }
+  function evaluate(row){
+    var reqs=getReqs(),p=row.prof;
+    if(!row.urlOk){row.status='Error';row.detail=row.urlErr||'Invalid profile link';return;}
+    if(!p||!p.ok){row.status='Error';row.detail=(p&&p.message)||'Profile could not be read';return;}
+    if(!row.tracks.length){row.status='Error';row.detail='Course not recognised'+(row.course?': “'+row.course+'”':' (no course given)');return;}
+    var earned=p.list.map(function(b){return normB(b.name);}),best=null;
+    row.tracks.forEach(function(t){
+      var need=reqs[t]||[],done=need.filter(function(n){var nn=normB(n);return nn&&earned.some(function(e){return e===nn||e.indexOf(nn)>-1;});});
+      var score=need.length?done.length/need.length:-1;
+      if(!best||score>best.score)best={track:t,need:need,done:done,score:score};
+    });
+    row.track=best.track;row.need=best.need;row.done=best.done;row.detail='';
+    row.status=!best.need.length?'No requirement set':best.done.length===best.need.length?'Complete':best.done.length?'In progress':'Not started';
+  }
+  function runCheck(){
+    if(BC.running||!BC.rows.length)return;
+    BC.running=true;BC.stop=false;$a('bc-start').hidden=true;$a('bc-stop').hidden=false;$a('bc-export').hidden=true;
+    var todo=BC.rows.filter(function(r){return r.state!=='done';}),i=0,last=0;
+    function next(){
+      if(BC.stop||i>=todo.length)return finish();
+      var row=todo[i++];
+      if(!row.urlOk){row.state='done';evaluate(row);renderBc();return next();}
+      row.state='checking';renderBc();
+      var gap=Math.max(0,BC_GAP-(Date.now()-last));
+      return wait(gap).then(function(){last=Date.now();return fetchProfile(row.url);})
+        .then(function(p){row.prof=p;},function(e){row.prof={ok:false,message:(e&&e.message)||'Profile could not be read'};})
+        .then(function(){row.state='done';row.checkedAt=new Date().toLocaleString();evaluate(row);renderBc();return next();});
+    }
+    function finish(){
+      saveBadgeResults();
+      BC.running=false;$a('bc-start').hidden=false;$a('bc-stop').hidden=true;$a('bc-export').hidden=!BC.rows.some(function(r){return r.state==='done';});
+      var left=BC.rows.filter(function(r){return r.state!=='done';}).length;
+      $a('bc-start').textContent=left?'Continue ('+left+' left)':'Check again';
+      renderBc();
+      if(!BC.stop&&!left)toast('success','Badge check finished');
+    }
+    next();
+  }
+  /* store each checked student's latest result on their registration (matched by profile link), for the Overview dashboard */
+  function isoNow(){var d=new Date(),z=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+' '+z(d.getHours())+':'+z(d.getMinutes());}
+  function saveBadgeResults(){
+    var regs=A.all||[];if(!regs.length)return;
+    var byP={};regs.forEach(function(r){var k=profileKey(r['Profile URL']);if(k)(byP[k]=byP[k]||[]).push(r);});
+    var jobs=[];
+    BC.rows.forEach(function(row){
+      if(row.state!=='done'||row.saved||!row.urlOk)return;
+      /* a temporary checker/network failure must not overwrite an earlier good result */
+      if(row.status==='Error'&&!(row.prof&&row.prof.reason==='not_found'))return;
+      var k=profileKey(row.url);if(!k||!byP[k])return;
+      var patch={'Badge Status':row.status||'Error','Badges Done':row.need&&row.need.length?(row.done||[]).length:'','Badges Required':row.need&&row.need.length?row.need.length:'','Badge Checked At':isoNow()};
+      byP[k].forEach(function(r){jobs.push({rec:r,patch:patch});});row.saved=true;
+    });
+    if(!jobs.length)return;
+    var chain=Promise.resolve(),n=0;
+    jobs.forEach(function(j){chain=chain.then(function(){return Data.update([j.rec['Ref No']],j.patch).then(function(){Object.assign(j.rec,j.patch);n++;});});});
+    chain.then(function(){toast('success','Badge results saved for '+n+' registered student'+(n===1?'':'s'));}).catch(dbErr('Could not save badge results'));
+  }
+  /* ---- results ---- */
+  var BC_CARDS=[['','Total',''],['Complete','Complete','k-ver'],['In progress','In progress','k-pen'],['Not started','Not started','k-rej'],['Error','Errors','k-rev']];
+  function renderBc(){
+    var rows=BC.rows,done=rows.filter(function(r){return r.state==='done';}).length,cnt={};
+    rows.forEach(function(r){if(r.status)cnt[r.status]=(cnt[r.status]||0)+1;});
+    $a('bc-run').hidden=!rows.length;
+    $a('bc-title').textContent=BC.running?'Checking profiles…':done===rows.length&&rows.length?'Check complete':'Ready to check';
+    if(!BC.running||!/busy/.test($a('bc-sub').textContent)){
+      var left=rows.length-done;
+      $a('bc-sub').textContent=rows.length+' student'+(rows.length===1?'':'s')+' from '+BC.source+' · '+done+' checked'+(left&&BC.running?' · about '+Math.ceil(left*BC_GAP/60000)+' min left':'');
+    }
+    $a('bc-bar').style.width=(rows.length?done/rows.length*100:0)+'%';
+    $a('bc-stats').innerHTML=BC_CARDS.map(function(c){var n=c[0]?(cnt[c[0]]||0):rows.length;
+      return '<button type="button" class="ad-stat '+c[2]+(BC.view.f===c[0]?' on':'')+'" data-bf="'+c[0]+'"><b>'+n+'</b><span>'+c[1]+'</span></button>';}).join('');
+    var q=BC.view.q.trim().toLowerCase();
+    var list=rows.filter(function(r){
+      if(BC.view.f&&r.status!==BC.view.f)return false;
+      return !q||[r.name,r.email,r.course,r.track,r.prof&&r.prof.name].join(' ').toLowerCase().indexOf(q)>-1;});
+    $a('bc-rows').innerHTML=list.map(function(r){
+      var i=rows.indexOf(r),need=r.need||[],doneN=(r.done||[]).length,pct=need.length?Math.round(doneN/need.length*100):0;
+      var res=r.state==='queued'?'<span class="bc-pill q">Queued</span>':r.state==='checking'?'<span class="bc-pill run">Checking…</span>':'<span class="bc-pill '+esc(r.status.replace(/\s/g,''))+'">'+esc(r.status)+'</span>';
+      var main='<tr data-bi="'+i+'"><td><div class="ad-name">'+esc(r.name||(r.prof&&r.prof.name)||'—')+'</div><div class="ad-sub">'+esc(r.email||'')+'</div></td>'+
+        '<td>'+esc(r.track||r.tracks.join(' / ')||'—')+'<div class="ad-sub">'+esc(r.course&&r.course!==r.track?r.course:'')+'</div></td>'+
+        '<td>'+res+(r.detail?'<div class="ad-sub">'+esc(r.detail)+'</div>':'')+'</td>'+
+        '<td>'+(r.state==='done'&&need.length?'<div class="bc-mini"><i style="width:'+pct+'%"></i></div><span class="ad-sub">'+doneN+' of '+need.length+'</span>':'<span class="ad-sub">—</span>')+'</td>'+
+        '<td>'+(r.prof&&r.prof.ok?r.prof.list.length:'—')+'</td>'+
+        '<td>'+(r.state==='done'&&r.prof&&r.prof.ok?'<button type="button" class="ad-btn bc-more" data-bo="'+i+'">'+(BC.open[i]?'Hide':'Details')+'</button>':'')+'</td></tr>';
+      if(BC.open[i]&&r.prof&&r.prof.ok){
+        var needN=need.map(normB),doneSet={};(r.done||[]).forEach(function(d){doneSet[normB(d)]=1;});
+        main+='<tr class="bc-detail"><td colspan="6"><div class="bc-dgrid">'+
+          '<div><h4>Required for '+esc(r.track||'')+'</h4>'+(need.length?'<ul class="bc-list">'+need.map(function(n){var ok=!!doneSet[normB(n)];return '<li class="'+(ok?'ok':'miss')+'">'+(ok?'✓':'✗')+' '+esc(n)+'</li>';}).join('')+'</ul>':'<p class="ad-muted">No required badges set for this course. Add them in “Required badges per course”.</p>')+'</div>'+
+          '<div><h4>Earned badges ('+r.prof.list.length+') · <a href="'+esc(r.url)+'" target="_blank" rel="noopener noreferrer">'+esc(r.prof.name)+' ↗</a></h4><ul class="bc-list earned">'+
+            (r.prof.list.length?r.prof.list.map(function(b){var isReq=needN.some(function(n){var e=normB(b.name);return e===n||e.indexOf(n)>-1;});return '<li'+(isReq?' class="ok"':'')+'>'+esc(b.name)+' <span class="ad-sub">'+esc(b.date)+'</span></li>';}).join(''):'<li class="ad-muted">No badges earned yet</li>')+
+          '</ul></div></div></td></tr>';
+      }
+      return main;
+    }).join('')||'<tr><td colspan="6" class="ad-empty">No students match this filter.</td></tr>';
+  }
+  function loadRows(list,source){
+    if(BC.running)return say('info','Check in progress','Stop the current check first.');
+    var rows=prepRows(list);
+    if(!rows.length)return say('warning','No students found','The list has no rows with a profile link.');
+    BC.rows=rows;BC.open={};BC.view={q:'',f:''};BC.source=source;$a('bc-q').value='';$a('bc-f').value='';
+    $a('bc-start').textContent='Start check';$a('bc-export').hidden=true;
+    rows.forEach(function(r){if(!r.urlOk){r.state='done';evaluate(r);}});
+    renderBc();$a('bc-run').scrollIntoView({behavior:'smooth',block:'start'});
+    var unknown=rows.filter(function(r){return r.urlOk&&!r.tracks.length;}).length;
+    toast('success',rows.length+' student'+(rows.length===1?'':'s')+' loaded'+(BC.skipped?' · '+BC.skipped+' duplicate'+(BC.skipped>1?'s':'')+' skipped':'')+(unknown?' · '+unknown+' without a recognised course':''));
+  }
+  function renderBadges(){
+    var dc=$a('bc-defc');
+    if(dc.options.length<2){
+      var g1=document.createElement('optgroup');g1.label='Google courses';TRACKS.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;g1.appendChild(o);});
+      var g2=document.createElement('optgroup');g2.label='Registration courses';Object.keys(MAP).forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;g2.appendChild(o);});
+      dc.appendChild(g1);dc.appendChild(g2);
+    }
+    renderReqs();renderBc();
+  }
+  function readCsvFile(file){
+    if(!file)return;
+    if(!/\.csv$/i.test(file.name)&&!/csv|text\/plain|excel/.test(file.type))return say('error','Not a CSV file','Please upload a .csv file (in Excel: File → Save As → CSV).');
+    if(file.size>5*1024*1024)return say('error','File too large','Please upload a CSV under 5 MB.');
+    var fr=new FileReader();
+    fr.onload=function(){try{var list=rowsFromCsv(fr.result);$a('bc-fname').textContent='📄 '+file.name;loadRows(list,file.name);}catch(e){say('error','Could not read the CSV',e.message);}};
+    fr.onerror=function(){say('error','Could not read the file','Please try again.');};
+    fr.readAsText(file);
+  }
+  $a('bc-file').addEventListener('change',function(){if(guard())readCsvFile(this.files[0]);this.value='';});
+  var bcDrop=$a('bc-drop');
+  ['dragenter','dragover'].forEach(function(ev){bcDrop.addEventListener(ev,function(e){e.preventDefault();bcDrop.classList.add('over');});});
+  ['dragleave','drop'].forEach(function(ev){bcDrop.addEventListener(ev,function(){bcDrop.classList.remove('over');});});
+  bcDrop.addEventListener('drop',function(e){e.preventDefault();if(guard()&&e.dataTransfer&&e.dataTransfer.files[0])readCsvFile(e.dataTransfer.files[0]);});
+  $a('bc-regs').addEventListener('click',function(){
+    if(!guard())return;
+    (A.loaded?Promise.resolve(A.all):Data.list().then(function(all){A.all=all;A.loaded=true;return all;})).then(function(all){
+      if(!all.length)return say('info','No registrations yet','There are no registered students to check.');
+      loadRows(all.map(function(r){var mc=r['Mapped Google Course'];return {name:r['Full Name'],email:r['Email'],course:r['Course'],tracks:TRACKS.indexOf(mc)>-1?[mc]:null,url:r['Profile URL']};}),'registrations');
+    }).catch(dbErr('Could not load registrations'));
+  });
+  $a('bc-sample').addEventListener('click',function(){
+    var csv='Name,Email,Course,Profile URL\r\nPriya Sharma,priya.sharma@example.com,Robotics and Cobotics,https://www.skills.google/public_profiles/your-profile-id\r\nArun Kumar,arun.kumar@example.com,GCCF,https://www.skills.google/public_profiles/another-profile-id\r\n';
+    saveAs(new Blob(['﻿'+csv],{type:'text/csv'}),'Badge_Check_Sample.csv');
+  });
+  $a('bc-reqsave').addEventListener('click',function(){if(guard())saveReqs();});
+  $a('bc-reqs').addEventListener('change',function(e){if(e.target.tagName==='TEXTAREA')saveReqs(true);});
+  $a('bc-start').addEventListener('click',function(){
+    if(!guard())return;
+    if(BC.rows.every(function(r){return r.state==='done';}))BC.rows.forEach(function(r){if(r.urlOk){r.state='queued';r.status='';r.prof=null;}});
+    var noReq=TRACKS.filter(function(t){return !(getReqs()[t]||[]).length;});
+    if(noReq.length===TRACKS.length)toast('info','No required badges set yet: badges will be counted only');
+    runCheck();
+  });
+  $a('bc-stop').addEventListener('click',function(){BC.stop=true;$a('bc-stop').hidden=true;$a('bc-sub').textContent='Stopping after the current profile…';});
+  $a('bc-stats').addEventListener('click',function(e){var b=e.target.closest('[data-bf]');if(!b)return;BC.view.f=b.getAttribute('data-bf');$a('bc-f').value=BC.view.f;renderBc();});
+  $a('bc-q').addEventListener('input',function(){BC.view.q=this.value;renderBc();});
+  $a('bc-f').addEventListener('change',function(){BC.view.f=this.value;renderBc();});
+  $a('bc-rows').addEventListener('click',function(e){var b=e.target.closest('[data-bo]');if(!b)return;var i=+b.getAttribute('data-bo');BC.open[i]=!BC.open[i];renderBc();});
+  $a('bc-export').addEventListener('click',function(){
+    var out=BC.rows.filter(function(r){return r.state==='done';}).map(function(r){
+      var need=r.need||[],doneSet={};(r.done||[]).forEach(function(d){doneSet[normB(d)]=1;});
+      return {'Name':r.name,'Email':r.email,'Course':r.course,'Google Course':r.track||r.tracks.join(' / '),'Profile URL':r.url,'Profile Name':r.prof&&r.prof.ok?r.prof.name:'',
+        'Result':r.status,'Details':r.detail||'','Required Done':need.length?(r.done||[]).length:'','Required Total':need.length||'',
+        'Missing Badges':need.filter(function(n){return !doneSet[normB(n)];}).join('; '),'Total Badges':r.prof&&r.prof.ok?r.prof.list.length:'',
+        'Earned Badges':r.prof&&r.prof.ok?r.prof.list.map(function(b){return b.name+' ('+b.date+')';}).join('; '):'','Checked At':r.checkedAt||''};
+    });
+    if(!out.length)return say('info','Nothing to export','Run the check first.');
+    var h=Object.keys(out[0]);
+    var csv=[h].concat(out.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v==null?'':v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    saveAs(new Blob(['﻿'+csv],{type:'text/csv'}),'Badge_Check_Results.csv');toast('success','Results exported');
+  });
+  route();
+  document.getElementById('terms-link').addEventListener('click',function(e){
+    e.preventDefault();
+    var txt='<div style="text-align:left;font-size:15px;line-height:1.55"><ol style="padding-left:18px;margin:0">'+
+      '<li>The details you submit are used only to register you for the selected course and to track your progress in the program.</li>'+
+      '<li>Your registered email must match the email of your Skills account, and the screenshot must show that same email.</li>'+
+      '<li>Your public Skills profile URL is used to check completed courses and skill badges.</li>'+
+      '<li>Registrations with incorrect or mismatched details may be rejected.</li>'+
+      '<li>Prizes and certificates are sent only to the registered email address.</li></ol></div>';
+    if(!window.Swal)return alert('Terms: your details are used only to register you for the course and track progress.');
+    Swal.fire({title:'Terms and Condition',html:txt,showCancelButton:true,confirmButtonText:'I Agree',cancelButtonText:'Close',confirmButtonColor:BTN})
+      .then(function(r){if(r.isConfirmed)document.querySelector('input[name=terms]').checked=true;});
+  });
+
+  var y=document.getElementById('year'),c=document.getElementById('course'),g=document.getElementById('gcourse'),sel=document.getElementById('sel'),shot=document.getElementById('shot'),prev=document.getElementById('prev');
+  /* ---- course cards (keep the hidden <select> in sync for the form logic) ---- */
+  var grid=document.getElementById('course-grid');
+  Object.keys(MAP).forEach(function(t){
+    var o=document.createElement('option');o.value=t;o.textContent=t;c.appendChild(o);
+    var b=document.createElement('button');b.type='button';b.className='course';b.setAttribute('aria-pressed','false');b.dataset.course=t;
+    b.innerHTML='<b>'+esc(t)+'</b><span>Google course: '+esc(MAP[t].join(' or '))+'</span>';
+    grid.appendChild(b);
+  });
+  document.getElementById('course-count').setAttribute('data-count',Object.keys(MAP).length);
+  grid.addEventListener('click',function(e){var b=e.target.closest('.course');if(!b)return;c.value=b.dataset.course;c.dispatchEvent(new Event('change',{bubbles:true}));});
+  c.addEventListener('change',function(){
+    sel.textContent=c.value||'none yet';
+    grid.querySelectorAll('.course').forEach(function(b){var on=b.dataset.course===c.value;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
+    grid.classList.remove('err');
+    var opts=MAP[c.value]||[];
+    g.innerHTML='<option value="">'+(c.value?'Select the Google course':'Choose a course above first')+'</option>';
+    opts.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;g.appendChild(o);});
+    if(opts.length===1)g.value=opts[0];
+  });
+  for(var i=2030;i>=2015;i--){var o=document.createElement('option');o.textContent=i;y.appendChild(o);}
+
+  /* ---- 3-step form ---- */
+  var curStep=1,maxStep=1,fsets=document.querySelectorAll('#f .fs'),stepBtns=document.querySelectorAll('.stepper [data-go]');
+  function goStep(n,noScroll){
+    n=Math.max(1,Math.min(3,n));if(n===curStep&&!noScroll)return;
+    var back=n<curStep;curStep=n;maxStep=Math.max(maxStep,n);
+    fsets.forEach(function(fs){var on=+fs.dataset.step===n;fs.hidden=!on;fs.classList.remove('enter','back');if(on){void fs.offsetWidth;fs.classList.add('enter');if(back)fs.classList.add('back');}});
+    stepBtns.forEach(function(b){var k=+b.dataset.go;b.classList.toggle('on',k===n);b.classList.toggle('done',k<n);b.disabled=k>maxStep;if(k===n)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');b.querySelector('.dot').textContent=k<n?'✓':k;});
+    document.getElementById('bar').style.width=(n/3*100)+'%';
+    if(!noScroll){var card=document.querySelector('.card');var top=card.getBoundingClientRect().top;if(top<0||top>window.innerHeight*.5)card.scrollIntoView({behavior:'smooth',block:'start'});}
+    setTimeout(function(){var first=document.querySelector('#f .fs:not([hidden]) input:not(.sr-only),#f .fs:not([hidden]) .course');if(first&&n>1)first.focus({preventScroll:true});},350);
+  }
+  function stepOf(el){var fs=el&&el.closest&&el.closest('.fs');return fs?+fs.dataset.step:curStep;}
+  function markErr(el){if(!el)return;var t=el===shot?document.getElementById('drop'):el===c?grid:el;t.classList.remove('err');void t.offsetWidth;t.classList.add('err');}
+  function focusField(el){if(!el)return;goStep(stepOf(el===c?grid:el),true);setTimeout(function(){(el===c?grid.querySelector('.course'):el===shot?document.getElementById('drop'):el).focus();},50);}
+  /* validates one step; returns true when the student may continue */
+  function checkStep(n){
+    var f=document.getElementById('f');
+    function no(msg,el){markErr(el);say('warning','Check your details',msg).then(function(){focusField(el);});return false;}
+    if(n===1){
+      if(!c.value)return no('Please choose your course.',c);
+      if(!g.value)return no('Please select the mapped Google course.',g);
+    }
+    if(n===2){
+      if(f.name.value.trim().length<2||!/[A-Za-zÀ-￿]/.test(f.name.value))return no('Please enter your full name.',f.name);
+      var ec=checkEmail(f.email.value);if(!ec.ok){stat('email-stat','bad','✗ '+esc(ec.err));return no(ec.err,f.email);}
+      if(!f.org.value.trim())return no('Please enter your organisation or institution.',f.org);
+    }
+    return true;
+  }
+  /* checkStep + the background checks (email domain / already registered, mobile number) for step 2 */
+  var validating=false;
+  function validateStep(n){
+    if(!checkStep(n))return Promise.resolve(false);
+    if(n!==2)return Promise.resolve(true);
+    var f=document.getElementById('f'),btn=document.querySelector('.fs[data-step="2"] [data-next="3"]'),old=btn.innerHTML;
+    validating=true;btn.disabled=true;btn.innerHTML='Checking…';
+    function done(){validating=false;btn.disabled=false;btn.innerHTML=old;}
+    return Promise.all([emailBackground(),phoneBackground()]).then(function(rs){
+      var e=rs[0],ph=rs[1];done();
+      if(!e.ok){markErr(f.email);say('error',e.dup?'Already registered':'Check your email ID',e.err).then(function(){focusField(f.email);});return false;}
+      if(!ph.ok){markErr(f.phone);say('error','Check your mobile number',ph.err).then(function(){focusField(f.phone);});return false;}
+      if(ph.pretty)f.phone.value=ph.pretty;
+      return true;
+    },function(){done();return true;});
+  }
+  function advanceTo(to){
+    if(validating)return;
+    if(to<=curStep)return goStep(to);
+    var k=curStep;
+    (function nextCheck(){if(k>=to)return goStep(to);validateStep(k).then(function(okk){if(okk){k++;nextCheck();}});})();
+  }
+  document.querySelectorAll('#f [data-next]').forEach(function(b){b.addEventListener('click',function(){advanceTo(+b.dataset.next);});});
+  stepBtns.forEach(function(b){b.addEventListener('click',function(){advanceTo(+b.dataset.go);});});
+  /* Enter in a text field moves to the next step instead of submitting early */
+  document.getElementById('f').addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.type!=='checkbox'&&curStep<3){e.preventDefault();advanceTo(curStep+1);}});
+
+  /* ---- drag & drop screenshot ---- */
+  var drop=document.getElementById('drop');
+  ['dragenter','dragover'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('over');});});
+  ['dragleave','dragend','drop'].forEach(function(ev){drop.addEventListener(ev,function(){drop.classList.remove('over');});});
+  drop.addEventListener('drop',function(e){e.preventDefault();var fl=e.dataTransfer&&e.dataTransfer.files;if(!fl||!fl.length)return;var dt=new DataTransfer();dt.items.add(fl[0]);shot.files=dt.files;shot.dispatchEvent(new Event('change',{bubbles:true}));});
+  drop.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();shot.click();}});
+  drop.tabIndex=0;drop.setAttribute('role','button');drop.setAttribute('aria-label','Upload screenshot');
+
+  /* ---- reveal on scroll ---- */
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});},{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  }else document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');});
+
+  /* ================= Interactive effects ================= */
+  var reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+  /* count-up numbers (hero chips + admin stats) */
+  function countUp(el,to,suffix){
+    to=+to||0;suffix=suffix||'';
+    if(reduceMotion||to===0){el.textContent=to+suffix;return;}
+    var t0=performance.now(),dur=Math.min(1200,400+to*12);
+    (function tick(now){var p=Math.min(1,(now-t0)/dur),v=Math.round(to*(1-Math.pow(1-p,3)));el.textContent=v+suffix;if(p<1)requestAnimationFrame(tick);})(t0);
+    setTimeout(function(){el.textContent=to+suffix;},dur+300);   /* always end on the real number, even if frames are throttled */
+  }
+  if('IntersectionObserver' in window){
+    var cio=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){countUp(en.target,en.target.getAttribute('data-count'),en.target.getAttribute('data-suffix'));cio.unobserve(en.target);}});},{threshold:.6});
+    document.querySelectorAll('.stats [data-count]').forEach(function(el){cio.observe(el);});
+  }else document.querySelectorAll('.stats [data-count]').forEach(function(el){el.textContent=el.getAttribute('data-count')+(el.getAttribute('data-suffix')||'');});
+  /* scroll progress bar */
+  var prog=document.getElementById('progress');
+  window.addEventListener('scroll',function(){var h=document.documentElement.scrollHeight-innerHeight;prog.style.width=(h>0?scrollY/h*100:0)+'%';},{passive:true});
+  /* ================= Verification ================= */
+  var form=document.getElementById('f'),emailIn=form.email,urlIn=form.url;
+  function stat(id,cls,html){var el=document.getElementById(id);if(!cls){el.hidden=true;el.className='vstat';el.innerHTML='';return;}el.hidden=false;el.className='vstat '+cls;el.innerHTML=html;}
+
+  /* 1) Email / Gmail ID */
+  var TYPO={'gmial.com':'gmail.com','gamil.com':'gmail.com','gmai.com':'gmail.com','gmal.com':'gmail.com','gmaill.com':'gmail.com','gnail.com':'gmail.com','gmail.co':'gmail.com','gmail.con':'gmail.com','gmail.cm':'gmail.com','gmail.om':'gmail.com','gmail.comm':'gmail.com','gmail.in':'gmail.com','gmail.co.in':'gmail.com','gmailcom':'gmail.com','gmsil.com':'gmail.com','gmail.cpm':'gmail.com',
+    'yahooo.com':'yahoo.com','yaho.com':'yahoo.com','yahoo.co':'yahoo.com','hotmial.com':'hotmail.com','hotmail.co':'hotmail.com','outlok.com':'outlook.com','outlook.co':'outlook.com'};
+  function checkEmail(raw){
+    var e=String(raw||'').trim().toLowerCase();
+    if(!e)return {err:'Please enter your registered email ID.'};
+    if(!/^[^\s@]+@[^\s@]+$/.test(e))return {err:'Your email ID must contain one @, for example name@gmail.com.'};
+    var at=e.lastIndexOf('@'),local=e.slice(0,at),dom=e.slice(at+1);
+    if(TYPO[dom])return {err:'“'+dom+'” looks like a typo. Did you mean '+local+'@'+TYPO[dom]+'?',fix:local+'@'+TYPO[dom]};
+    if(!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(dom))return {err:'The part after @ (“'+dom+'”) is not a valid email domain.'};
+    if(!/^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+$/.test(local)||/^\.|\.$|\.\./.test(local))return {err:'The part before @ contains characters that are not allowed in an email address.'};
+    if(dom==='gmail.com'||dom==='googlemail.com'){
+      var user=local.split('+')[0];
+      if(!/^[a-z0-9.]+$/.test(user))return {err:'A Gmail ID can only contain letters, numbers and dots before @gmail.com.'};
+      var core=user.replace(/\./g,'');
+      if(core.length<6||core.length>30)return {err:'A Gmail username must be 6–30 characters long (you entered '+core.length+').'};
+      return {ok:true,gmail:true};
+    }
+    return {ok:true,gmail:false};
+  }
+  /* ---- background email check: format → domain can receive mail (DNS) → not already registered ---- */
+  var DISPOSABLE=['mailinator.com','10minutemail.com','guerrillamail.com','guerrillamail.info','guerrillamail.net','sharklasers.com','grr.la','tempmail.com','temp-mail.org','tempmail.net','tempail.com','yopmail.com','yopmail.net','trashmail.com','getnada.com','nada.email','dispostable.com','maildrop.cc','throwawaymail.com','fakeinbox.com','mintemail.com','emailondeck.com','mohmal.com','burnermail.io','mailnesia.com','moakt.com','spamgourmet.com','mytemp.email','tempr.email','discard.email','inboxkitten.com','emailfake.com','fakemail.net','mail.tm','tmpmail.org','tmpmail.net','minuteinbox.com','luxusmail.org'];
+  var MAIL_OK={'gmail.com':1,'googlemail.com':1,'outlook.com':1,'hotmail.com':1,'live.com':1,'msn.com':1,'yahoo.com':1,'yahoo.co.in':1,'ymail.com':1,'icloud.com':1,'me.com':1,'rediffmail.com':1,'protonmail.com':1,'proton.me':1,'zoho.com':1,'zohomail.in':1,'aol.com':1};
+  var domCache={};
+  function dnsHas(name,type){
+    return fetch('https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+type,{headers:{Accept:'application/dns-json'}})
+      .then(function(r){if(!r.ok)throw new Error('dns '+r.status);return r.json();})
+      .then(function(j){return {nx:j.Status===3,any:(j.Answer||[]).length>0};});
+  }
+  /* only the domain (e.g. "college.edu") is looked up, never the full email ID */
+  function checkEmailDomain(email){
+    var dom=String(email).trim().toLowerCase().split('@').pop();
+    if(DISPOSABLE.indexOf(dom)>-1)return Promise.resolve({ok:false,err:'Temporary / disposable email addresses are not accepted. Please use your real email ID.'});
+    if(MAIL_OK[dom])return Promise.resolve({ok:true});
+    if(domCache[dom])return domCache[dom];
+    domCache[dom]=dnsHas(dom,'MX').then(function(mx){
+      if(mx.nx)return {ok:false,err:'The email domain “'+dom+'” does not exist. Please check the spelling.'};
+      if(mx.any)return {ok:true};
+      return dnsHas(dom,'A').then(function(a){return a.any?{ok:true}:{ok:false,err:'The email domain “'+dom+'” cannot receive email. Please check your email ID.'};});
+    }).catch(function(){delete domCache[dom];return {ok:true,unchecked:true};});   /* lookup unavailable: don't block */
+    return domCache[dom];
+  }
+  var emailSeq=0,emailTimer=null,emailBg={key:'',p:null};
+  function emailBackground(){
+    var v=emailIn.value.trim(),r=checkEmail(v);
+    if(!v){stat('email-stat');return Promise.resolve({ok:false,err:'Please enter your registered email ID.'});}
+    if(!r.ok){stat('email-stat','bad','✗ '+esc(r.err));return Promise.resolve({ok:false,err:r.err,fix:r.fix});}
+    var key=v.toLowerCase();
+    if(emailBg.key===key&&emailBg.p)return emailBg.p;
+    var seq=++emailSeq;emailBg.key=key;
+    stat('email-stat','wait','⏳ Checking your email ID…');
+    emailBg.p=checkEmailDomain(v).then(function(d){
+      if(!d.ok)return d;
+      return Data.conflict(v,null).then(function(k){return k==='email'?{ok:false,dup:true,err:DUP_MSG.email}:d;},function(){return d;});
+    }).then(function(res){
+      if(seq===emailSeq){
+        if(res.ok){emailIn.classList.remove('err');stat('email-stat','ok','✓ '+(r.gmail?'Valid Gmail ID':'Valid email ID')+(res.unchecked?'':' · this address can receive email'));}
+        else stat('email-stat','bad','✗ '+esc(res.err));
+      }
+      if(!res.ok&&!res.dup)emailBg.p=Promise.resolve(res);
+      return res;
+    });
+    return emailBg.p;
+  }
+  function showEmailStat(){return emailBackground();}
+
+  /* ---- background mobile number check (Google's libphonenumber rules, India by default) ---- */
+  var phoneIn=form.phone,phoneLibP=null,phoneSeq=0,phoneTimer=null;
+  function loadPhoneLib(){
+    if(window.libphonenumber)return Promise.resolve(window.libphonenumber);
+    if(!phoneLibP)phoneLibP=loadScript('https://cdn.jsdelivr.net/npm/libphonenumber-js@1.11.18/bundle/libphonenumber-max.js')
+      .then(function(){return window.libphonenumber||null;},function(){phoneLibP=null;return null;});
+    return phoneLibP;
+  }
+  function regionName(cc){try{return new Intl.DisplayNames(['en'],{type:'region'}).of(cc);}catch(e){return cc;}}
+  function checkPhone(raw){
+    var v=String(raw||'').trim();
+    if(!v)return Promise.resolve({ok:true,empty:true});
+    if(/[^\d\s()+.\-]/.test(v))return Promise.resolve({ok:false,err:'A mobile number can only contain digits, spaces, + and -.'});
+    var digits=v.replace(/\D/g,'');
+    if(digits.length<7)return Promise.resolve({ok:false,err:'This mobile number is too short.'});
+    if(!/^\s*\+/.test(v)||/^\s*\+91/.test(v)){   /* Indian number: 10 digits starting with 6–9 */
+      var nat=digits.replace(/^(?:91(?=\d{10}$)|0(?=\d{10}$))/,'');
+      if(nat.length===10&&/^[0-5]/.test(nat))return Promise.resolve({ok:false,err:'Indian mobile numbers start with 6, 7, 8 or 9. Please check the number.'});
+      if(nat.length!==10&&!/^\s*\+/.test(v))return Promise.resolve({ok:false,err:'Enter a 10-digit mobile number (for other countries add the country code, e.g. +44…).'});
+    }
+    return loadPhoneLib().then(function(lib){
+      if(lib){
+        var p=null;try{p=lib.parsePhoneNumberFromString(v,'IN');}catch(e){}
+        if(!p||!p.isValid())return {ok:false,err:/^\s*\+/.test(v)&&!/^\s*\+91/.test(v)?'This is not a valid mobile number for that country code.':'Enter a valid 10-digit mobile number (Indian numbers start with 6, 7, 8 or 9). For other countries add the country code, e.g. +44…'};
+        var t=p.getType&&p.getType();
+        if(t&&t!=='MOBILE'&&t!=='FIXED_LINE_OR_MOBILE')return {ok:false,err:'This looks like a '+(t==='FIXED_LINE'?'landline':t.toLowerCase().replace(/_/g,' '))+' number. Please enter a mobile number.'};
+        return {ok:true,e164:p.number,pretty:p.formatInternational(),country:p.country};
+      }
+      var m=digits.match(/^(?:91|0)?([6-9]\d{9})$/);   /* library unavailable: Indian mobile rule */
+      if(m)return {ok:true,e164:'+91'+m[1],pretty:'+91 '+m[1].slice(0,5)+' '+m[1].slice(5),country:'IN'};
+      return {ok:false,err:'Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.'};
+    });
+  }
+  function phoneBackground(){
+    var v=phoneIn.value.trim(),seq=++phoneSeq;
+    if(!v){stat('phone-stat');return Promise.resolve({ok:true,empty:true});}
+    stat('phone-stat','wait','⏳ Checking mobile number…');
+    return checkPhone(v).then(function(res){
+      if(seq===phoneSeq){
+        if(res.ok){phoneIn.classList.remove('err');stat('phone-stat','ok','✓ Valid mobile number · '+esc(res.pretty)+(res.country?' ('+esc(regionName(res.country))+')':''));}
+        else stat('phone-stat','bad','✗ '+esc(res.err));
+      }
+      return res;
+    });
+  }
+  phoneIn.addEventListener('focus',function(){loadPhoneLib();});
+  phoneIn.addEventListener('input',function(){clearTimeout(phoneTimer);stat('phone-stat');if(phoneIn.value.replace(/\D/g,'').length>=7)phoneTimer=setTimeout(phoneBackground,600);});
+  phoneIn.addEventListener('blur',function(){clearTimeout(phoneTimer);phoneBackground().then(function(r){if(r.ok&&r.pretty&&document.activeElement!==phoneIn)phoneIn.value=r.pretty;});});
+
+  emailIn.addEventListener('blur',function(){
+    clearTimeout(emailTimer);showEmailStat();
+    if(shot.files[0])runShotCheck();
+    var r=checkEmail(emailIn.value);
+    if(r.fix&&window.Swal){
+      Swal.fire({icon:'question',title:'Check your email ID',text:r.err,showCancelButton:true,confirmButtonText:'Yes, use '+r.fix,cancelButtonText:'No, keep it',confirmButtonColor:BTN})
+        .then(function(x){if(x.isConfirmed){emailIn.value=r.fix;showEmailStat();shotState.key='';if(shot.files[0])runShotCheck();}});
+    }
+  });
+  emailIn.addEventListener('input',function(){stat('email-stat');emailBg.key='';clearTimeout(emailTimer);if(checkEmail(emailIn.value).ok)emailTimer=setTimeout(emailBackground,900);shotState.key='';if(shotState.res)stat('shot-stat','wait','Email changed — the screenshot will be checked again when you submit.');});
+
+  /* 2) Public profile link */
+  function checkProfileUrl(raw){
+    var v=String(raw||'').trim(),u;
+    if(!v)return {err:'Please enter your Skills public profile URL.'};
+    try{u=new URL(v);}catch(e){return {err:'That is not a valid link. Copy the full URL from your browser’s address bar (it starts with https://).'};}
+    if(u.protocol!=='https:'&&u.protocol!=='http:')return {err:'The link must start with https://'};
+    var host=u.hostname.toLowerCase();
+    if(!/(^|\.)(skills\.google|cloudskillsboost\.google)$/.test(host))return {err:'This is not a Google Skills link. It must look like https://www.skills.google/public_profiles/…'};
+    var m=u.pathname.match(/^\/public_profiles\/([A-Za-z0-9-]{8,})\/?$/);
+    if(!m)return {err:/\/profile\/?$/.test(u.pathname)?'This is your private profile page. Click “Make profile public” and share the public link (…/public_profiles/…).':'This is not a public profile link. It must look like https://www.skills.google/public_profiles/your-id'};
+    return {ok:true,url:'https://www.skills.google/public_profiles/'+m[1],id:m[1]};
+  }
+  /* Live check: does the profile really open? A real profile's page title is "<Name> | Google Skills";
+     a wrong or private one redirects to the Skills home page. */
+  var linkCache={},linkTimer=null;
+  function parseProfile(md,url){
+    var title=((md.match(/^Title:\s*(.*)$/m)||[])[1]||'').trim();
+    var finalUrl=((md.match(/^Final URL:\s*(\S+)/m)||[])[1]||'');
+    var nm=title.match(/^(.*?)\s*\|\s*Google Skills\s*$/i);
+    if((finalUrl&&finalUrl.indexOf('/public_profiles/')<0)||!nm||!nm[1])
+      return {ok:false,reason:'not_found',message:'This profile does not open. It may be wrong, or not made public yet.'};
+    var ids={},re=/\/public_profiles\/[A-Za-z0-9-]+\/badges\/(\d+)/g,m;
+    while((m=re.exec(md)))ids[m[1]]=1;
+    /* earned badges with names and dates, e.g. "…/badges/20069056) Manage Kubernetes in Google Cloud  Earned Nov 9, 2025" */
+    var list=[],seen={},rb=/\/public_profiles\/[A-Za-z0-9-]+\/badges\/(\d+)\)\s*([^\n]*?)\s+Earned\s+([A-Z][a-z]{2,8}\.? \d{1,2}, \d{4})/g;
+    while((m=rb.exec(md))){if(seen[m[1]])continue;seen[m[1]]=1;list.push({id:m[1],name:m[2].replace(/\s+/g,' ').trim(),date:m[3]});}
+    return {ok:true,name:nm[1].trim(),badges:Object.keys(ids).length,list:list,url:url};
+  }
+  function liveCheck(url){
+    if(linkCache[url]&&!linkCache[url].then)return Promise.resolve(linkCache[url]);
+    if(linkCache[url])return linkCache[url];
+    var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){ctl&&ctl.abort();},25000);
+    var p=fetch(READER+url,{headers:{Accept:'text/plain'},signal:ctl&&ctl.signal})
+      .then(function(r){if(!r.ok)throw new Error('reader '+r.status);return r.text();})
+      .then(function(md){var j=parseProfile(md,url);linkCache[url]=j;return j;},
+            /* checker unavailable (offline / busy): not verified, so the student cannot submit yet */
+            function(){delete linkCache[url];return {ok:false,reason:'unreachable',message:'Your profile link could not be verified right now (you may be offline or the checker is busy). Please try again in a minute.'};})
+      .then(function(j){clearTimeout(tm);return j;});
+    linkCache[url]=p;return p;
+  }
+  function checkLinkNow(){
+    var v=urlIn.value.trim();
+    if(!v){stat('url-stat');return Promise.resolve(null);}
+    var r=checkProfileUrl(v);
+    if(!r.ok){stat('url-stat','bad','✗ '+esc(r.err));return Promise.resolve({ok:false,message:r.err,format:true});}
+    stat('url-stat','wait','⏳ Checking that your profile opens…');
+    return Promise.all([liveCheck(r.url),Data.conflict(null,r.url).catch(function(){return null;})]).then(function(rs){
+      var j=Object.assign({},rs[0]);
+      if(rs[1]==='profile')j={ok:false,reason:'dup',message:DUP_MSG.profile};
+      if(urlIn.value.trim()!==v){j.url=r.url;j.id=r.id;return j;}
+      if(j.ok)stat('url-stat','ok','✓ Profile opens: <b>'+esc(j.name||'')+'</b>'+(typeof j.badges==='number'?' · '+j.badges+' badge'+(j.badges===1?'':'s'):''));
+      else stat('url-stat','bad','✗ '+esc(j.message||'This profile link does not open.'));
+      j.url=r.url;j.id=r.id;return j;
+    });
+  }
+  urlIn.addEventListener('input',function(){stat('url-stat');clearTimeout(linkTimer);linkTimer=setTimeout(function(){if(checkProfileUrl(urlIn.value).ok){checkLinkNow();if(shot.files[0])runShotCheck();}},800);});
+  urlIn.addEventListener('blur',function(){clearTimeout(linkTimer);checkLinkNow();if(shot.files[0])runShotCheck();});
+  urlIn.addEventListener('paste',function(){setTimeout(function(){var v=urlIn.value.trim(),r=checkProfileUrl(v);if(r.ok&&r.url!==v)urlIn.value=r.url;},0);});
+
+  /* 3) Screenshot must show the same email (text recognition, runs in the browser) */
+  var ocrWorker=null,shotState={key:'',res:null,running:null};
+  function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=function(){s.remove();rej(new Error('load '+src));};document.head.appendChild(s);});}
+  function getOcr(){
+    if(!ocrWorker)ocrWorker=(window.Tesseract?Promise.resolve():loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js'))
+      .then(function(){return Tesseract.createWorker('eng');})
+      .catch(function(e){ocrWorker=null;throw e;});
+    return ocrWorker;
+  }
+  function loadImg(file){return new Promise(function(res,rej){
+    var u=URL.createObjectURL(file),im=new Image();
+    im.onerror=function(){URL.revokeObjectURL(u);rej(new Error('bad image'));};
+    im.onload=function(){URL.revokeObjectURL(u);res(im);};
+    im.src=u;});}
+  /* mode 0: as-is. mode 1: high contrast — faint grey text (e.g. a greyed-out email field) becomes solid
+     black; dark-mode screenshots are inverted first. */
+  function toCanvas(im,mode){
+    var k=im.width<1600?Math.min(2.5,1600/im.width):Math.min(1,3000/im.width);
+    var cv=document.createElement('canvas');cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
+    var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.imageSmoothingQuality='high';cx.drawImage(im,0,0,cv.width,cv.height);
+    if(mode){
+      var d=cx.getImageData(0,0,cv.width,cv.height),p=d.data,i,sum=0,n=p.length/4,l;
+      for(i=0;i<p.length;i+=16)sum+=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];
+      var dark=sum/(n/4)<128;
+      for(i=0;i<p.length;i+=4){l=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];if(dark)l=255-l;p[i]=p[i+1]=p[i+2]=l<215?0:255;}
+      cx.putImageData(d,0,0);
+    }
+    return cv;
+  }
+  /* Reads the screenshot: normal pass first, high-contrast pass only if the first one did not find a match. */
+  var ocrCache={file:null,t:[]};
+  function ocrPass(file,mode){
+    if(ocrCache.file!==file)ocrCache={file:file,t:[]};
+    if(!ocrCache.t[mode])ocrCache.t[mode]=getOcr().then(function(w){return loadImg(file).then(function(im){return w.recognize(toCanvas(im,mode));});})
+      .then(function(o){return (o&&o.data&&o.data.text)||'';})
+      .catch(function(e){if(ocrCache.file===file)ocrCache.t[mode]=null;throw e;});
+    return ocrCache.t[mode];
+  }
+  function squash(s){return String(s).toLowerCase().replace(/\s+/g,'').replace(/[©®]/g,'@').replace(/,/g,'.').replace(/[|!1ı]/g,'l').replace(/0/g,'o').replace(/rn/g,'m').replace(/vv/g,'w');}
+  function fuzzyFind(p,t){ /* smallest edit distance between p and any substring of t */
+    var m=p.length,prev=[],cur,i,j,best=m;
+    for(i=0;i<=m;i++)prev[i]=i;
+    for(j=1;j<=t.length;j++){cur=[0];for(i=1;i<=m;i++)cur[i]=Math.min(prev[i]+1,cur[i-1]+1,prev[i-1]+(p[i-1]===t[j-1]?0:1));if(cur[m]<best)best=cur[m];prev=cur;}
+    return best;
+  }
+  function findIn(needle,text){ /* exact, then OCR-tolerant match */
+    var n=needle.trim().toLowerCase(),flat=text.toLowerCase().replace(/\s+/g,'');
+    if(n.length<6)return {found:false};
+    if(flat.indexOf(n)>-1)return {found:true,exact:true};
+    var sn=squash(n),st=squash(text);
+    if(st.indexOf(sn)>-1)return {found:true,exact:true};
+    var tol=Math.max(1,Math.floor(sn.length*0.1)),d=fuzzyFind(sn,st);
+    return {found:d<=tol,exact:false,dist:d};
+  }
+  /* Screenshot passes if it shows the email ID OR the public profile link (its profile ID). */
+  function matchShot(text,email,pid){
+    var em=email?findIn(email,text):{found:false};
+    if(em.found)return {found:true,by:'email',exact:em.exact};
+    if(pid){
+      var lk=findIn('public_profiles/'+pid,text);if(!lk.found)lk=findIn(pid,text);
+      if(!lk.found){var noDash=pid.replace(/-/g,'');if(noDash.length>=16)lk=findIn(noDash,text.replace(/[-–—]/g,''));}
+      if(lk.found)return {found:true,by:'link',exact:lk.exact};
+    }
+    return {found:false};
+  }
+  function shotInputs(){
+    var email=emailIn.value.trim(),u=checkProfileUrl(urlIn.value);
+    return {email:checkEmail(email).ok?email:'',pid:u.ok?u.id:''};
+  }
+  function runShotCheck(){
+    var file=shot.files[0],inp=shotInputs();
+    if(!file)return Promise.resolve(null);
+    if(!inp.email&&!inp.pid){stat('shot-stat','wait','Enter your email ID or profile link above — the screenshot will then be checked automatically.');return Promise.resolve(null);}
+    var key=file.name+'|'+file.size+'|'+file.lastModified+'|'+inp.email.toLowerCase()+'|'+inp.pid;
+    if(shotState.key===key&&shotState.res)return Promise.resolve(shotState.res);
+    if(shotState.key===key&&shotState.running)return shotState.running;
+    shotState.key=key;shotState.res=null;
+    stat('shot-stat','wait','⏳ Checking your screenshot for your email ID or profile link…');
+    var textP=ocrPass(file,0).then(function(t0){
+      if(matchShot(t0,inp.email,inp.pid).found)return t0;
+      return ocrPass(file,1).then(function(t1){return t0+'\n'+t1;});
+    });
+    shotState.running=textP.then(function(text){
+        var r=matchShot(text,inp.email,inp.pid);r.ran=true;
+        if(shotState.key!==key)return r;
+        shotState.res=r;
+        stat('shot-stat',r.found?'ok':'bad',r.found?(r.by==='email'?'✓ Screenshot shows your email ID':'✓ Screenshot shows your public profile link'):'✗ Neither your email ID nor your profile link was found in this screenshot');
+        return r;
+      },function(){
+        var r={ran:false};if(shotState.key===key){shotState.key='';stat('shot-stat','bad','✗ Could not check the screenshot (check your internet connection).');}
+        return r;
+      }).then(function(r){if(shotState.key===key)shotState.running=null;return r;});
+    return shotState.running;
+  }
+  shot.addEventListener('change',function(){
+    var f=shot.files[0];
+    if(prev.src){URL.revokeObjectURL(prev.src);prev.removeAttribute('src');}
+    shotState={key:'',res:null,running:null};ocrCache={file:null,t:[]};stat('shot-stat');
+    document.getElementById('fname').textContent=f?'📎 '+f.name:'';document.getElementById('drop').classList.remove('err');
+    if(f&&/^image\/(png|jpeg|webp)$/.test(f.type)){prev.src=URL.createObjectURL(f);prev.hidden=false;runShotCheck();}
+    else{prev.hidden=true;if(f)stat('shot-stat','bad','✗ Please upload a PNG or JPG image.');}
+  });
+  document.getElementById('f').addEventListener('input',function(e){e.target.classList&&e.target.classList.remove('err');});
+  document.getElementById('f').addEventListener('change',function(e){e.target.classList&&e.target.classList.remove('err');});
+  function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+  var busy=false;
+  document.getElementById('f').addEventListener('submit',function(e){
+    e.preventDefault();
+    if(busy)return;
+    var f=e.target;
+    f.querySelectorAll('.err').forEach(function(x){x.classList.remove('err');});grid.classList.remove('err');drop.classList.remove('err');
+    function bad(t,el){markErr(el);say('warning','Check your details',t).then(function(){focusField(el);});}
+    if(curStep<3){advanceTo(curStep+1);return;}
+    if(validating||!checkStep(1))return;
+    validateStep(2).then(function(ok2){if(ok2)proceed();});
+    function proceed(){
+    var email=f.email.value.trim(),file=shot.files[0],purl=f.url.value.trim();
+    var ec=checkEmail(email);
+    var uc=checkProfileUrl(purl);
+    if(!uc.ok){stat('url-stat','bad','✗ '+esc(uc.err));markErr(f.url);return say('error','Invalid profile link',uc.err).then(function(){focusField(f.url);});}
+    if(!file)return bad('Please upload a screenshot of your Skills account showing your email ID or profile link.',shot);
+    if(!/^image\/(png|jpeg|webp)$/.test(file.type))return bad('The screenshot must be a PNG or JPG image.',shot);
+    if(file.size>10*1024*1024)return bad('The screenshot is too large. Please upload an image under 10 MB.',shot);
+    if(!f.terms.checked)return bad('Please agree to the Terms and Conditions.',f.terms);
+    if(!window.Swal)return alert('Please wait for the page to finish loading and try again.');
+    busy=true;
+    var link=null,submitBtn=f.querySelector('button[type=submit]');submitBtn.disabled=true;
+    function stop(icon,title,html,el){Swal.close();if(el)markErr(el);return Swal.fire({icon:icon,title:title,html:html,confirmButtonColor:BTN}).then(function(){if(el)focusField(el);throw 'stop';});}
+    Swal.fire({title:'Verifying your details…',html:'<div id="vsteps" style="text-align:left;display:inline-block;line-height:1.9">⏳ Checking your registration…</div><br><small>This can take up to 30 seconds the first time.</small>',allowOutsideClick:false,allowEscapeKey:false,didOpen:function(){Swal.showLoading();}});
+    function step(h){var el=document.getElementById('vsteps');if(el)el.innerHTML=h;}
+    /* already registered? one registration per email ID and per profile link (online: asked of the server without exposing anyone's data) */
+    Data.conflict(email,uc.url).then(function(k){
+      if(k)return stop('error','Already registered',esc(DUP_MSG[k]),k==='email'?f.email:f.url);
+      step('⏳ Checking your profile link…');
+      return checkLinkNow();
+    },function(){
+      return stop('error','Could not connect','The registration service could not be reached. Please check your internet connection and try again.');
+    }).then(function(j){
+      link=j||{ok:false};
+      if(!link.ok){
+        if(link.reason==='dup')return stop('error','Already registered',esc(link.message),f.url);
+        if(link.reason==='unreachable')return stop('error','Could not check your profile link',esc(link.message||'Please check your internet connection and try again.'),f.url);
+        return stop('error','Profile link is not opening','<div style="text-align:left">Your link <b>'+esc(uc.url)+'</b> does not open a Google Skills profile.<ol style="padding-left:18px"><li>Log in at skills.google and open <b>skills.google/profile</b>.</li><li>Click <b>“Make profile public”</b>.</li><li>Copy the full URL from the address bar and paste it here.</li></ol></div>',f.url);
+      }
+      step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>⏳ Checking your screenshot…');
+      return runShotCheck();
+    }).then(function(r){
+      if(!r||!r.ran)return stop('error','Could not verify screenshot','The screenshot could not be checked. Please check your internet connection and try again, or upload a clearer PNG/JPG image.',shot);
+      if(!r.found)return stop('error','Screenshot does not match','<div style="text-align:left">Your screenshot shows neither your email ID <b>'+esc(email)+'</b> nor your profile link.<ul style="padding-left:18px"><li>Upload a full, uncropped <b>screenshot</b> (not a photo of the screen).</li><li>It must clearly show the same email typed above (e.g. your account settings), <b>or</b> your public profile page with its link in the address bar.</li></ul></div>',shot);
+      /* final gate: only fully verified registrations are saved */
+      if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&r.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
+      var name=f.name.value.trim(),refNo=newRef();
+      step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Screenshot matches<br>⏳ Saving your registration…');
+      var rec={'Ref No':refNo,'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
+        'Profile Name':link.name||'','Profile Badges':typeof link.badges==='number'?link.badges:'',
+        'Email Check':ec.gmail?'Valid Gmail ID':'Valid email','Profile Link Check':'Opens (auto-checked)',
+        'Screenshot Check':(r.by==='email'?'Email':'Profile link')+' found in screenshot'+(r.exact?'':' (close match)'),'Verification Screenshot':refNo+'.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};
+      return compress(file).then(function(blob){return Data.add(rec,blob);}).then(function(){
+        f.reset();c.dispatchEvent(new Event('change'));prev.hidden=true;document.getElementById('fname').textContent='';shotState={key:'',res:null,running:null};
+        ['email-stat','phone-stat','url-stat','shot-stat'].forEach(function(id){stat(id);});emailBg={key:'',p:null};
+        maxStep=1;goStep(1,true);
+        return Swal.fire({icon:'success',title:'Verified & Registered!',confirmButtonColor:'#16a34a',confirmButtonText:'Done',
+          html:'<div style="text-align:left;display:inline-block;line-height:1.9">✅ '+(ec.gmail?'Gmail ID':'Email ID')+' is valid: <b>'+esc(email)+'</b><br>✅ Public profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Screenshot matches your '+(r.by==='email'?'email ID':'profile link')+'</div><br><br>Thank you, <b>'+esc(name)+'</b>! Your registration for <b>'+esc(rec['Course'])+'</b> has been submitted.<br><br>Reference number: <b>'+esc(refNo)+'</b>'});
+      });
+    }).catch(function(err){
+      if(err==='stop')return;
+      if(err&&err.dup)return Swal.fire({icon:'error',title:'Already registered',text:DUP_MSG[err.dup]||DUP_MSG.email,confirmButtonColor:BTN});
+      console.error(err);
+      return Swal.fire({icon:'error',title:'Could not save',text:'Your registration could not be saved'+(err&&err.message?' ('+err.message+')':'')+'. Please check your internet connection and try again.',confirmButtonColor:BTN});
+    }).then(function(){busy=false;submitBtn.disabled=false;});
+    }
+  });
+})();
+</script>
+</body>
+</html>
