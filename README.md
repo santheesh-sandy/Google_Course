@@ -5,7 +5,7 @@ A single-page registration portal for Google Skills learning paths, with automat
 Open **`index.html`** in a browser (or the GitHub Pages site). The admin area is at `index.html#admin` (or the **Admin login** link in the footer).
 
 ## Student registration
-- 3-step form: choose a course → personal details → verify Skills account.
+- 3-step form: choose a course → personal details (with an optional password) → verify Skills account.
 - Background checks while the student types:
   - **Email ID** – format and Gmail rules, typo suggestions (`gmial.com` → `gmail.com`), the email domain must be able to receive mail (DNS lookup of the domain only), disposable addresses are blocked.
   - **Mobile number** – validated with Google's libphonenumber (India by default, other countries with a country code) and saved in one standard format.
@@ -26,9 +26,17 @@ Open **`index.html`** in a browser (or the GitHub Pages site). The admin area is
   - **Course-wise badge summary** – per Google course: students checked / completed / pending / errors, badges earned vs pending and completion %; click a course for each required badge. **Download summary CSV** gives one row per course, one per required badge, and an all-courses total.
 - **Settings** – change the admin password, data export, delete all.
 
-## Storage
-- Works out of the box by saving in the browser.
-- Saves online automatically once the Supabase project is set up: run **`supabase_setup.sql`** in the Supabase SQL Editor (after creating the admin user and putting its email at the bottom of the script). The page uses only the Supabase **publishable** key; database rules allow students to add registrations only, and only listed admins can read or change data.
+## Storage (backend)
+**Recommended: Google Sheet + Drive** (works on Indian networks, where `supabase.co` is often blocked)
+1. Create a new Google Sheet → **Extensions → Apps Script**, paste all of **`google_apps_script.gs`**, Save.
+2. **Deploy → New deployment → Web app** — Execute as: *Me*, Who has access: *Anyone* → Deploy → copy the **Web app URL** (ends with `/exec`).
+3. In `index.html` set `var GAS_URL='…/exec';` and publish.
+
+Registrations go to the sheet **Registrations**, both screenshots to the private Drive folder **Course Registration Screenshots**. The admin login is checked by the script (change the password from **Settings**). Badge checks read up to 20 public profiles at a time on Google's servers (fast check).
+
+Other modes: without `GAS_URL` the page uses Supabase if `supabase_setup.sql` has been run, otherwise it saves in the browser only (testing).
+
+**Student password (optional):** stored only as a salted SHA-256 hash created in the browser; never shown or exported.
 
 ## Security notes
 - Change the admin password from **Settings** after first login.

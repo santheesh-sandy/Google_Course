@@ -53,6 +53,7 @@ create table if not exists public.registrations (
   badges_done      integer,
   badges_required  integer,
   badge_checked_at text,
+  password_hash    text,          -- optional student password: salted SHA-256 made in the browser
   constraint registrations_sizes check (
         char_length(full_name)    between 2 and 120
     and char_length(email)        between 5 and 254
@@ -67,6 +68,7 @@ alter table public.registrations add column if not exists badge_status text;
 alter table public.registrations add column if not exists badges_done integer;
 alter table public.registrations add column if not exists badges_required integer;
 alter table public.registrations add column if not exists badge_checked_at text;
+alter table public.registrations add column if not exists password_hash text;
 
 -- One registration per email ID and one per public profile (any course).
 drop index if exists public.registrations_email_course_key;

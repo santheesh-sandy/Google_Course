@@ -139,6 +139,10 @@ a{color:#7fb0ff}
 .drop .fname{display:block;margin-top:6px;font-weight:600;color:#7fb0ff;word-break:break-all}
 #prev{display:block;max-width:100%;max-height:190px;margin:12px auto 0;border-radius:8px;border:1px solid var(--line2);animation:open .25s}
 #prev[hidden]{display:none}
+.pwwrap{position:relative;display:block}
+.pwwrap input{padding-right:70px!important}
+.pwshow{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:#7fb0ff;font:600 13px inherit;cursor:pointer;padding:4px 8px}
+.fld small.opt{color:var(--mute);font-weight:500}
 .agree{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;margin:18px 0 4px;cursor:pointer;color:#cdd6e8}
 .agree input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--pri)}
 .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
@@ -598,6 +602,9 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
                 <label class="fld"><span>Organisation / Institution <i>*</i></span><input type="text" name="org" autocomplete="organization" placeholder="College or company"></label>
                 <label class="fld"><span>Year of graduation</span><select name="year" id="year"><option value="">Select</option></select></label>
               </div>
+              <label class="fld"><span>Password <small class="opt">(optional)</small></span>
+                <span class="pwwrap"><input type="password" name="pw" id="pw" autocomplete="new-password" placeholder="At least 8 characters"><button type="button" class="pwshow" id="pwshow" aria-label="Show password">Show</button></span>
+                <div class="vstat" id="pw-stat" hidden></div></label>
               <div class="nav"><button type="button" class="btn ghost" data-next="1">← Back</button><button type="button" class="btn pri" data-next="3">Continue <span aria-hidden="true">→</span></button></div>
             </fieldset>
 
@@ -915,17 +922,36 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     im.src=u;});}
   function saveAs(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();}
   function downloadCsv(rows){
-    var h=[];rows.forEach(function(r){Object.keys(r).forEach(function(k){if(k.charAt(0)!=='_'&&h.indexOf(k)<0)h.push(k);});});
+    var h=[];rows.forEach(function(r){Object.keys(r).forEach(function(k){if(k.charAt(0)!=='_'&&k!=='Password Hash'&&h.indexOf(k)<0)h.push(k);});});
     var csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
     saveAs(new Blob(['\ufeff'+csv],{type:'text/csv'}),'Course_Registrations.csv');
   }
   /* ================= Data layer =================
      Supabase is used automatically once supabase_setup.sql has been run in the project.
      Until then (or if STORAGE is set to 'local') everything is kept in this browser. */
-  var STORAGE='auto';   /* 'auto' | 'cloud' | 'local' */
+  /* ---- Google Sheet backend (Google Apps Script web app — see google_apps_script.gs).
+     Paste the web-app URL (ends with /exec) here; when set, ALL data is stored in your Google Sheet + Drive. */
+  var GAS_URL='';
+  var GAS_TOKEN_KEY='gc_sheet_token',GAS_USER_KEY='gc_sheet_user';
+  function gasToken(){try{return sessionStorage.getItem(GAS_TOKEN_KEY)||'';}catch(e){return '';}}
+  function gas(action,payload,timeoutMs){
+    var ctl=new AbortController(),t=setTimeout(function(){ctl.abort();},timeoutMs||30000);
+    var body=Object.assign({action:action,token:gasToken()},payload||{});
+    return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body),signal:ctl.signal,redirect:'follow'})
+      .then(function(r){if(!r.ok)throw new Error('The backend returned '+r.status+'.');return r.json();})
+      .then(function(j){
+        clearTimeout(t);
+        if(!j||!j.ok){var e=new Error(j&&j.error==='AUTH'?'Your admin session expired. Please log in again.':(j&&j.error)||'Backend error');e.code=j&&j.error;e.dup=j&&j.dup;throw e;}
+        return j;
+      },function(e){clearTimeout(t);throw e&&e.name==='AbortError'?new Error('The backend did not respond in time. Please try again.'):e;});
+  }
+  function blobB64(blob){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(',')[1]||'');};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(blob);});}
+  function b64Blob(b64,mime){var bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:mime||'image/jpeg'});}
+  var STORAGE='auto';   /* 'auto' | 'cloud' | 'local' | 'sheet' */
   var MODE=null,modeP=null,CLOUD_SEEN='gc_cloud_confirmed';
   function detectMode(){
     if(MODE)return Promise.resolve(MODE);
+    if(GAS_URL){MODE='sheet';return Promise.resolve(MODE);}
     if(STORAGE!=='auto'){MODE=STORAGE;return Promise.resolve(MODE);}
     if(modeP)return modeP;
     var c;try{c=sb();}catch(e){return Promise.resolve('local');}
@@ -947,16 +973,16 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     ['Contact Number','phone'],['Gender','gender'],['Year Of Graduation','grad_year'],['Organisation','organisation'],['Profile URL','profile_url'],['Profile Name','profile_name'],
     ['Profile Badges','profile_badges'],['Email Check','email_check'],['Profile Link Check','link_check'],['Screenshot Check','screenshot_check'],['Verification Screenshot','screenshot_path'],['Profile Screenshot','screenshot2_path'],
     ['Verification Status','status'],['Reviewed At','reviewed_at'],['Admin Note','admin_note'],
-    ['Badge Status','badge_status'],['Badges Done','badges_done'],['Badges Required','badges_required'],['Badge Checked At','badge_checked_at']];
+    ['Badge Status','badge_status'],['Badges Done','badges_done'],['Badges Required','badges_required'],['Badge Checked At','badge_checked_at'],['Password Hash','password_hash']];
   var COL={};FIELDS.forEach(function(f){COL[f[0]]=f[1];});
-  function rowToRec(row){var r={};FIELDS.forEach(function(f){r[f[0]]=row[f[1]]==null?'':row[f[1]];});r['Submitted At']=row.created_at?new Date(row.created_at).toLocaleString():'';r._ts=Date.parse(row.created_at)||'';return r;}
+  function rowToRec(row){var r={};FIELDS.forEach(function(f){r[f[0]]=row[f[1]]==null?'':row[f[1]];});r['Submitted At']=row.created_at?new Date(row.created_at).toLocaleString():'';r._ts=Date.parse(row.created_at)||'';r['Password Set']=row.password_hash?'Yes':'No';delete r['Password Hash'];return r;}
   function recToRow(r){
     return {ref_no:r['Ref No'],course:r['Course']||'-',mapped_course:r['Mapped Google Course']||'-',full_name:r['Full Name']||'-',email:r['Email']||'-',phone:r['Contact Number']||null,
       gender:r['Gender']||null,grad_year:r['Year Of Graduation']?String(r['Year Of Graduation']):null,organisation:r['Organisation']||'-',profile_url:r['Profile URL']||'-',
       profile_name:r['Profile Name']||null,profile_badges:parseInt(r['Profile Badges'],10)||null,email_check:r['Email Check']||null,link_check:r['Profile Link Check']||null,
       screenshot_check:r['Screenshot Check']||null,screenshot_path:r['Verification Screenshot']||null,screenshot2_path:r['Profile Screenshot']||null,
       status:['Pending','Verified','Rejected'].indexOf(r['Verification Status'])>-1?r['Verification Status']:'Pending',reviewed_at:r['Reviewed At']||null,admin_note:r['Admin Note']||null,
-      badge_status:r['Badge Status']||null,badges_done:r['Badges Done']===''||r['Badges Done']==null?null:+r['Badges Done'],badges_required:r['Badges Required']===''||r['Badges Required']==null?null:+r['Badges Required'],badge_checked_at:r['Badge Checked At']||null};
+      badge_status:r['Badge Status']||null,badges_done:r['Badges Done']===''||r['Badges Done']==null?null:+r['Badges Done'],badges_required:r['Badges Required']===''||r['Badges Required']==null?null:+r['Badges Required'],badge_checked_at:r['Badge Checked At']||null,password_hash:r['Password Hash']||null};
   }
   function patchToRow(p){var o={};Object.keys(p).forEach(function(k){o[COL[k]]=p[k]===''?null:p[k];});return o;}
   function localRecs(){
@@ -975,6 +1001,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     conflict:function(email,url){
       var em=String(email||'').trim().toLowerCase(),pk=profileKey(url);
       return detectMode().then(function(m){
+        if(m==='sheet')return gas('conflict',{email:em,profile:url||''}).then(function(j){return j.conflict||null;});
         if(m==='local'){
           var all=localRecs();
           if(em&&all.some(function(r){return String(r['Email']).trim().toLowerCase()===em;}))return 'email';
@@ -989,6 +1016,11 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       return detectMode().then(function(m){
         var path=rec['Verification Screenshot'],path2=rec['Profile Screenshot'];
         function dropLocal(){delShot(path).catch(function(){});if(path2)delShot(path2).catch(function(){});}
+        if(m==='sheet'){
+          var clean={};Object.keys(rec).forEach(function(k){if(k.charAt(0)!=='_')clean[k]=rec[k];});
+          return Promise.all([blobB64(blob),blobB64(blob2)]).then(function(b){return gas('register',{rec:clean,shot1:b[0],shot2:b[1]},120000);})
+            .catch(function(e){if(e&&e.code==='DUP')throw {dup:e.dup||'email'};throw e;});
+        }
         if(m==='local'){
           return putShot(path,blob).then(function(){return blob2&&path2?putShot(path2,blob2):null;}).then(function(){
             var all=localRecs();
@@ -1009,19 +1041,23 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     list:function(){
       return detectMode().then(function(m){
         if(m==='local')return localRecs();
+        if(m==='sheet')return gas('list',{},60000).then(function(j){return j.rows.map(function(r){r._ts=Date.parse(r['Created'])||Date.parse(r['Submitted At'])||'';Object.keys(r).forEach(function(k){if(r[k]==null)r[k]='';});return r;});});
         return sb().from('registrations').select('*').order('created_at',{ascending:true}).limit(10000).then(ok).then(function(res){return res.data.map(rowToRec);});
       });
     },
     update:function(refs,patch){
+      if(MODE==='sheet')return gas('update',{refs:refs,patch:patch});
       if(MODE==='local'){var all=localRecs();all.forEach(function(r){if(refs.indexOf(r['Ref No'])>-1)Object.assign(r,patch);});if(!save(all))return Promise.reject(new Error('Could not save in this browser'));return Promise.resolve();}
       return sb().from('registrations').update(patchToRow(patch)).in('ref_no',refs).then(ok);
     },
     remove:function(recs){
       var refs=recs.map(function(r){return r['Ref No'];}),paths=shotPaths(recs);
+      if(MODE==='sheet')return gas('remove',{refs:refs},60000);
       if(MODE==='local'){save(localRecs().filter(function(r){return refs.indexOf(r['Ref No'])<0;}));paths.forEach(function(p){delShot(p).catch(function(){});});return Promise.resolve();}
       return sb().from('registrations').delete().in('ref_no',refs).then(ok).then(function(){return removeFiles(paths).catch(function(e){console.error(e);});});
     },
     removeAll:function(recs){
+      if(MODE==='sheet')return gas('remove',{all:true},120000);
       if(MODE==='local'){save([]);return clearShots().catch(function(){});}
       var paths=shotPaths(recs);
       return sb().from('registrations').delete().not('id','is',null).then(ok).then(function(){
@@ -1033,11 +1069,13 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     /* resolves to a URL for <img>, or '' when there is no screenshot */
     shotUrl:function(rec,which){
       var p=rec[which==='profile'?'Profile Screenshot':'Verification Screenshot'];if(!p)return Promise.resolve('');
+      if(MODE==='sheet')return gas('shot',{ref:rec['Ref No'],which:which},60000).then(function(j){return j.data?URL.createObjectURL(b64Blob(j.data,j.mime)):'';});
       if(MODE==='local')return getShot(p).then(function(b){return b?URL.createObjectURL(b):'';});
       return sb().storage.from(BUCKET).createSignedUrl(p,600).then(function(res){return res.error||!res.data?'':res.data.signedUrl;});
     },
     shotBlob:function(rec,which){
       var p=rec[which==='profile'?'Profile Screenshot':'Verification Screenshot'];if(!p)return Promise.resolve(null);
+      if(MODE==='sheet')return gas('shot',{ref:rec['Ref No'],which:which},60000).then(function(j){return j.data?b64Blob(j.data,j.mime):null;});
       if(MODE==='local')return getShot(p).then(function(b){return b||null;});
       return sb().storage.from(BUCKET).download(p).then(function(res){return res.error?null:res.data;});
     }
@@ -1081,6 +1119,12 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     user:null,
     check:function(){
       return detectMode().then(function(m){
+        if(m==='sheet'){
+          if(!gasToken())return 'none';
+          if(idleExpired())return Auth.logout().then(function(){return 'expired';});
+          var nm='admin';try{nm=sessionStorage.getItem(GAS_USER_KEY)||'admin';}catch(e){}
+          Auth.user={name:nm};touchSession();return 'ok';
+        }
         if(m==='local'){
           var on=false;try{on=sessionStorage.getItem(LOCAL_SESS)==='1';}catch(e){}
           if(!on)return 'none';
@@ -1100,6 +1144,12 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     },
     login:function(u,p){
       return detectMode().then(function(m){
+        if(m==='sheet'){
+          return gas('login',{user:u,pass:p}).then(function(j){
+            try{sessionStorage.setItem(GAS_TOKEN_KEY,j.token);sessionStorage.setItem(GAS_USER_KEY,j.user);}catch(e){}
+            Auth.user={name:j.user};touchSession();
+          });
+        }
         if(m==='local'){
           var lk=lockState();
           if(lk.until>Date.now())throw new Error('Too many wrong attempts. Try again in '+Math.ceil((lk.until-Date.now())/60000)+' minute(s).');
@@ -1122,11 +1172,13 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     },
     logout:function(){
       Auth.user=null;
-      try{sessionStorage.removeItem(ACT_KEY);sessionStorage.removeItem(LOCAL_SESS);}catch(e){}
-      if(MODE==='local')return Promise.resolve();
+      if(MODE==='sheet'&&gasToken()){gas('logout',{}).catch(function(){});}
+      try{sessionStorage.removeItem(ACT_KEY);sessionStorage.removeItem(LOCAL_SESS);sessionStorage.removeItem(GAS_TOKEN_KEY);sessionStorage.removeItem(GAS_USER_KEY);}catch(e){}
+      if(MODE==='local'||MODE==='sheet')return Promise.resolve();
       try{return sb().auth.signOut().catch(function(){});}catch(e){return Promise.resolve();}
     },
     changePassword:function(old,p1){
+      if(MODE==='sheet')return gas('changePassword',{old:old,pass:p1}).catch(function(e){if(e&&e.code==='CUR')throw {cur:true};throw e;});
       if(MODE==='local'){
         var c=getCred();
         if(credHash(c.user,old)!==c.hash)return Promise.reject({cur:true});
@@ -1152,7 +1204,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     return Swal.fire(Object.assign({icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',focusCancel:true},o)).then(function(r){return r.isConfirmed;});
   }
   function busyBox(title){if(window.Swal)Swal.fire({title:title,allowOutsideClick:false,allowEscapeKey:false,didOpen:function(){Swal.showLoading();}});}
-  function dbErr(what){return function(e){console.error(e);if(window.Swal&&Swal.isVisible())Swal.close();say('error',what,(e&&e.message)||'Please check your internet connection and try again.');};}
+  function dbErr(what){return function(e){console.error(e);if(window.Swal&&Swal.isVisible())Swal.close();if(e&&e.code==='AUTH'){Auth.logout().then(function(){showLogin('Your session expired. Please log in again.');});return;}say('error',what,(e&&e.message)||'Please check your internet connection and try again.');};}
   function loadRecs(){return A.all;}
   function findRec(ref){return A.all.find(function(x){return x['Ref No']===ref;});}
   function needsReview(r){return !r['Screenshot Check']||!/Opens/.test(r['Profile Link Check']||'')||/close/.test(r['Screenshot Check']||'');}
@@ -1163,7 +1215,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     return Data.list().then(function(all){A.all=all;A.loaded=true;if(!$a('ad-ov').hidden)renderOverview();if(!$a('ad-regs').hidden)renderRegs();if(!$a('ad-settings').hidden)renderSettings();})
       .catch(silent?function(e){console.error(e);}:dbErr('Could not load registrations'));
   }
-  function modeBadge(){return MODE==='cloud'?'<span class="ad-mode on">● Online · Supabase</span>':'<span class="ad-mode">● This browser only</span>';}
+  function modeBadge(){return MODE==='sheet'?'<span class="ad-mode on">● Online · Google Sheet</span>':MODE==='cloud'?'<span class="ad-mode on">● Online · Supabase</span>':'<span class="ad-mode">● This browser only</span>';}
 
   /* ---- routing: #admin shows the admin page, anything else the registration form ---- */
   function route(){
@@ -1364,7 +1416,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
         kv('Email',r['Email'])+kv('Contact number',r['Contact Number'])+kv('Gender',r['Gender'])+kv('Year of graduation',r['Year Of Graduation'])+
         kv('Organisation',r['Organisation'])+kv('Course',r['Course'])+kv('Mapped Google course',r['Mapped Google Course'])+
         kv('Profile link',url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open public profile ↗</a>':esc(r['Profile URL']),true)+
-        kv('Submitted',r['Submitted At'])+kv('Last reviewed',r['Reviewed At'])+
+        kv('Submitted',r['Submitted At'])+kv('Last reviewed',r['Reviewed At'])+kv('Student password',(r['Password Hash']||r['Password Set']==='Yes')?'Set (stored as a secure hash)':'Not set')+
       '</dl></div>'+
       '<div class="ad-sec"><h4>Admin note</h4><textarea class="ad-textarea" id="ad-note" rows="3" maxlength="2000" placeholder="Optional note (saved automatically)">'+esc(r['Admin Note']||'')+'</textarea></div>';
     $a('ad-note').addEventListener('change',function(){
@@ -1424,9 +1476,9 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   function renderSettings(){
     var all=loadRecs(),shots=shotPaths(all).length,cloud=MODE==='cloud';
     $a('cl-email').textContent=Auth.user?Auth.user.name:'';
-    $a('cl-where').textContent=cloud?'Your password is managed securely by Supabase.':'Your password is stored only as a secure hash in this browser.';
+    $a('cl-where').textContent=MODE==='sheet'?'Your admin password is stored only as a secure hash in the Google Apps Script settings.':cloud?'Your password is managed securely by Supabase.':'Your password is stored only as a secure hash in this browser.';
     ['cl-old','cl-p1','cl-p2'].forEach(function(id){$a(id).value='';});$a('cl-err').hidden=true;
-    $a('ad-dataw').innerHTML=cloud?'Registrations and screenshots are saved <b>online in Supabase</b>, so every admin sees them from any device.':
+    $a('ad-dataw').innerHTML=MODE==='sheet'?'Registrations are saved in <b>your Google Sheet</b> and screenshots in a <b>private Google Drive folder</b>, so every admin sees them from any device.':cloud?'Registrations and screenshots are saved <b>online in Supabase</b>, so every admin sees them from any device.':
       'Registrations are saved in <b>this browser only</b>. Run <b>supabase_setup.sql</b> in your Supabase project to collect registrations from every device.';
     $a('ad-datainfo').innerHTML='<b>'+all.length+'</b> registration'+(all.length===1?'':'s')+' and <b>'+shots+'</b> screenshot'+(shots===1?'':'s')+' stored.';
     var local=cloud?load().length:0;$a('ad-mig').hidden=!local;
@@ -1767,6 +1819,27 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     if(BC.running||!BC.rows.length)return;
     BC.running=true;BC.stop=false;$a('bc-start').hidden=true;$a('bc-stop').hidden=false;$a('bc-export').hidden=true;
     var todo=BC.rows.filter(function(r){return r.state!=='done';}),i=0,last=0;
+    if(GAS_URL)return batch();
+    /* Google Sheet backend: Google's servers read 20 profiles at a time, in parallel */
+    function batch(){
+      if(BC.stop)return finish();
+      todo.filter(function(r){return r.state!=='done'&&!r.urlOk;}).forEach(function(r){r.state='done';evaluate(r);});
+      var chunk=todo.filter(function(r){return r.state!=='done';}).slice(0,20);
+      if(!chunk.length)return finish();
+      chunk.forEach(function(r){r.state='checking';});renderBc();
+      gas('profiles',{urls:chunk.map(function(r){return r.url;})},90000).then(function(j){
+        chunk.forEach(function(r,k){var p=j.results&&j.results[k];r.prof=p||{ok:false,message:'Profile could not be read'};});
+      },function(){
+        /* backend unavailable: fall back to the page reader for this group */
+        var c=Promise.resolve();
+        chunk.forEach(function(r){c=c.then(function(){return fetchProfile(r.url).then(function(p){r.prof=p;},function(e){r.prof={ok:false,message:(e&&e.message)||'Profile could not be read'};});});});
+        return c;
+      }).then(function(){
+        var when=new Date().toLocaleString();
+        chunk.forEach(function(r){r.state='done';r.checkedAt=when;evaluate(r);});
+        renderBc();batch();
+      });
+    }
     function next(){
       if(BC.stop||i>=todo.length)return finish();
       var row=todo[i++];
@@ -1816,7 +1889,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     $a('bc-title').textContent=BC.running?'Checking profiles…':done===rows.length&&rows.length?'Check complete':'Ready to check';
     if(!BC.running||!/busy/.test($a('bc-sub').textContent)){
       var left=rows.length-done;
-      $a('bc-sub').textContent=rows.length+' student'+(rows.length===1?'':'s')+' from '+BC.source+' · '+done+' checked'+(left&&BC.running?' · about '+Math.ceil(left*BC_GAP/60000)+' min left':'');
+      $a('bc-sub').textContent=rows.length+' student'+(rows.length===1?'':'s')+' from '+BC.source+' · '+done+' checked'+(left&&BC.running?(GAS_URL?' · fast check (20 at a time)':' · about '+Math.ceil(left*BC_GAP/60000)+' min left'):'');
     }
     $a('bc-bar').style.width=(rows.length?done/rows.length*100:0)+'%';
     $a('bc-stats').innerHTML=BC_CARDS.map(function(c){var n=c[0]?(cnt[c[0]]||0):rows.length;
@@ -2042,6 +2115,9 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       if(f.name.value.trim().length<2||!/[A-Za-zÀ-￿]/.test(f.name.value))return no('Please enter your full name.',f.name);
       var ec=checkEmail(f.email.value);if(!ec.ok){stat('email-stat','bad','✗ '+esc(ec.err));return no(ec.err,f.email);}
       if(!f.org.value.trim())return no('Please enter your organisation or institution.',f.org);
+      var pw=f.pw.value;
+      if(pw&&pw.length<8)return no('Your password must be at least 8 characters (or leave it empty).',f.pw);
+      if(pw&&pw.trim().toLowerCase()===f.email.value.trim().toLowerCase())return no('Please choose a password that is different from your email ID.',f.pw);
     }
     return true;
   }
@@ -2259,6 +2335,14 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   function liveCheck(url){
     if(linkCache[url]&&!linkCache[url].then)return Promise.resolve(linkCache[url]);
     if(linkCache[url])return linkCache[url];
+    if(GAS_URL){
+      var gp=gas('profiles',{urls:[url]},30000).then(function(j){var r=j.results&&j.results[0];if(!r||r.reason==='unreachable')throw new Error('busy');linkCache[url]=r;return r;})
+        .catch(function(){delete linkCache[url];return readerCheck(url);});
+      linkCache[url]=gp;return gp;
+    }
+    return readerCheck(url);
+  }
+  function readerCheck(url){
     var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){ctl&&ctl.abort();},25000);
     var p=fetch(READER+url,{headers:{Accept:'text/plain'},signal:ctl&&ctl.signal})
       .then(function(r){if(!r.ok)throw new Error('reader '+r.status);return r.text();})
@@ -2428,6 +2512,17 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   });
   document.getElementById('f').addEventListener('input',function(e){e.target.classList&&e.target.classList.remove('err');});
   document.getElementById('f').addEventListener('change',function(e){e.target.classList&&e.target.classList.remove('err');});
+  /* the student password never leaves the page in plain text: salted SHA-256 ("sha256$salt$hash") */
+  function hashStudentPw(pw){
+    if(!pw)return '';
+    var a=new Uint8Array(16);crypto.getRandomValues(a);var salt=Array.prototype.map.call(a,function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
+    return 'sha256$'+salt+'$'+sha256(salt+'|'+pw);
+  }
+  (function(){
+    var pw=document.getElementById('pw'),bt=document.getElementById('pwshow');
+    bt.addEventListener('click',function(){var show=pw.type==='password';pw.type=show?'text':'password';bt.textContent=show?'Hide':'Show';bt.setAttribute('aria-label',show?'Hide password':'Show password');pw.focus();});
+    pw.addEventListener('input',function(){var v=pw.value;if(!v){stat('pw-stat');return;}stat('pw-stat',v.length<8?'bad':'ok',v.length<8?'✗ At least 8 characters ('+v.length+' so far)':'✓ Password will be stored securely (hashed)');});
+  })();
   function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
   var busy=false;
   document.getElementById('f').addEventListener('submit',function(e){
@@ -2485,13 +2580,13 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&mE.found&&mL.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
       var name=f.name.value.trim(),refNo=newRef();
       step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Both screenshots match<br>⏳ Saving your registration…');
-      var rec={'Ref No':refNo,_ts:Date.now(),'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
+      var rec={'Ref No':refNo,_ts:Date.now(),'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Password Hash':hashStudentPw(f.pw.value),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
         'Profile Name':link.name||'','Profile Badges':typeof link.badges==='number'?link.badges:'',
         'Email Check':ec.gmail?'Valid Gmail ID':'Valid email','Profile Link Check':'Opens (auto-checked)',
         'Screenshot Check':'Email found in email screenshot'+(mE.exact?'':' (close match)')+'; profile link found in profile screenshot','Verification Screenshot':refNo+'.jpg','Profile Screenshot':refNo+'-profile.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};
       return Promise.all([compress(file),compress(file2)]).then(function(bs){return Data.add(rec,bs[0],bs[1]);}).then(function(){
         f.reset();c.dispatchEvent(new Event('change'));resetSlot('email');resetSlot('link');
-        ['email-stat','phone-stat','url-stat'].forEach(function(id){stat(id);});emailBg={key:'',p:null};
+        ['email-stat','phone-stat','url-stat','pw-stat'].forEach(function(id){stat(id);});emailBg={key:'',p:null};
         maxStep=1;goStep(1,true);
         return Swal.fire({icon:'success',title:'Verified & Registered!',confirmButtonColor:'#16a34a',confirmButtonText:'Done',
           html:'<div style="text-align:left;display:inline-block;line-height:1.9">✅ '+(ec.gmail?'Gmail ID':'Email ID')+' is valid: <b>'+esc(email)+'</b><br>✅ Public profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Email ID screenshot matches<br>✅ Profile link screenshot matches</div><br><br>Thank you, <b>'+esc(name)+'</b>! Your registration for <b>'+esc(rec['Course'])+'</b> has been submitted.<br><br>Reference number: <b>'+esc(refNo)+'</b>'});
