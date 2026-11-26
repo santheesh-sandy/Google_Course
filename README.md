@@ -10,7 +10,7 @@ Open **`Course_Registration.html`** in a browser. The admin area is at `Course_R
   - **Email ID** – format and Gmail rules, typo suggestions (`gmial.com` → `gmail.com`), the email domain must be able to receive mail (DNS lookup of the domain only), disposable addresses are blocked.
   - **Mobile number** – validated with Google's libphonenumber (India by default, other countries with a country code) and saved in one standard format.
   - **Public profile link** – must be a `skills.google/public_profiles/…` link that really opens; the profile name and badge count are shown.
-  - **Screenshot** – read in the browser (OCR); one screenshot must show **both** the registered email ID and the public profile link.
+  - **Screenshot** – read in the browser (OCR): one screenshot of the Skills **Account settings** page must show the registered email ID (exactly the one typed in the form) and the public profile link entered in the form.
 - Only fully verified registrations are accepted.
 - **One registration per email ID and per public profile link** (any course).
 

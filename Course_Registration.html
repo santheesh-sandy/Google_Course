@@ -554,9 +554,10 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
           </details>
           <details class="acc glass">
             <summary><span class="num">3</span>Which screenshot to upload</summary>
-            <div class="body">One full screenshot that shows <b>both</b>:<ol style="margin:6px 0 0">
-              <li>your <b>public profile page</b> with its link visible in the browser address bar (…/public_profiles/…), and</li>
-              <li>your <b>email ID</b> on screen at the same time — open your account menu, or place your Account settings page beside it.</li></ol></div>
+            <div class="body">Your Skills <b>Account settings</b> page shows everything needed:<ol style="margin:6px 0 0">
+              <li>Log in and open <a href="https://www.skills.google/my_account/profile" target="_blank" rel="noopener">skills.google/my_account/profile</a>.</li>
+              <li>Make sure <b>Make profile public</b> is ticked, so the green box shows <b>“Your profile is public and accessible at …/public_profiles/…”</b>.</li>
+              <li>Take <b>one</b> screenshot that shows your <b>Email</b> field and that green box together (zoom the page out if needed).</li></ol></div>
           </details>
           <div class="tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Your email ID, profile link and screenshot are verified automatically. Only verified registrations are accepted.</span></div>
         </aside>
@@ -605,7 +606,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
                   <input type="file" name="shot" id="shot" class="sr-only" accept="image/png,image/jpeg,image/webp">
                   <span class="up"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/><path d="M12 3v13M7 8l5-5 5 5"/></svg></span>
                   <b>Drag and drop, or click to upload</b>
-                  <small>PNG or JPG · must show <b>both</b> your email ID and your public profile link</small>
+                  <small>PNG or JPG · Account settings page showing your <b>email ID</b> and the green <b>public profile link</b> box</small>
                   <span class="fname" id="fname"></span>
                 </label>
                 <img id="prev" alt="Screenshot preview" hidden>
@@ -2275,17 +2276,19 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     im.onerror=function(){URL.revokeObjectURL(u);rej(new Error('bad image'));};
     im.onload=function(){URL.revokeObjectURL(u);res(im);};
     im.src=u;});}
-  /* mode 0: as-is. mode 1: high contrast — faint grey text (e.g. a greyed-out email field) becomes solid
-     black; dark-mode screenshots are inverted first. */
+  /* mode 0: as-is. mode 1/2: high contrast (cut-off 225 / 200) — faint grey text such as the greyed-out email
+     field (225) or the link in the green "profile is public" box (200) becomes solid black; dark-mode
+     screenshots are inverted first. Small screenshots are enlarged up to 3x so tiny text stays readable. */
+  var OCR_CUT={1:225,2:200};
   function toCanvas(im,mode){
-    var k=im.width<1600?Math.min(2.5,1600/im.width):Math.min(1,3000/im.width);
+    var k=im.width<2300?Math.min(3,2300/im.width):Math.min(1,3000/im.width);
     var cv=document.createElement('canvas');cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);
     var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.imageSmoothingQuality='high';cx.drawImage(im,0,0,cv.width,cv.height);
     if(mode){
       var d=cx.getImageData(0,0,cv.width,cv.height),p=d.data,i,sum=0,n=p.length/4,l;
       for(i=0;i<p.length;i+=16)sum+=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];
       var dark=sum/(n/4)<128;
-      for(i=0;i<p.length;i+=4){l=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];if(dark)l=255-l;p[i]=p[i+1]=p[i+2]=l<215?0:255;}
+      for(i=0;i<p.length;i+=4){l=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];if(dark)l=255-l;p[i]=p[i+1]=p[i+2]=l<OCR_CUT[mode]?0:255;}
       cx.putImageData(d,0,0);
     }
     return cv;
@@ -2318,17 +2321,30 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   /* Screenshot passes if it shows the email ID OR the public profile link (its profile ID). */
   /* the screenshot must show BOTH the registered email ID and the public profile link (its profile ID) */
   function matchShot(text,email,pid){
-    var em=email?findIn(email,text):{found:false},lk={found:false};
+    var em={found:false},lk={found:false};
+    if(email){
+      /* every email-like text in the image; the typed email must be one of them (allowing only OCR look-alikes) */
+      var target=email.trim().toLowerCase(),seen=(text.toLowerCase().replace(/\s*@\s*/g,'@').match(/[a-z0-9._%+\-]+@[a-z0-9\-]+(?:\.[a-z0-9\-]+)+/g)||[]);
+      if(seen.some(function(x){return x===target||squash(x)===squash(target);}))em={found:true,exact:true};
+      else{
+        em=findIn(email,text);
+        if(em.found){
+          var tl=target.split('@'),other=seen.filter(function(x){var xl=x.split('@');return xl[1]===tl[1]&&Math.abs(xl[0].length-tl[0].length)<=2&&xl[0]!==tl[0]&&fuzzyFind(squash(xl[0]),squash(tl[0]))<=3;})[0];
+          if(other)em={found:false,conflict:other};   /* the image clearly shows a different email ID */
+        }
+      }
+    }
     if(pid){
       lk=findIn('public_profiles/'+pid,text);if(!lk.found)lk=findIn(pid,text);
       if(!lk.found){var noDash=pid.replace(/-/g,'');if(noDash.length>=16)lk=findIn(noDash,text.replace(/[-–—]/g,''));}
     }
-    return {found:em.found&&lk.found,email:em.found,link:lk.found,exact:em.found&&lk.found&&em.exact&&lk.exact,by:'both'};
+    return {found:em.found&&lk.found,email:em.found,link:lk.found,conflict:em.conflict||'',emailExact:!!(em.found&&em.exact),exact:em.found&&lk.found&&em.exact&&lk.exact,by:'both'};
   }
   function shotMsg(r){
     if(r.found)return '✓ Screenshot shows your email ID and your public profile link';
+    if(r.conflict)return '✗ The screenshot shows a different email ID ('+r.conflict+'). It must be the same as your registered email ID';
     if(r.email)return '✗ Your email ID was found, but your public profile link is not visible in this screenshot';
-    if(r.link)return '✗ Your profile link was found, but your email ID is not visible in this screenshot';
+    if(r.link)return '✗ Your profile link was found, but your registered email ID is not visible in this screenshot (or the email in the image is different)';
     return '✗ Neither your email ID nor your profile link was found in this screenshot';
   }
   function shotInputs(){
@@ -2344,15 +2360,21 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     if(shotState.key===key&&shotState.running)return shotState.running;
     shotState.key=key;shotState.res=null;
     stat('shot-stat','wait','⏳ Checking your screenshot for your email ID and profile link…');
+    /* up to three reads (normal, contrast 225, contrast 200); stop as soon as both the email ID and the link are found */
+    /* a near match keeps reading too, so the email ID is confirmed character-for-character whenever possible */
+    function sure(t){var m=matchShot(t,inp.email,inp.pid);return m.found&&m.emailExact;}
     var textP=ocrPass(file,0).then(function(t0){
-      if(matchShot(t0,inp.email,inp.pid).found)return t0;
-      return ocrPass(file,1).then(function(t1){return t0+'\n'+t1;});
+      if(sure(t0))return t0;
+      return ocrPass(file,1).then(function(t1){
+        var t=t0+'\n'+t1;if(sure(t))return t;
+        return ocrPass(file,2).then(function(t2){return t+'\n'+t2;});
+      });
     });
     shotState.running=textP.then(function(text){
         var r=matchShot(text,inp.email,inp.pid);r.ran=true;
         if(shotState.key!==key)return r;
         shotState.res=r;
-        stat('shot-stat',r.found?'ok':'bad',shotMsg(r));
+        stat('shot-stat',r.found?'ok':'bad',esc(shotMsg(r)));
         return r;
       },function(){
         var r={ran:false};if(shotState.key===key){shotState.key='';stat('shot-stat','bad','✗ Could not check the screenshot (check your internet connection).');}
@@ -2414,8 +2436,8 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       return runShotCheck();
     }).then(function(r){
       if(!r||!r.ran)return stop('error','Could not verify screenshot','The screenshot could not be checked. Please check your internet connection and try again, or upload a clearer PNG/JPG image.',shot);
-      if(!r.found)return stop('error','Screenshot does not match','<div style="text-align:left">'+(r.email?'Your email ID was found, but your <b>public profile link</b> is not visible.':r.link?'Your profile link was found, but your <b>email ID</b> ('+esc(email)+') is not visible.':'Your screenshot shows neither your email ID <b>'+esc(email)+'</b> nor your public profile link.')+
-        '<p style="margin:10px 0 4px">One screenshot must show <b>both</b>:</p><ul style="padding-left:18px;margin:0"><li>your public profile page with its link in the browser address bar (…/public_profiles/…), and</li><li>your email ID on screen at the same time (open your account menu, or place your Account settings page beside it).</li><li>Take a full, uncropped screenshot (not a photo of the screen).</li></ul></div>',shot);
+      if(!r.found)return stop('error','Screenshot does not match','<div style="text-align:left">'+(r.conflict?'The screenshot shows the email ID <b>'+esc(r.conflict)+'</b>, but you registered with <b>'+esc(email)+'</b>. They must be the same.':r.email?'Your email ID was found, but the <b>public profile link</b> you entered is not visible.':r.link?'Your profile link was found, but your registered email ID <b>'+esc(email)+'</b> is not visible (or the email in the image is different).':'The screenshot shows neither your registered email ID <b>'+esc(email)+'</b> nor the profile link you entered.')+
+        '<p style="margin:10px 0 4px">Upload one screenshot of your Skills <b>Account settings</b> page (skills.google/my_account/profile) that shows:</p><ul style="padding-left:18px;margin:0"><li>your <b>Email</b> field — it must be the same email ID you typed in this form, and</li><li>the green box <b>“Your profile is public and accessible at …/public_profiles/…”</b> with the same link you entered.</li><li>Use a real, uncropped screenshot (not a photo of the screen); zoom the page out if both don’t fit.</li></ul></div>',shot);
       /* final gate: only fully verified registrations are saved */
       if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&r.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
       var name=f.name.value.trim(),refNo=newRef();
@@ -2423,7 +2445,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       var rec={'Ref No':refNo,_ts:Date.now(),'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
         'Profile Name':link.name||'','Profile Badges':typeof link.badges==='number'?link.badges:'',
         'Email Check':ec.gmail?'Valid Gmail ID':'Valid email','Profile Link Check':'Opens (auto-checked)',
-        'Screenshot Check':'Email and profile link found in screenshot'+(r.exact?'':' (close match)'),'Verification Screenshot':refNo+'.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};
+        'Screenshot Check':'Email and profile link found in screenshot'+(r.emailExact?'':' (email close match)'),'Verification Screenshot':refNo+'.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};
       return compress(file).then(function(blob){return Data.add(rec,blob);}).then(function(){
         f.reset();c.dispatchEvent(new Event('change'));prev.hidden=true;document.getElementById('fname').textContent='';shotState={key:'',res:null,running:null};
         ['email-stat','phone-stat','url-stat','shot-stat'].forEach(function(id){stat(id);});emailBg={key:'',p:null};
