@@ -10,7 +10,7 @@ Open **`index.html`** in a browser (or the GitHub Pages site). The admin area is
   - **Email ID** – format and Gmail rules, typo suggestions (`gmial.com` → `gmail.com`), the email domain must be able to receive mail (DNS lookup of the domain only), disposable addresses are blocked.
   - **Mobile number** – validated with Google's libphonenumber (India by default, other countries with a country code) and saved in one standard format.
   - **Public profile link** – must be a `skills.google/public_profiles/…` link that really opens; the profile name and badge count are shown.
-  - **Screenshot** – read in the browser (OCR): one screenshot of the Skills **Account settings** page must show the registered email ID (exactly the one typed in the form) and the public profile link entered in the form.
+  - **Two screenshots**, each read in the browser (OCR) and checked separately: (1) the **email ID screenshot** must show the registered email ID exactly as typed; (2) the **profile link screenshot** must show the public profile link entered in the form.
 - Only fully verified registrations are accepted.
 - **One registration per email ID and per public profile link** (any course).
 

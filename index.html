@@ -133,7 +133,8 @@ a{color:#7fb0ff}
 .drop{display:block;border:1.5px dashed var(--line2);border-radius:10px;padding:22px;text-align:center;cursor:pointer;background:var(--field);transition:border-color .15s,background .15s}
 .drop:hover,.drop.over,.drop:focus-visible{border-color:var(--pri);background:rgba(59,130,246,.06);outline:none}
 .drop .up{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--pri-soft);color:#7fb0ff;margin-bottom:8px}
-.drop b{display:block;font-weight:600}
+.drop>b{display:block;font-weight:600}
+.drop small b{display:inline;font-weight:700}
 .drop small{color:var(--mute)}
 .drop .fname{display:block;margin-top:6px;font-weight:600;color:#7fb0ff;word-break:break-all}
 #prev{display:block;max-width:100%;max-height:190px;margin:12px auto 0;border-radius:8px;border:1px solid var(--line2);animation:open .25s}
@@ -293,6 +294,10 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
 .ad-checks li::before{position:absolute;left:0;top:2px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:700}
 .ad-checks li.ok::before{content:"✓";background:var(--a-okb);color:var(--a-ok)}
 .ad-checks li.no::before{content:"!";background:var(--a-warnb);color:var(--a-warn)}
+.ad-shots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ad-shots figure{margin:0;min-width:0}
+.ad-shots figcaption{font-size:12px;color:var(--mute);margin-bottom:6px;font-weight:600}
+@media(max-width:560px){.ad-shots{grid-template-columns:1fr}}
 .ad-shot{display:block;width:100%;border:1px solid var(--line2);border-radius:8px;cursor:zoom-in;background:var(--card2);min-height:80px}
 .ad-df{border-top:1px solid var(--a-line);padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .ad-df .ad-sp{flex:1}
@@ -553,11 +558,10 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
             <p style="margin:10px 0 0"><a href="https://www.youtube.com/watch?v=C7Zb3cqEkwA" target="_blank" rel="noopener">Watch the 1-minute video guide ↗</a></p></div>
           </details>
           <details class="acc glass">
-            <summary><span class="num">3</span>Which screenshot to upload</summary>
-            <div class="body">Your Skills <b>Account settings</b> page shows everything needed:<ol style="margin:6px 0 0">
-              <li>Log in and open <a href="https://www.skills.google/my_account/profile" target="_blank" rel="noopener">skills.google/my_account/profile</a>.</li>
-              <li>Make sure <b>Make profile public</b> is ticked, so the green box shows <b>“Your profile is public and accessible at …/public_profiles/…”</b>.</li>
-              <li>Take <b>one</b> screenshot that shows your <b>Email</b> field and that green box together (zoom the page out if needed).</li></ol></div>
+            <summary><span class="num">3</span>Which screenshots to upload</summary>
+            <div class="body"><ol style="margin:0">
+              <li><b>Email ID screenshot</b> — open <a href="https://www.skills.google/my_account/profile" target="_blank" rel="noopener">skills.google/my_account/profile</a> and capture the <b>Email</b> field. It must be the same email ID you type in this form.</li>
+              <li><b>Profile link screenshot</b> — your public profile page with the link visible in the address bar (…/public_profiles/…), or the green box <b>“Your profile is public and accessible at …”</b> on the same settings page.</li></ol></div>
           </details>
           <div class="tip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Your email ID, profile link and screenshot are verified automatically. Only verified registrations are accepted.</span></div>
         </aside>
@@ -599,18 +603,29 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
 
             <fieldset class="fs" data-step="3" hidden>
               <legend>Verify your Skills account</legend>
-              <p class="hint">Your profile link and screenshot are checked as you go.</p>
+              <p class="hint">Your profile link and both screenshots are checked as you go.</p>
               <label class="fld"><span>Public profile link <i>*</i></span><input type="url" name="url" autocomplete="url" placeholder="https://www.skills.google/public_profiles/…"><div class="vstat" id="url-stat" hidden></div></label>
-              <div class="fld"><span>Screenshot of your Skills account <i>*</i></span>
+              <div class="fld"><span>1. Email ID screenshot <i>*</i></span>
                 <label class="drop" id="drop">
                   <input type="file" name="shot" id="shot" class="sr-only" accept="image/png,image/jpeg,image/webp">
                   <span class="up"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/><path d="M12 3v13M7 8l5-5 5 5"/></svg></span>
-                  <b>Drag and drop, or click to upload</b>
-                  <small>PNG or JPG · Account settings page showing your <b>email ID</b> and the green <b>public profile link</b> box</small>
+                  <b>Upload a screenshot showing your email ID</b>
+                  <small>PNG or JPG · e.g. your Skills <b>Account settings</b> page — the email must be the same as the one you registered with</small>
                   <span class="fname" id="fname"></span>
                 </label>
-                <img id="prev" alt="Screenshot preview" hidden>
+                <img id="prev" alt="Email ID screenshot preview" hidden>
                 <div class="vstat" id="shot-stat" hidden></div>
+              </div>
+              <div class="fld"><span>2. Public profile link screenshot <i>*</i></span>
+                <label class="drop" id="drop2">
+                  <input type="file" name="shot2" id="shot2" class="sr-only" accept="image/png,image/jpeg,image/webp">
+                  <span class="up"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+                  <b>Upload a screenshot showing your public profile link</b>
+                  <small>PNG or JPG · your public profile page with the link in the address bar, or the green “profile is public” box</small>
+                  <span class="fname" id="fname2"></span>
+                </label>
+                <img id="prev2" alt="Profile link screenshot preview" hidden>
+                <div class="vstat" id="shot2-stat" hidden></div>
               </div>
               <label class="agree"><input type="checkbox" name="terms"><span>I agree to the <a href="#" id="terms-link">Terms and Conditions</a></span></label>
               <div class="nav"><button type="button" class="btn ghost" data-next="2">← Back</button><button type="submit" class="btn pri go">Verify &amp; submit</button></div>
@@ -854,7 +869,13 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   function sb(){
     if(!sbClient){
       if(!window.supabase||!window.supabase.createClient)throw new Error('Supabase library not loaded');
-      sbClient=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'gc-admin-auth'}});
+      /* every Supabase request gives up after 10 s, so a blocked or slow network fails fast instead of hanging */
+      var timedFetch=function(url,opts){
+        var ctl=new AbortController(),t=setTimeout(function(){ctl.abort();},10000);
+        opts=Object.assign({},opts||{});if(opts.signal)opts.signal.addEventListener('abort',function(){ctl.abort();});opts.signal=ctl.signal;
+        return fetch(url,opts).finally(function(){clearTimeout(t);});
+      };
+      sbClient=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'gc-admin-auth'},global:{fetch:timedFetch}});
     }
     return sbClient;
   }
@@ -902,18 +923,21 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
      Supabase is used automatically once supabase_setup.sql has been run in the project.
      Until then (or if STORAGE is set to 'local') everything is kept in this browser. */
   var STORAGE='auto';   /* 'auto' | 'cloud' | 'local' */
-  var MODE=null,modeP=null;
+  var MODE=null,modeP=null,CLOUD_SEEN='gc_cloud_confirmed';
   function detectMode(){
     if(MODE)return Promise.resolve(MODE);
     if(STORAGE!=='auto'){MODE=STORAGE;return Promise.resolve(MODE);}
     if(modeP)return modeP;
     var c;try{c=sb();}catch(e){return Promise.resolve('local');}
+    /* Supabase unreachable (offline, or the network blocks supabase.co): if this device has ever confirmed online
+       saving, refuse to fall back silently; otherwise online saving was never available here, so keep using this browser */
+    function unreachable(){modeP=null;var seen=false;try{seen=localStorage.getItem(CLOUD_SEEN)==='1';}catch(e){}if(seen)return 'cloud';MODE='local';return MODE;}
     modeP=c.rpc('registration_conflict',{p_email:'setup-check@example.com',p_profile:'-'}).then(function(x){
       modeP=null;
-      if(!x.error){MODE='cloud';return MODE;}
+      if(!x.error){MODE='cloud';try{localStorage.setItem(CLOUD_SEEN,'1');}catch(e){}return MODE;}
       if(/^PGRST2|^42/.test(String(x.error.code||''))){MODE='local';return MODE;}   /* database not set up yet */
-      return 'cloud';   /* temporary network problem: never fall back silently */
-    },function(){modeP=null;return 'cloud';});
+      return unreachable();
+    },unreachable);
     return modeP;
   }
   function ok(res){if(res&&res.error)throw res.error;return res;}
@@ -921,7 +945,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   /* database column <-> label used on screen and in the CSV */
   var FIELDS=[['Ref No','ref_no'],['Submitted At','created_at'],['Course','course'],['Mapped Google Course','mapped_course'],['Full Name','full_name'],['Email','email'],
     ['Contact Number','phone'],['Gender','gender'],['Year Of Graduation','grad_year'],['Organisation','organisation'],['Profile URL','profile_url'],['Profile Name','profile_name'],
-    ['Profile Badges','profile_badges'],['Email Check','email_check'],['Profile Link Check','link_check'],['Screenshot Check','screenshot_check'],['Verification Screenshot','screenshot_path'],
+    ['Profile Badges','profile_badges'],['Email Check','email_check'],['Profile Link Check','link_check'],['Screenshot Check','screenshot_check'],['Verification Screenshot','screenshot_path'],['Profile Screenshot','screenshot2_path'],
     ['Verification Status','status'],['Reviewed At','reviewed_at'],['Admin Note','admin_note'],
     ['Badge Status','badge_status'],['Badges Done','badges_done'],['Badges Required','badges_required'],['Badge Checked At','badge_checked_at']];
   var COL={};FIELDS.forEach(function(f){COL[f[0]]=f[1];});
@@ -930,7 +954,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     return {ref_no:r['Ref No'],course:r['Course']||'-',mapped_course:r['Mapped Google Course']||'-',full_name:r['Full Name']||'-',email:r['Email']||'-',phone:r['Contact Number']||null,
       gender:r['Gender']||null,grad_year:r['Year Of Graduation']?String(r['Year Of Graduation']):null,organisation:r['Organisation']||'-',profile_url:r['Profile URL']||'-',
       profile_name:r['Profile Name']||null,profile_badges:parseInt(r['Profile Badges'],10)||null,email_check:r['Email Check']||null,link_check:r['Profile Link Check']||null,
-      screenshot_check:r['Screenshot Check']||null,screenshot_path:r['Verification Screenshot']||null,
+      screenshot_check:r['Screenshot Check']||null,screenshot_path:r['Verification Screenshot']||null,screenshot2_path:r['Profile Screenshot']||null,
       status:['Pending','Verified','Rejected'].indexOf(r['Verification Status'])>-1?r['Verification Status']:'Pending',reviewed_at:r['Reviewed At']||null,admin_note:r['Admin Note']||null,
       badge_status:r['Badge Status']||null,badges_done:r['Badges Done']===''||r['Badges Done']==null?null:+r['Badges Done'],badges_required:r['Badges Required']===''||r['Badges Required']==null?null:+r['Badges Required'],badge_checked_at:r['Badge Checked At']||null};
   }
@@ -945,6 +969,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   /* the profile ID identifies a profile regardless of skills.google / cloudskillsboost.google, query strings, case */
   function profileKey(url){var m=String(url||'').match(/\/public_profiles\/([A-Za-z0-9-]{8,64})/);return m?m[1].toLowerCase():'';}
   var DUP_MSG={email:'This email ID is already registered. Each email ID can register only once.',profile:'This public profile link is already registered. Each Skills profile can register only once.'};
+  function shotPaths(recs){var out=[];recs.forEach(function(r){if(r['Verification Screenshot'])out.push(r['Verification Screenshot']);if(r['Profile Screenshot'])out.push(r['Profile Screenshot']);});return out;}
   var Data={
     /* one registration per email ID and per public profile link: resolves to 'email', 'profile' or null */
     conflict:function(email,url){
@@ -959,23 +984,26 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
         return sb().rpc('registration_conflict',{p_email:em||'',p_profile:pk?'https://www.skills.google/public_profiles/'+pk:''}).then(ok).then(function(x){return x.data||null;});
       });
     },
-    /* rec uses the on-screen labels; 'Verification Screenshot' is the file name */
-    add:function(rec,blob){
+    /* rec uses the on-screen labels; 'Verification Screenshot' (email) and 'Profile Screenshot' are file names */
+    add:function(rec,blob,blob2){
       return detectMode().then(function(m){
-        var path=rec['Verification Screenshot'];
+        var path=rec['Verification Screenshot'],path2=rec['Profile Screenshot'];
+        function dropLocal(){delShot(path).catch(function(){});if(path2)delShot(path2).catch(function(){});}
         if(m==='local'){
-          return putShot(path,blob).then(function(){
+          return putShot(path,blob).then(function(){return blob2&&path2?putShot(path2,blob2):null;}).then(function(){
             var all=localRecs();
             var em=rec['Email'].trim().toLowerCase(),pk=profileKey(rec['Profile URL']);
-            if(all.some(function(r){return String(r['Email']).trim().toLowerCase()===em;})){delShot(path).catch(function(){});throw {dup:'email'};}
-            if(pk&&all.some(function(r){return profileKey(r['Profile URL'])===pk;})){delShot(path).catch(function(){});throw {dup:'profile'};}
+            if(all.some(function(r){return String(r['Email']).trim().toLowerCase()===em;})){dropLocal();throw {dup:'email'};}
+            if(pk&&all.some(function(r){return profileKey(r['Profile URL'])===pk;})){dropLocal();throw {dup:'profile'};}
             all.push(rec);
-            if(!save(all)){delShot(path).catch(function(){});throw new Error('this browser’s storage is full');}
+            if(!save(all)){dropLocal();throw new Error('this browser’s storage is full');}
           });
         }
-        return sb().storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',upsert:false}).then(ok).then(function(){
-          return sb().from('registrations').insert(recToRow(rec));
-        }).then(function(res){if(res.error){if(res.error.code==='23505')throw {dup:/profile/i.test(res.error.message||'')?'profile':'email'};throw res.error;}});
+        var st=sb().storage.from(BUCKET);
+        return st.upload(path,blob,{contentType:'image/jpeg',upsert:false}).then(ok)
+          .then(function(){return blob2&&path2?st.upload(path2,blob2,{contentType:'image/jpeg',upsert:false}).then(ok):null;})
+          .then(function(){return sb().from('registrations').insert(recToRow(rec));})
+          .then(function(res){if(res.error){if(res.error.code==='23505')throw {dup:/profile/i.test(res.error.message||'')?'profile':'email'};throw res.error;}});
       });
     },
     list:function(){
@@ -989,13 +1017,13 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       return sb().from('registrations').update(patchToRow(patch)).in('ref_no',refs).then(ok);
     },
     remove:function(recs){
-      var refs=recs.map(function(r){return r['Ref No'];}),paths=recs.map(function(r){return r['Verification Screenshot'];}).filter(Boolean);
+      var refs=recs.map(function(r){return r['Ref No'];}),paths=shotPaths(recs);
       if(MODE==='local'){save(localRecs().filter(function(r){return refs.indexOf(r['Ref No'])<0;}));paths.forEach(function(p){delShot(p).catch(function(){});});return Promise.resolve();}
       return sb().from('registrations').delete().in('ref_no',refs).then(ok).then(function(){return removeFiles(paths).catch(function(e){console.error(e);});});
     },
     removeAll:function(recs){
       if(MODE==='local'){save([]);return clearShots().catch(function(){});}
-      var paths=recs.map(function(r){return r['Verification Screenshot'];}).filter(Boolean);
+      var paths=shotPaths(recs);
       return sb().from('registrations').delete().not('id','is',null).then(ok).then(function(){
         var c=Promise.resolve();
         for(var i=0;i<paths.length;i+=100)(function(part){c=c.then(function(){return removeFiles(part).catch(function(e){console.error(e);});});})(paths.slice(i,i+100));
@@ -1003,13 +1031,13 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       });
     },
     /* resolves to a URL for <img>, or '' when there is no screenshot */
-    shotUrl:function(rec){
-      var p=rec['Verification Screenshot'];if(!p)return Promise.resolve('');
+    shotUrl:function(rec,which){
+      var p=rec[which==='profile'?'Profile Screenshot':'Verification Screenshot'];if(!p)return Promise.resolve('');
       if(MODE==='local')return getShot(p).then(function(b){return b?URL.createObjectURL(b):'';});
       return sb().storage.from(BUCKET).createSignedUrl(p,600).then(function(res){return res.error||!res.data?'':res.data.signedUrl;});
     },
-    shotBlob:function(rec){
-      var p=rec['Verification Screenshot'];if(!p)return Promise.resolve(null);
+    shotBlob:function(rec,which){
+      var p=rec[which==='profile'?'Profile Screenshot':'Verification Screenshot'];if(!p)return Promise.resolve(null);
       if(MODE==='local')return getShot(p).then(function(b){return b||null;});
       return sb().storage.from(BUCKET).download(p).then(function(res){return res.error?null:res.data;});
     }
@@ -1129,7 +1157,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   function findRec(ref){return A.all.find(function(x){return x['Ref No']===ref;});}
   function needsReview(r){return !r['Screenshot Check']||!/Opens/.test(r['Profile Link Check']||'')||/close/.test(r['Screenshot Check']||'');}
   function stamp(){return new Date().toLocaleString();}
-  function freeShot(){if(A.shotUrl&&A.shotUrl.indexOf('blob:')===0)URL.revokeObjectURL(A.shotUrl);A.shotUrl='';}
+  function freeShot(){(A.shotUrls||[]).forEach(function(u){if(u&&u.indexOf('blob:')===0)URL.revokeObjectURL(u);});A.shotUrls=[];A.shotUrl='';}
   function reload(silent){
     if(!silent&&!A.loaded){$a('ad-rows').innerHTML='';var em=$a('ad-empty');em.hidden=false;em.innerHTML='<b>Loading registrations…</b>';}
     return Data.list().then(function(all){A.all=all;A.loaded=true;if(!$a('ad-ov').hidden)renderOverview();if(!$a('ad-regs').hidden)renderRegs();if(!$a('ad-settings').hidden)renderSettings();})
@@ -1303,11 +1331,11 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   function exportCsv(){if(!guard())return;var all=loadRecs();if(!all.length)return say('info','Nothing to export','There are no registrations yet.');downloadCsv(all);toast('success','CSV downloaded');}
   function exportZip(){
     if(!guard())return;
-    var list=loadRecs().filter(function(r){return r['Verification Screenshot'];});
+    var list=loadRecs().filter(function(r){return r['Verification Screenshot']||r['Profile Screenshot'];});
     if(!list.length)return say('info','No screenshots','Nothing to download.');
     if(!window.JSZip)return say('error','ZIP not available','The ZIP library could not load. Check your internet connection and reload.');
     var z=new JSZip(),done=0,failed=0,chain=Promise.resolve();busyBox('Preparing '+list.length+' screenshots…');
-    list.forEach(function(r){chain=chain.then(function(){return Data.shotBlob(r).then(function(b){if(!b){failed++;return;}z.file(r['Ref No']+'_'+slug(r['Email'])+'.jpg',b);done++;});});});
+    list.forEach(function(r){[['email','Verification Screenshot','email-id'],['profile','Profile Screenshot','profile-link']].forEach(function(k){if(!r[k[1]])return;chain=chain.then(function(){return Data.shotBlob(r,k[0]).then(function(b){if(!b){failed++;return;}z.file(r['Ref No']+'_'+slug(r['Email'])+'_'+k[2]+'.jpg',b);done++;});});});});
     chain.then(function(){return z.generateAsync({type:'blob'});}).then(function(b){Swal.close();saveAs(b,'Verification_Screenshots.zip');toast('success',done+' screenshots downloaded'+(failed?' ('+failed+' missing)':''));})
       .catch(dbErr('Could not download screenshots'));
   }
@@ -1331,7 +1359,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
           '<li class="'+(shotClose?'no':'ok')+'">'+esc(r['Screenshot Check'])+'</li>'
         :'<li class="no">This registration was made before automatic checks were added.</li>')+
       '</ul></div></div>'+
-      '<div class="ad-sec"><h4>Verification screenshot</h4><div id="ad-shotbox" class="ad-muted">Loading…</div></div>'+
+      '<div class="ad-sec"><h4>Verification screenshots</h4><div class="ad-shots"><figure><figcaption>1. Email ID</figcaption><div id="ad-shotbox" class="ad-muted">Loading…</div></figure><figure><figcaption>2. Public profile link</figcaption><div id="ad-shotbox2" class="ad-muted">Loading…</div></figure></div></div>'+
       '<div class="ad-sec"><h4>Student details</h4><dl class="ad-kv">'+
         kv('Email',r['Email'])+kv('Contact number',r['Contact Number'])+kv('Gender',r['Gender'])+kv('Year of graduation',r['Year Of Graduation'])+
         kv('Organisation',r['Organisation'])+kv('Course',r['Course'])+kv('Mapped Google course',r['Mapped Google Course'])+
@@ -1343,14 +1371,16 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       if(!guard())return;var v=this.value.trim();
       Data.update([ref],{'Admin Note':v}).then(function(){var x=findRec(ref);if(x)x['Admin Note']=v;toast('success','Note saved');}).catch(dbErr('Could not save the note'));
     });
-    var box=$a('ad-shotbox');
-    Data.shotUrl(r).then(function(u){
-      if(A.open!==ref){if(u.indexOf('blob:')===0)URL.revokeObjectURL(u);return;}
-      if(!u){box.textContent=r['Verification Screenshot']?'Screenshot not found.':'No screenshot for this registration.';return;}
-      A.shotUrl=u;
-      box.innerHTML='<img class="ad-shot" alt="Verification screenshot of '+esc(r['Full Name'])+'" src="'+esc(u)+'"><div class="ad-sub" style="margin-top:6px">Click to enlarge · Check it shows <b>'+esc(r['Email'])+'</b> or the profile link.</div>';
-      box.querySelector('img').addEventListener('click',function(){if(window.Swal)Swal.fire({imageUrl:A.shotUrl,imageAlt:'Verification screenshot',width:'min(1400px,96vw)',showConfirmButton:false,showCloseButton:true});});
-    }).catch(function(){box.textContent='Could not load the screenshot.';});
+    [['ad-shotbox','email','Verification Screenshot','Check it shows <b>'+esc(r['Email'])+'</b>.'],['ad-shotbox2','profile','Profile Screenshot','Check it shows the profile link.']].forEach(function(cfg){
+      var box=$a(cfg[0]);
+      Data.shotUrl(r,cfg[1]).then(function(u){
+        if(A.open!==ref){if(u.indexOf('blob:')===0)URL.revokeObjectURL(u);return;}
+        if(!u){box.textContent=r[cfg[2]]?'Screenshot not found.':'No screenshot.';return;}
+        A.shotUrls.push(u);
+        box.innerHTML='<img class="ad-shot" alt="'+esc(cfg[1]==='email'?'Email ID screenshot':'Profile link screenshot')+' of '+esc(r['Full Name'])+'" src="'+esc(u)+'"><div class="ad-sub" style="margin-top:6px">Click to enlarge · '+cfg[3]+'</div>';
+        box.querySelector('img').addEventListener('click',function(){if(window.Swal)Swal.fire({imageUrl:u,imageAlt:'Verification screenshot',width:'min(1400px,96vw)',showConfirmButton:false,showCloseButton:true});});
+      }).catch(function(){box.textContent='Could not load the screenshot.';});
+    });
     var idx=A.list.findIndex(function(x){return x['Ref No']===ref;});
     $a('ad-prev').disabled=idx<=0;$a('ad-next').disabled=idx<0||idx>=A.list.length-1;
     $a('ad-ver').disabled=r['Verification Status']==='Verified';$a('ad-rej').disabled=r['Verification Status']==='Rejected';
@@ -1392,7 +1422,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
 
   /* ---- settings ---- */
   function renderSettings(){
-    var all=loadRecs(),shots=all.filter(function(r){return r['Verification Screenshot'];}).length,cloud=MODE==='cloud';
+    var all=loadRecs(),shots=shotPaths(all).length,cloud=MODE==='cloud';
     $a('cl-email').textContent=Auth.user?Auth.user.name:'';
     $a('cl-where').textContent=cloud?'Your password is managed securely by Supabase.':'Your password is stored only as a secure hash in this browser.';
     ['cl-old','cl-p1','cl-p2'].forEach(function(id){$a(id).value='';});$a('cl-err').hidden=true;
@@ -1998,8 +2028,8 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     setTimeout(function(){var first=document.querySelector('#f .fs:not([hidden]) input:not(.sr-only),#f .fs:not([hidden]) .course');if(first&&n>1)first.focus({preventScroll:true});},350);
   }
   function stepOf(el){var fs=el&&el.closest&&el.closest('.fs');return fs?+fs.dataset.step:curStep;}
-  function markErr(el){if(!el)return;var t=el===shot?document.getElementById('drop'):el===c?grid:el;t.classList.remove('err');void t.offsetWidth;t.classList.add('err');}
-  function focusField(el){if(!el)return;goStep(stepOf(el===c?grid:el),true);setTimeout(function(){(el===c?grid.querySelector('.course'):el===shot?document.getElementById('drop'):el).focus();},50);}
+  function markErr(el){if(!el)return;var t=el===shot?document.getElementById('drop'):el===document.getElementById('shot2')?document.getElementById('drop2'):el===c?grid:el;t.classList.remove('err');void t.offsetWidth;t.classList.add('err');}
+  function focusField(el){if(!el)return;goStep(stepOf(el===c?grid:el),true);setTimeout(function(){(el===c?grid.querySelector('.course'):el===shot?document.getElementById('drop'):el===document.getElementById('shot2')?document.getElementById('drop2'):el).focus();},50);}
   /* validates one step; returns true when the student may continue */
   function checkStep(n){
     var f=document.getElementById('f');
@@ -2042,13 +2072,8 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   /* Enter in a text field moves to the next step instead of submitting early */
   document.getElementById('f').addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.type!=='checkbox'&&curStep<3){e.preventDefault();advanceTo(curStep+1);}});
 
-  /* ---- drag & drop screenshot ---- */
+  /* ---- drag & drop: wired per upload box in the screenshot section ---- */
   var drop=document.getElementById('drop');
-  ['dragenter','dragover'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('over');});});
-  ['dragleave','dragend','drop'].forEach(function(ev){drop.addEventListener(ev,function(){drop.classList.remove('over');});});
-  drop.addEventListener('drop',function(e){e.preventDefault();var fl=e.dataTransfer&&e.dataTransfer.files;if(!fl||!fl.length)return;var dt=new DataTransfer();dt.items.add(fl[0]);shot.files=dt.files;shot.dispatchEvent(new Event('change',{bubbles:true}));});
-  drop.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();shot.click();}});
-  drop.tabIndex=0;drop.setAttribute('role','button');drop.setAttribute('aria-label','Upload screenshot');
 
   /* ---- reveal on scroll ---- */
   if('IntersectionObserver' in window){
@@ -2194,14 +2219,14 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
 
   emailIn.addEventListener('blur',function(){
     clearTimeout(emailTimer);showEmailStat();
-    if(shot.files[0])runShotCheck();
+    if(shot.files[0])runSlot('email');
     var r=checkEmail(emailIn.value);
     if(r.fix&&window.Swal){
       Swal.fire({icon:'question',title:'Check your email ID',text:r.err,showCancelButton:true,confirmButtonText:'Yes, use '+r.fix,cancelButtonText:'No, keep it',confirmButtonColor:BTN})
-        .then(function(x){if(x.isConfirmed){emailIn.value=r.fix;showEmailStat();shotState.key='';if(shot.files[0])runShotCheck();}});
+        .then(function(x){if(x.isConfirmed){emailIn.value=r.fix;showEmailStat();SLOT.email.st.key='';if(shot.files[0])runSlot('email');}});
     }
   });
-  emailIn.addEventListener('input',function(){stat('email-stat');emailBg.key='';clearTimeout(emailTimer);if(checkEmail(emailIn.value).ok)emailTimer=setTimeout(emailBackground,900);shotState.key='';if(shotState.res)stat('shot-stat','wait','Email changed — the screenshot will be checked again when you submit.');});
+  emailIn.addEventListener('input',function(){stat('email-stat');emailBg.key='';clearTimeout(emailTimer);if(checkEmail(emailIn.value).ok)emailTimer=setTimeout(emailBackground,900);SLOT.email.st.key='';if(SLOT.email.st.res)stat('shot-stat','wait','Email changed — the email screenshot will be checked again.');});
 
   /* 2) Public profile link */
   function checkProfileUrl(raw){
@@ -2258,12 +2283,12 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       j.url=r.url;j.id=r.id;return j;
     });
   }
-  urlIn.addEventListener('input',function(){stat('url-stat');clearTimeout(linkTimer);linkTimer=setTimeout(function(){if(checkProfileUrl(urlIn.value).ok){checkLinkNow();if(shot.files[0])runShotCheck();}},800);});
-  urlIn.addEventListener('blur',function(){clearTimeout(linkTimer);checkLinkNow();if(shot.files[0])runShotCheck();});
+  urlIn.addEventListener('input',function(){stat('url-stat');clearTimeout(linkTimer);linkTimer=setTimeout(function(){if(checkProfileUrl(urlIn.value).ok){checkLinkNow();if(document.getElementById('shot2').files[0])runSlot('link');}},800);});
+  urlIn.addEventListener('blur',function(){clearTimeout(linkTimer);checkLinkNow();if(document.getElementById('shot2').files[0])runSlot('link');});
   urlIn.addEventListener('paste',function(){setTimeout(function(){var v=urlIn.value.trim(),r=checkProfileUrl(v);if(r.ok&&r.url!==v)urlIn.value=r.url;},0);});
 
   /* 3) Screenshot must show the same email (text recognition, runs in the browser) */
-  var ocrWorker=null,shotState={key:'',res:null,running:null};
+  var ocrWorker=null;
   function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=function(){s.remove();rej(new Error('load '+src));};document.head.appendChild(s);});}
   function getOcr(){
     if(!ocrWorker)ocrWorker=(window.Tesseract?Promise.resolve():loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js'))
@@ -2293,14 +2318,14 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     }
     return cv;
   }
-  /* Reads the screenshot: normal pass first, high-contrast pass only if the first one did not find a match. */
-  var ocrCache={file:null,t:[]};
+  /* Reads a screenshot (cached per file): pass 0 normal, 1 contrast 225, 2 contrast 200. */
+  var ocrCache=new WeakMap();
   function ocrPass(file,mode){
-    if(ocrCache.file!==file)ocrCache={file:file,t:[]};
-    if(!ocrCache.t[mode])ocrCache.t[mode]=getOcr().then(function(w){return loadImg(file).then(function(im){return w.recognize(toCanvas(im,mode));});})
+    var c=ocrCache.get(file);if(!c){c=[];ocrCache.set(file,c);}
+    if(!c[mode])c[mode]=getOcr().then(function(w){return loadImg(file).then(function(im){return w.recognize(toCanvas(im,mode));});})
       .then(function(o){return (o&&o.data&&o.data.text)||'';})
-      .catch(function(e){if(ocrCache.file===file)ocrCache.t[mode]=null;throw e;});
-    return ocrCache.t[mode];
+      .catch(function(e){c[mode]=null;throw e;});
+    return c[mode];
   }
   function squash(s){return String(s).toLowerCase().replace(/\s+/g,'').replace(/[©®]/g,'@').replace(/,/g,'.').replace(/[|!1ı]/g,'l').replace(/0/g,'o').replace(/rn/g,'m').replace(/vv/g,'w');}
   function fuzzyFind(p,t){ /* smallest edit distance between p and any substring of t */
@@ -2318,77 +2343,88 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     var tol=Math.max(1,Math.floor(sn.length*0.1)),d=fuzzyFind(sn,st);
     return {found:d<=tol,exact:false,dist:d};
   }
-  /* Screenshot passes if it shows the email ID OR the public profile link (its profile ID). */
-  /* the screenshot must show BOTH the registered email ID and the public profile link (its profile ID) */
-  function matchShot(text,email,pid){
-    var em={found:false},lk={found:false};
-    if(email){
-      /* every email-like text in the image; the typed email must be one of them (allowing only OCR look-alikes) */
-      var target=email.trim().toLowerCase(),seen=(text.toLowerCase().replace(/\s*@\s*/g,'@').match(/[a-z0-9._%+\-]+@[a-z0-9\-]+(?:\.[a-z0-9\-]+)+/g)||[]);
-      if(seen.some(function(x){return x===target||squash(x)===squash(target);}))em={found:true,exact:true};
-      else{
-        em=findIn(email,text);
-        if(em.found){
-          var tl=target.split('@'),other=seen.filter(function(x){var xl=x.split('@');return xl[1]===tl[1]&&Math.abs(xl[0].length-tl[0].length)<=2&&xl[0]!==tl[0]&&fuzzyFind(squash(xl[0]),squash(tl[0]))<=3;})[0];
-          if(other)em={found:false,conflict:other};   /* the image clearly shows a different email ID */
-        }
-      }
+  /* EMAIL screenshot: the registered email ID must be in it. Every email-like text in the image is compared;
+     only OCR look-alikes are tolerated, and a clearly different email ID is reported as a conflict. */
+  function matchEmail(text,email){
+    var target=String(email||'').trim().toLowerCase();if(!target)return {found:false};
+    var seen=(text.toLowerCase().replace(/\s*@\s*/g,'@').match(/[a-z0-9._%+\-]+@[a-z0-9\-]+(?:\.[a-z0-9\-]+)+/g)||[]);
+    if(seen.some(function(x){return x===target||squash(x)===squash(target);}))return {found:true,exact:true};
+    var em=findIn(target,text);
+    if(em.found){
+      var tl=target.split('@'),other=seen.filter(function(x){var xl=x.split('@');return xl[1]===tl[1]&&Math.abs(xl[0].length-tl[0].length)<=2&&xl[0]!==tl[0]&&fuzzyFind(squash(xl[0]),squash(tl[0]))<=3;})[0];
+      if(other)return {found:false,conflict:other};
     }
-    if(pid){
-      lk=findIn('public_profiles/'+pid,text);if(!lk.found)lk=findIn(pid,text);
-      if(!lk.found){var noDash=pid.replace(/-/g,'');if(noDash.length>=16)lk=findIn(noDash,text.replace(/[-–—]/g,''));}
-    }
-    return {found:em.found&&lk.found,email:em.found,link:lk.found,conflict:em.conflict||'',emailExact:!!(em.found&&em.exact),exact:em.found&&lk.found&&em.exact&&lk.exact,by:'both'};
+    return {found:!!em.found,exact:false};
   }
-  function shotMsg(r){
-    if(r.found)return '✓ Screenshot shows your email ID and your public profile link';
-    if(r.conflict)return '✗ The screenshot shows a different email ID ('+r.conflict+'). It must be the same as your registered email ID';
-    if(r.email)return '✗ Your email ID was found, but your public profile link is not visible in this screenshot';
-    if(r.link)return '✗ Your profile link was found, but your registered email ID is not visible in this screenshot (or the email in the image is different)';
-    return '✗ Neither your email ID nor your profile link was found in this screenshot';
+  /* PROFILE screenshot: the profile ID of the entered public profile link must be in it */
+  function matchLink(text,pid){
+    if(!pid)return {found:false};
+    var lk=findIn('public_profiles/'+pid,text);if(!lk.found)lk=findIn(pid,text);
+    if(!lk.found){var noDash=pid.replace(/-/g,'');if(noDash.length>=16)lk=findIn(noDash,text.replace(/[-–—]/g,''));}
+    return {found:!!lk.found,exact:!!lk.exact};
   }
-  function shotInputs(){
-    var email=emailIn.value.trim(),u=checkProfileUrl(urlIn.value);
-    return {email:checkEmail(email).ok?email:'',pid:u.ok?u.id:''};
-  }
-  function runShotCheck(){
-    var file=shot.files[0],inp=shotInputs();
+  var shot2=document.getElementById('shot2');
+  var SLOT={
+    email:{input:shot,drop:'drop',prev:'prev',stat:'shot-stat',fname:'fname',st:{key:'',res:null,running:null},
+      need:function(){var e=emailIn.value.trim();return checkEmail(e).ok?e:'';},
+      wait:'Enter a valid email ID in step 2 — this screenshot will then be checked automatically.',
+      checking:'⏳ Looking for your email ID in this screenshot…',
+      match:matchEmail,sure:function(m){return m.found&&m.exact;},
+      msg:function(m,v){return m.found?'✓ Screenshot shows your registered email ID'+(m.exact?'':' (close match)'):m.conflict?'✗ This screenshot shows a different email ID ('+m.conflict+'). It must be the same as your registered email ID':'✗ Your registered email ID ('+v+') is not visible in this screenshot';}},
+    link:{input:shot2,drop:'drop2',prev:'prev2',stat:'shot2-stat',fname:'fname2',st:{key:'',res:null,running:null},
+      need:function(){var u=checkProfileUrl(urlIn.value);return u.ok?u.id:'';},
+      wait:'Enter your public profile link above — this screenshot will then be checked automatically.',
+      checking:'⏳ Looking for your public profile link in this screenshot…',
+      match:matchLink,sure:function(m){return m.found;},
+      msg:function(m){return m.found?'✓ Screenshot shows your public profile link':'✗ The public profile link you entered is not visible in this screenshot';}}
+  };
+  function runSlot(kind){
+    var S=SLOT[kind],file=S.input.files[0],v=S.need();
     if(!file)return Promise.resolve(null);
-    if(!inp.email||!inp.pid){stat('shot-stat','wait','Enter a valid email ID (step 2) and profile link above — the screenshot will then be checked automatically.');return Promise.resolve(null);}
-    var key=file.name+'|'+file.size+'|'+file.lastModified+'|'+inp.email.toLowerCase()+'|'+inp.pid;
-    if(shotState.key===key&&shotState.res)return Promise.resolve(shotState.res);
-    if(shotState.key===key&&shotState.running)return shotState.running;
-    shotState.key=key;shotState.res=null;
-    stat('shot-stat','wait','⏳ Checking your screenshot for your email ID and profile link…');
-    /* up to three reads (normal, contrast 225, contrast 200); stop as soon as both the email ID and the link are found */
-    /* a near match keeps reading too, so the email ID is confirmed character-for-character whenever possible */
-    function sure(t){var m=matchShot(t,inp.email,inp.pid);return m.found&&m.emailExact;}
+    if(!v){stat(S.stat,'wait',S.wait);return Promise.resolve(null);}
+    var key=file.name+'|'+file.size+'|'+file.lastModified+'|'+String(v).toLowerCase();
+    if(S.st.key===key&&S.st.res)return Promise.resolve(S.st.res);
+    if(S.st.key===key&&S.st.running)return S.st.running;
+    S.st.key=key;S.st.res=null;stat(S.stat,'wait',S.checking);
+    /* up to three reads; stop as soon as the item is confirmed */
+    function sure(t){return S.sure(S.match(t,v));}
     var textP=ocrPass(file,0).then(function(t0){
       if(sure(t0))return t0;
-      return ocrPass(file,1).then(function(t1){
-        var t=t0+'\n'+t1;if(sure(t))return t;
-        return ocrPass(file,2).then(function(t2){return t+'\n'+t2;});
-      });
+      return ocrPass(file,1).then(function(t1){var t=t0+'\n'+t1;if(sure(t))return t;return ocrPass(file,2).then(function(t2){return t+'\n'+t2;});});
     });
-    shotState.running=textP.then(function(text){
-        var r=matchShot(text,inp.email,inp.pid);r.ran=true;
-        if(shotState.key!==key)return r;
-        shotState.res=r;
-        stat('shot-stat',r.found?'ok':'bad',esc(shotMsg(r)));
-        return r;
+    S.st.running=textP.then(function(text){
+        var m=S.match(text,v);m.ran=true;
+        if(S.st.key!==key)return m;
+        S.st.res=m;stat(S.stat,m.found?'ok':'bad',esc(S.msg(m,v)));
+        if(m.found)document.getElementById(S.drop).classList.remove('err');
+        return m;
       },function(){
-        var r={ran:false};if(shotState.key===key){shotState.key='';stat('shot-stat','bad','✗ Could not check the screenshot (check your internet connection).');}
-        return r;
-      }).then(function(r){if(shotState.key===key)shotState.running=null;return r;});
-    return shotState.running;
+        var m={ran:false};if(S.st.key===key){S.st.key='';stat(S.stat,'bad','✗ Could not check the screenshot (check your internet connection).');}
+        return m;
+      }).then(function(m){if(S.st.key===key)S.st.running=null;return m;});
+    return S.st.running;
   }
-  shot.addEventListener('change',function(){
-    var f=shot.files[0];
-    if(prev.src){URL.revokeObjectURL(prev.src);prev.removeAttribute('src');}
-    shotState={key:'',res:null,running:null};ocrCache={file:null,t:[]};stat('shot-stat');
-    document.getElementById('fname').textContent=f?'📎 '+f.name:'';document.getElementById('drop').classList.remove('err');
-    if(f&&/^image\/(png|jpeg|webp)$/.test(f.type)){prev.src=URL.createObjectURL(f);prev.hidden=false;runShotCheck();}
-    else{prev.hidden=true;if(f)stat('shot-stat','bad','✗ Please upload a PNG or JPG image.');}
+  function runShotCheck(){return Promise.all([runSlot('email'),runSlot('link')]);}
+  function resetSlot(kind){
+    var S=SLOT[kind],pv=document.getElementById(S.prev);
+    if(pv.src){URL.revokeObjectURL(pv.src);pv.removeAttribute('src');}pv.hidden=true;
+    S.st={key:'',res:null,running:null};stat(S.stat);document.getElementById(S.fname).textContent='';document.getElementById(S.drop).classList.remove('err');
+  }
+  ['email','link'].forEach(function(kind){
+    var S=SLOT[kind],dz=document.getElementById(S.drop),inp=S.input;
+    inp.addEventListener('change',function(){
+      var fl=inp.files[0],pv=document.getElementById(S.prev);
+      if(pv.src){URL.revokeObjectURL(pv.src);pv.removeAttribute('src');}
+      S.st={key:'',res:null,running:null};stat(S.stat);
+      document.getElementById(S.fname).textContent=fl?'📎 '+fl.name:'';dz.classList.remove('err');
+      if(fl&&/^image\/(png|jpeg|webp)$/.test(fl.type)){pv.src=URL.createObjectURL(fl);pv.hidden=false;runSlot(kind);}
+      else{pv.hidden=true;if(fl)stat(S.stat,'bad','✗ Please upload a PNG or JPG image.');}
+    });
+    ['dragenter','dragover'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.add('over');});});
+    ['dragleave','dragend','drop'].forEach(function(ev){dz.addEventListener(ev,function(){dz.classList.remove('over');});});
+    dz.addEventListener('drop',function(e){e.preventDefault();var fl=e.dataTransfer&&e.dataTransfer.files;if(!fl||!fl.length)return;var dt=new DataTransfer();dt.items.add(fl[0]);inp.files=dt.files;inp.dispatchEvent(new Event('change',{bubbles:true}));});
+    dz.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click();}});
+    dz.tabIndex=0;dz.setAttribute('role','button');dz.setAttribute('aria-label',kind==='email'?'Upload email ID screenshot':'Upload public profile link screenshot');
   });
   document.getElementById('f').addEventListener('input',function(e){e.target.classList&&e.target.classList.remove('err');});
   document.getElementById('f').addEventListener('change',function(e){e.target.classList&&e.target.classList.remove('err');});
@@ -2398,19 +2434,22 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     e.preventDefault();
     if(busy)return;
     var f=e.target;
-    f.querySelectorAll('.err').forEach(function(x){x.classList.remove('err');});grid.classList.remove('err');drop.classList.remove('err');
+    f.querySelectorAll('.err').forEach(function(x){x.classList.remove('err');});grid.classList.remove('err');drop.classList.remove('err');document.getElementById('drop2').classList.remove('err');
     function bad(t,el){markErr(el);say('warning','Check your details',t).then(function(){focusField(el);});}
     if(curStep<3){advanceTo(curStep+1);return;}
     if(validating||!checkStep(1))return;
     validateStep(2).then(function(ok2){if(ok2)proceed();});
     function proceed(){
-    var email=f.email.value.trim(),file=shot.files[0],purl=f.url.value.trim();
+    var email=f.email.value.trim(),file=shot.files[0],file2=shot2.files[0],purl=f.url.value.trim();
     var ec=checkEmail(email);
     var uc=checkProfileUrl(purl);
     if(!uc.ok){stat('url-stat','bad','✗ '+esc(uc.err));markErr(f.url);return say('error','Invalid profile link',uc.err).then(function(){focusField(f.url);});}
-    if(!file)return bad('Please upload one screenshot that shows both your email ID and your public profile link.',shot);
-    if(!/^image\/(png|jpeg|webp)$/.test(file.type))return bad('The screenshot must be a PNG or JPG image.',shot);
-    if(file.size>10*1024*1024)return bad('The screenshot is too large. Please upload an image under 10 MB.',shot);
+    if(!file)return bad('Please upload the screenshot that shows your email ID (box 1).',shot);
+    if(!/^image\/(png|jpeg|webp)$/.test(file.type))return bad('The email ID screenshot must be a PNG or JPG image.',shot);
+    if(file.size>10*1024*1024)return bad('The email ID screenshot is too large. Please upload an image under 10 MB.',shot);
+    if(!file2)return bad('Please upload the screenshot that shows your public profile link (box 2).',shot2);
+    if(!/^image\/(png|jpeg|webp)$/.test(file2.type))return bad('The profile link screenshot must be a PNG or JPG image.',shot2);
+    if(file2.size>10*1024*1024)return bad('The profile link screenshot is too large. Please upload an image under 10 MB.',shot2);
     if(!f.terms.checked)return bad('Please agree to the Terms and Conditions.',f.terms);
     if(!window.Swal)return alert('Please wait for the page to finish loading and try again.');
     busy=true;
@@ -2432,26 +2471,30 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
         if(link.reason==='unreachable')return stop('error','Could not check your profile link',esc(link.message||'Please check your internet connection and try again.'),f.url);
         return stop('error','Profile link is not opening','<div style="text-align:left">Your link <b>'+esc(uc.url)+'</b> does not open a Google Skills profile.<ol style="padding-left:18px"><li>Log in at skills.google and open <b>skills.google/profile</b>.</li><li>Click <b>“Make profile public”</b>.</li><li>Copy the full URL from the address bar and paste it here.</li></ol></div>',f.url);
       }
-      step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>⏳ Checking your screenshot…');
+      step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>⏳ Checking your two screenshots…');
       return runShotCheck();
-    }).then(function(r){
-      if(!r||!r.ran)return stop('error','Could not verify screenshot','The screenshot could not be checked. Please check your internet connection and try again, or upload a clearer PNG/JPG image.',shot);
-      if(!r.found)return stop('error','Screenshot does not match','<div style="text-align:left">'+(r.conflict?'The screenshot shows the email ID <b>'+esc(r.conflict)+'</b>, but you registered with <b>'+esc(email)+'</b>. They must be the same.':r.email?'Your email ID was found, but the <b>public profile link</b> you entered is not visible.':r.link?'Your profile link was found, but your registered email ID <b>'+esc(email)+'</b> is not visible (or the email in the image is different).':'The screenshot shows neither your registered email ID <b>'+esc(email)+'</b> nor the profile link you entered.')+
-        '<p style="margin:10px 0 4px">Upload one screenshot of your Skills <b>Account settings</b> page (skills.google/my_account/profile) that shows:</p><ul style="padding-left:18px;margin:0"><li>your <b>Email</b> field — it must be the same email ID you typed in this form, and</li><li>the green box <b>“Your profile is public and accessible at …/public_profiles/…”</b> with the same link you entered.</li><li>Use a real, uncropped screenshot (not a photo of the screen); zoom the page out if both don’t fit.</li></ul></div>',shot);
+    }).then(function(rs){
+      var mE=rs&&rs[0],mL=rs&&rs[1];
+      if(!mE||!mE.ran)return stop('error','Could not verify the email ID screenshot','The screenshot could not be read. Please check your internet connection and try again, or upload a clearer PNG/JPG image.',shot);
+      if(!mL||!mL.ran)return stop('error','Could not verify the profile link screenshot','The screenshot could not be read. Please check your internet connection and try again, or upload a clearer PNG/JPG image.',shot2);
+      if(!mE.found)return stop('error','Email ID screenshot does not match','<div style="text-align:left">'+(mE.conflict?'This screenshot shows the email ID <b>'+esc(mE.conflict)+'</b>, but you registered with <b>'+esc(email)+'</b>. They must be the same.':'Your registered email ID <b>'+esc(email)+'</b> is not visible in screenshot 1.')+
+        '<p style="margin:10px 0 0">Open <b>skills.google/my_account/profile</b> and upload a clear, uncropped screenshot that shows your <b>Email</b> field.</p></div>',shot);
+      if(!mL.found)return stop('error','Profile link screenshot does not match','<div style="text-align:left">The public profile link you entered (<b>'+esc(uc.url)+'</b>) is not visible in screenshot 2.'+
+        '<p style="margin:10px 0 0">Upload a clear screenshot of your public profile page with the link in the address bar, or of the green box <b>“Your profile is public and accessible at …”</b> on your account settings page.</p></div>',shot2);
       /* final gate: only fully verified registrations are saved */
-      if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&r.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
+      if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&mE.found&&mL.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
       var name=f.name.value.trim(),refNo=newRef();
-      step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Screenshot matches<br>⏳ Saving your registration…');
+      step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Both screenshots match<br>⏳ Saving your registration…');
       var rec={'Ref No':refNo,_ts:Date.now(),'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
         'Profile Name':link.name||'','Profile Badges':typeof link.badges==='number'?link.badges:'',
         'Email Check':ec.gmail?'Valid Gmail ID':'Valid email','Profile Link Check':'Opens (auto-checked)',
-        'Screenshot Check':'Email and profile link found in screenshot'+(r.emailExact?'':' (email close match)'),'Verification Screenshot':refNo+'.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};
-      return compress(file).then(function(blob){return Data.add(rec,blob);}).then(function(){
-        f.reset();c.dispatchEvent(new Event('change'));prev.hidden=true;document.getElementById('fname').textContent='';shotState={key:'',res:null,running:null};
-        ['email-stat','phone-stat','url-stat','shot-stat'].forEach(function(id){stat(id);});emailBg={key:'',p:null};
+        'Screenshot Check':'Email found in email screenshot'+(mE.exact?'':' (close match)')+'; profile link found in profile screenshot','Verification Screenshot':refNo+'.jpg','Profile Screenshot':refNo+'-profile.jpg','Verification Status':'Verified','Reviewed At':'Auto-verified on submit','Admin Note':''};
+      return Promise.all([compress(file),compress(file2)]).then(function(bs){return Data.add(rec,bs[0],bs[1]);}).then(function(){
+        f.reset();c.dispatchEvent(new Event('change'));resetSlot('email');resetSlot('link');
+        ['email-stat','phone-stat','url-stat'].forEach(function(id){stat(id);});emailBg={key:'',p:null};
         maxStep=1;goStep(1,true);
         return Swal.fire({icon:'success',title:'Verified & Registered!',confirmButtonColor:'#16a34a',confirmButtonText:'Done',
-          html:'<div style="text-align:left;display:inline-block;line-height:1.9">✅ '+(ec.gmail?'Gmail ID':'Email ID')+' is valid: <b>'+esc(email)+'</b><br>✅ Public profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Screenshot shows your email ID and profile link</div><br><br>Thank you, <b>'+esc(name)+'</b>! Your registration for <b>'+esc(rec['Course'])+'</b> has been submitted.<br><br>Reference number: <b>'+esc(refNo)+'</b>'});
+          html:'<div style="text-align:left;display:inline-block;line-height:1.9">✅ '+(ec.gmail?'Gmail ID':'Email ID')+' is valid: <b>'+esc(email)+'</b><br>✅ Public profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Email ID screenshot matches<br>✅ Profile link screenshot matches</div><br><br>Thank you, <b>'+esc(name)+'</b>! Your registration for <b>'+esc(rec['Course'])+'</b> has been submitted.<br><br>Reference number: <b>'+esc(refNo)+'</b>'});
       });
     }).catch(function(err){
       if(err==='stop')return;

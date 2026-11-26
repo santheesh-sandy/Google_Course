@@ -45,6 +45,7 @@ create table if not exists public.registrations (
   link_check       text,
   screenshot_check text,
   screenshot_path  text,
+  screenshot2_path text,          -- second screenshot: public profile link
   status           text not null default 'Verified' check (status in ('Pending','Verified','Rejected')),
   reviewed_at      text,
   admin_note       text,
@@ -61,6 +62,7 @@ create table if not exists public.registrations (
   )
 );
 -- Badge-check columns (added here too, in case the table was created by an older version of this script).
+alter table public.registrations add column if not exists screenshot2_path text;
 alter table public.registrations add column if not exists badge_status text;
 alter table public.registrations add column if not exists badges_done integer;
 alter table public.registrations add column if not exists badges_required integer;
