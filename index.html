@@ -66,7 +66,7 @@ a{color:#7fb0ff}
 .step h3{margin:0 0 4px;font-size:16px}
 .step p{margin:0;color:var(--mute);font-size:14px}
 .reg{padding:8px 0 80px}
-.reg-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:24px;align-items:start}
+.reg-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:24px;align-items:start}
 /* help */
 .help{position:sticky;top:20px;display:flex;flex-direction:column;gap:10px}
 .acc{border-radius:var(--r);overflow:hidden;transition:border-color .2s}
@@ -137,8 +137,8 @@ a{color:#7fb0ff}
 .drop small b{display:inline;font-weight:700}
 .drop small{color:var(--mute)}
 .drop .fname{display:block;margin-top:6px;font-weight:600;color:#7fb0ff;word-break:break-all}
-#prev{display:block;max-width:100%;max-height:190px;margin:12px auto 0;border-radius:8px;border:1px solid var(--line2);animation:open .25s}
-#prev[hidden]{display:none}
+#prev,#prev2{display:block;max-width:100%;max-height:190px;margin:12px auto 0;border-radius:8px;border:1px solid var(--line2);animation:open .25s}
+#prev[hidden],#prev2[hidden]{display:none}
 .fld small.opt{color:var(--mute);font-weight:500}
 .agree{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;margin:18px 0 4px;cursor:pointer;color:#cdd6e8}
 .agree input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--pri)}
