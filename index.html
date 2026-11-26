@@ -276,6 +276,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
 .ad-chk.no{background:var(--a-warnb);color:var(--a-warn)}
 .ad-chk.none{background:var(--card2);color:var(--a-mute)}
 .ad-empty{padding:54px 20px;text-align:center;color:var(--a-mute)}
+.ad-morerow td{text-align:center;padding:14px 10px!important;background:transparent!important;cursor:default}.ad-morerow .ad-sub{margin-left:8px}
 .ad-empty b{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
 .ad-foot{display:flex;justify-content:space-between;align-items:center;color:var(--a-mute);padding:10px 2px;font-size:13px}
 /* drawer */
@@ -945,6 +946,17 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
         return j;
       },function(e){clearTimeout(t);throw e&&e.name==='AbortError'?new Error('The backend did not respond in time. Please try again.'):e;});
   }
+  /* the backend answers BUSY when many people use it at the same moment: wait a little and try again */
+  function gasRetry(action,payload,timeoutMs,tries){
+    tries=tries||5;var n=0;
+    function go(){n++;return gas(action,payload,timeoutMs).catch(function(e){
+      if(e&&e.code==='BUSY'&&n<tries)return new Promise(function(r){setTimeout(r,2500*n+Math.random()*2000);}).then(go);
+      if(e&&e.code==='BUSY')e.message='The server is very busy right now. Please try again in a minute.';
+      throw e;});}
+    return go();
+  }
+  /* finish trashing screenshots that a big delete could not trash in one go */
+  function gasTrash(ids){if(!ids||!ids.length)return Promise.resolve();return gasRetry('trash',{ids:ids},300000).then(function(j){return gasTrash(j.pendingFiles);});}
   function blobB64(blob){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(',')[1]||'');};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(blob);});}
   function b64Blob(b64,mime){var bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:mime||'image/jpeg'});}
   var STORAGE='auto';   /* 'auto' | 'cloud' | 'local' | 'sheet' */
@@ -1018,7 +1030,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
         function dropLocal(){delShot(path).catch(function(){});if(path2)delShot(path2).catch(function(){});}
         if(m==='sheet'){
           var clean={};Object.keys(rec).forEach(function(k){if(k.charAt(0)!=='_')clean[k]=rec[k];});
-          return Promise.all([blobB64(blob),blobB64(blob2)]).then(function(b){return gas('register',{rec:clean,shot1:b[0],shot2:b[1]},120000);})
+          return Promise.all([blobB64(blob),blobB64(blob2)]).then(function(b){return gasRetry('register',{rec:clean,shot1:b[0],shot2:b[1]},120000,6);})
             .catch(function(e){if(e&&e.code==='DUP')throw {dup:e.dup||'email'};throw e;});
         }
         if(m==='local'){
@@ -1046,18 +1058,28 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       });
     },
     update:function(refs,patch){
-      if(MODE==='sheet')return gas('update',{refs:refs,patch:patch});
-      if(MODE==='local'){var all=localRecs();all.forEach(function(r){if(refs.indexOf(r['Ref No'])>-1)Object.assign(r,patch);});if(!save(all))return Promise.reject(new Error('Could not save in this browser'));return Promise.resolve();}
+      if(MODE==='sheet'){var c=Promise.resolve();for(var i=0;i<refs.length;i+=1000)(function(part){c=c.then(function(){return gasRetry('update',{refs:part,patch:patch},120000);});})(refs.slice(i,i+1000));return c;}
+      if(MODE==='local'){var set={};refs.forEach(function(k){set[k]=1;});var all=localRecs();all.forEach(function(r){if(set[r['Ref No']])Object.assign(r,patch);});if(!save(all))return Promise.reject(new Error('Could not save in this browser'));return Promise.resolve();}
       return sb().from('registrations').update(patchToRow(patch)).in('ref_no',refs).then(ok);
+    },
+    /* a different change per registration (badge-check results): items=[{ref,patch}]; few calls even for thousands */
+    updateMany:function(items){
+      if(!items.length)return Promise.resolve();
+      if(MODE==='sheet'){var c=Promise.resolve();for(var i=0;i<items.length;i+=500)(function(part){c=c.then(function(){return gasRetry('update',{items:part},120000);});})(items.slice(i,i+500));return c;}
+      if(MODE==='local'){var by={};items.forEach(function(it){by[it.ref]=it.patch;});var all=localRecs();all.forEach(function(r){if(by[r['Ref No']])Object.assign(r,by[r['Ref No']]);});if(!save(all))return Promise.reject(new Error('Could not save in this browser'));return Promise.resolve();}
+      /* Supabase: group identical patches into one request each */
+      var groups={};items.forEach(function(it){var k=JSON.stringify(it.patch);(groups[k]=groups[k]||{patch:it.patch,refs:[]}).refs.push(it.ref);});
+      var ch=Promise.resolve();Object.keys(groups).forEach(function(k){var g=groups[k];for(var i=0;i<g.refs.length;i+=200)(function(part){ch=ch.then(function(){return sb().from('registrations').update(patchToRow(g.patch)).in('ref_no',part).then(ok);});})(g.refs.slice(i,i+200));});
+      return ch;
     },
     remove:function(recs){
       var refs=recs.map(function(r){return r['Ref No'];}),paths=shotPaths(recs);
-      if(MODE==='sheet')return gas('remove',{refs:refs},60000);
+      if(MODE==='sheet')return gasRetry('remove',{refs:refs},300000).then(function(j){return gasTrash(j.pendingFiles);});
       if(MODE==='local'){save(localRecs().filter(function(r){return refs.indexOf(r['Ref No'])<0;}));paths.forEach(function(p){delShot(p).catch(function(){});});return Promise.resolve();}
       return sb().from('registrations').delete().in('ref_no',refs).then(ok).then(function(){return removeFiles(paths).catch(function(e){console.error(e);});});
     },
     removeAll:function(recs){
-      if(MODE==='sheet')return gas('remove',{all:true},120000);
+      if(MODE==='sheet')return gasRetry('remove',{all:true},300000).then(function(j){return gasTrash(j.pendingFiles);});
       if(MODE==='local'){save([]);return clearShots().catch(function(){});}
       var paths=shotPaths(recs);
       return sb().from('registrations').delete().not('id','is',null).then(ok).then(function(){
@@ -1312,6 +1334,12 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     });
     return out;
   }
+  /* big lists: draw at most PAGE rows at once (more on request) so thousands of rows stay fast */
+  var PAGE=300;
+  function pageOf(st,sig){if(st.sig!==sig){st.sig=sig;st.limit=PAGE;}return st.limit;}
+  function moreRow(shown,total,cols){return total>shown?'<tr class="ad-morerow"><td colspan="'+cols+'"><button type="button" class="ad-btn" data-more="1">Show '+Math.min(PAGE,total-shown)+' more</button> <span class="ad-sub">Showing '+shown+' of '+total+' · search or filter to narrow down</span></td></tr>':'';}
+  function debounce(fn,ms){var t;return function(){var self=this,args=arguments;clearTimeout(t);t=setTimeout(function(){fn.apply(self,args);},ms);};}
+  var regPage={};
   function renderRegs(){
     var all=loadRecs(),cnt={Pending:0,Verified:0,Rejected:0},rev=0;
     all.forEach(function(r){cnt[r['Verification Status']]=(cnt[r['Verification Status']]||0)+1;if(needsReview(r))rev++;});
@@ -1324,14 +1352,15 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     A.dups=findDups(all);var nd=Object.keys(A.dups).length;
     $a('ad-dups').hidden=!nd;$a('ad-dups').textContent='⚠ '+nd+' duplicate'+(nd===1?'':'s');
     A.list=filtered(all);
-    $a('ad-rows').innerHTML=A.list.map(function(r){var ref=r['Ref No'],on=!!A.sel[ref];
+    var lim=pageOf(regPage,[A.view.q,A.view.course,A.view.status].join('|'));
+    $a('ad-rows').innerHTML=A.list.slice(0,lim).map(function(r){var ref=r['Ref No'],on=!!A.sel[ref];
       return '<tr data-ref="'+esc(ref)+'"'+(on?' class="sel"':'')+'>'+
         '<td class="ad-cb"><input type="checkbox" data-cb="'+esc(ref)+'"'+(on?' checked':'')+' aria-label="Select '+esc(r['Full Name'])+'"></td>'+
         '<td><div class="ad-name">'+esc(r['Full Name'])+(A.dups[ref]?' <span class="ad-chk no" title="Same '+esc(A.dups[ref].why)+' as '+esc(A.dups[ref].of['Ref No'])+'">Duplicate</span>':'')+'</div><div class="ad-sub">'+esc(r['Email'])+' · '+esc(ref)+'</div></td>'+
         '<td>'+esc(r['Course'])+'<div class="ad-sub">'+esc(r['Mapped Google Course'])+(r['Organisation']?' · '+esc(r['Organisation']):'')+'</div></td>'+
         '<td>'+checkBadges(r)+'</td>'+
         '<td><span class="ad-pill '+esc(r['Verification Status'])+'">'+esc(r['Verification Status'])+'</span>'+(r['Badge Status']?'<div class="ad-sub" style="margin-top:4px">Badges: '+esc(r['Badge Status'])+(r['Badges Required']?' ('+esc(r['Badges Done'])+'/'+esc(r['Badges Required'])+')':'')+'</div>':'')+'</td>'+
-        '<td class="ad-sub">'+esc(r['Submitted At'])+'</td></tr>';}).join('');
+        '<td class="ad-sub">'+esc(r['Submitted At'])+'</td></tr>';}).join('')+moreRow(Math.min(lim,A.list.length),A.list.length,6);
     var empty=$a('ad-empty');empty.hidden=!!A.list.length;
     empty.innerHTML=all.length?'<b>No registrations match your filters</b>Try clearing the search or filters.':'<b>No registrations yet</b>New student registrations will appear here.';
     $a('ad-count').textContent=A.list.length===all.length?all.length+' registration'+(all.length===1?'':'s'):'Showing '+A.list.length+' of '+all.length;
@@ -1341,7 +1370,8 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     var n=Object.keys(A.sel).length;$a('ad-bulk').hidden=!n;$a('ad-bulkn').textContent=n+' selected';
   }
   $a('ad-stats').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;A.view.status=b.getAttribute('data-st');renderRegs();});
-  $a('ad-q').addEventListener('input',function(){A.view.q=this.value;renderRegs();});
+  var regsLater=debounce(renderRegs,150),bcLater=debounce(renderBc,150);
+  $a('ad-q').addEventListener('input',function(){A.view.q=this.value;regsLater();});
   $a('ad-c').addEventListener('change',function(){A.view.course=this.value;renderRegs();});
   $a('ad-s').addEventListener('change',function(){A.view.status=this.value;renderRegs();});
   $a('ad-dups').addEventListener('click',function(){
@@ -1360,6 +1390,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   $a('ad-all').addEventListener('change',function(){var on=this.checked;A.list.forEach(function(r){if(on)A.sel[r['Ref No']]=1;else delete A.sel[r['Ref No']];});renderRegs();});
   $a('ad-rows').addEventListener('click',function(e){
     if(!guard())return;
+    if(e.target.closest('[data-more]')){regPage.limit+=PAGE;renderRegs();return;}
     var cb=e.target.closest('[data-cb]');
     if(cb){var k=cb.getAttribute('data-cb');if(cb.checked)A.sel[k]=1;else delete A.sel[k];renderRegs();return;}
     if(e.target.closest('.ad-cb'))return;
@@ -1827,8 +1858,18 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       var chunk=todo.filter(function(r){return r.state!=='done';}).slice(0,20);
       if(!chunk.length)return finish();
       chunk.forEach(function(r){r.state='checking';});renderBc();
-      gas('profiles',{urls:chunk.map(function(r){return r.url;})},90000).then(function(j){
-        chunk.forEach(function(r,k){var p=j.results&&j.results[k];r.prof=p||{ok:false,message:'Profile could not be read'};});
+      function readSome(rows){return gas('profiles',{urls:rows.map(function(r){return r.url;})},90000).then(function(j){
+        rows.forEach(function(r,k){var p=j.results&&j.results[k];r.prof=p||{ok:false,reason:'unreachable',message:'Profile could not be read'};});});}
+      function busyRows(){return chunk.filter(function(r){return r.prof&&r.prof.reason==='unreachable';});}
+      readSome(chunk).then(function(){
+        /* Google Skills said "busy" for some profiles: wait, ask again, then try the page reader for any still busy */
+        var b=busyRows();if(!b.length)return;
+        $a('bc-sub').textContent='Google Skills is busy for '+b.length+' profile'+(b.length>1?'s':'')+', retrying…';
+        return wait(6000).then(function(){return readSome(b).catch(function(){});}).then(function(){
+          var c=Promise.resolve();
+          busyRows().forEach(function(r){c=c.then(function(){return fetchProfile(r.url).then(function(p){r.prof=p;},function(){});});});
+          return c;
+        });
       },function(){
         /* backend unavailable: fall back to the page reader for this group */
         var c=Promise.resolve();
@@ -1875,12 +1916,14 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       byP[k].forEach(function(r){jobs.push({rec:r,patch:patch});});row.saved=true;
     });
     if(!jobs.length)return;
-    var chain=Promise.resolve(),n=0;
-    jobs.forEach(function(j){chain=chain.then(function(){return Data.update([j.rec['Ref No']],j.patch).then(function(){Object.assign(j.rec,j.patch);n++;});});});
-    chain.then(function(){toast('success','Badge results saved for '+n+' registered student'+(n===1?'':'s'));}).catch(dbErr('Could not save badge results'));
+    var n=jobs.length;
+    Data.updateMany(jobs.map(function(j){return {ref:j.rec['Ref No'],patch:j.patch};}))
+      .then(function(){jobs.forEach(function(j){Object.assign(j.rec,j.patch);});toast('success','Badge results saved for '+n+' registered student'+(n===1?'':'s'));})
+      .catch(function(e){BC.rows.forEach(function(row){row.saved=false;});dbErr('Could not save badge results')(e);});
   }
   /* ---- results ---- */
   var BC_CARDS=[['','Total',''],['Complete','Complete','k-ver'],['In progress','In progress','k-pen'],['Not started','Not started','k-rej'],['Error','Errors','k-rev']];
+  var bcPage={};
   function renderBc(){
     var rows=BC.rows,done=rows.filter(function(r){return r.state==='done';}).length,cnt={};
     rows.forEach(function(r){if(r.status)cnt[r.status]=(cnt[r.status]||0)+1;});
@@ -1898,7 +1941,8 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     var list=rows.filter(function(r){
       if(BC.view.f&&r.status!==BC.view.f)return false;
       return !q||[r.name,r.email,r.course,r.track,r.prof&&r.prof.name].join(' ').toLowerCase().indexOf(q)>-1;});
-    $a('bc-rows').innerHTML=list.map(function(r){
+    var blim=pageOf(bcPage,[BC.view.q,BC.view.f,rows.length].join('|'));
+    $a('bc-rows').innerHTML=list.slice(0,blim).map(function(r){
       var i=rows.indexOf(r),need=r.need||[],doneN=(r.done||[]).length,pct=need.length?Math.round(doneN/need.length*100):0;
       var res=r.state==='queued'?'<span class="bc-pill q">Queued</span>':r.state==='checking'?'<span class="bc-pill run">Checking…</span>':'<span class="bc-pill '+esc(r.status.replace(/\s/g,''))+'">'+esc(r.status)+'</span>';
       var main='<tr data-bi="'+i+'"><td><div class="ad-name">'+esc(r.name||(r.prof&&r.prof.name)||'—')+'</div><div class="ad-sub">'+esc(r.email||'')+'</div></td>'+
@@ -1916,7 +1960,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
           '</ul></div></div></td></tr>';
       }
       return main;
-    }).join('')||'<tr><td colspan="6" class="ad-empty">No students match this filter.</td></tr>';
+    }).join('')+moreRow(Math.min(blim,list.length),list.length,6)||'<tr><td colspan="6" class="ad-empty">No students match this filter.</td></tr>';
   }
   function loadRows(list,source){
     if(BC.running)return say('info','Check in progress','Stop the current check first.');
@@ -1974,9 +2018,9 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   });
   $a('bc-stop').addEventListener('click',function(){BC.stop=true;$a('bc-stop').hidden=true;$a('bc-sub').textContent='Stopping after the current profile…';});
   $a('bc-stats').addEventListener('click',function(e){var b=e.target.closest('[data-bf]');if(!b)return;BC.view.f=b.getAttribute('data-bf');$a('bc-f').value=BC.view.f;renderBc();});
-  $a('bc-q').addEventListener('input',function(){BC.view.q=this.value;renderBc();});
+  $a('bc-q').addEventListener('input',function(){BC.view.q=this.value;bcLater();});
   $a('bc-f').addEventListener('change',function(){BC.view.f=this.value;renderBc();});
-  $a('bc-rows').addEventListener('click',function(e){var b=e.target.closest('[data-bo]');if(!b)return;var i=+b.getAttribute('data-bo');BC.open[i]=!BC.open[i];renderBc();});
+  $a('bc-rows').addEventListener('click',function(e){if(e.target.closest('[data-more]')){bcPage.limit+=PAGE;renderBc();return;}var b=e.target.closest('[data-bo]');if(!b)return;var i=+b.getAttribute('data-bo');BC.open[i]=!BC.open[i];renderBc();});
   /* ---- course-wise badge summary: per Google course and per required badge ---- */
   BC.sumOpen={};
   function bcSummary(){

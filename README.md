@@ -36,6 +36,8 @@ Registrations go to the sheet **Registrations**, both screenshots to the private
 
 Other modes: without `GAS_URL` the page uses Supabase if `supabase_setup.sql` has been run, otherwise it saves in the browser only (testing).
 
+**Bulk use:** many students can register at the same moment (screenshots are saved before the sheet is locked, the lock is held for one row only, and a busy server is retried automatically). Badge results, status changes and deletes for hundreds or thousands of students are saved in one or a few calls; admin tables show 300 rows at a time (**Show more**, or search to narrow down). Tested with 500 parallel registrations (with simulated busy server) and 1,200 rows in the admin page.
+
 **Student password (optional):** stored only as a salted SHA-256 hash created in the browser; never shown or exported.
 
 ## Security notes
