@@ -2,7 +2,7 @@
 
 A single-page registration portal for Google Skills learning paths, with automatic verification and an admin dashboard.
 
-Open **`Course_Registration.html`** in a browser. The admin area is at `Course_Registration.html#admin` (or the **Admin login** link in the footer).
+Open **`index.html`** in a browser (or the GitHub Pages site). The admin area is at `index.html#admin` (or the **Admin login** link in the footer).
 
 ## Student registration
 - 3-step form: choose a course → personal details → verify Skills account.
