@@ -2452,6 +2452,65 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       .catch(function(e){c[mode]=null;throw e;});
     return c[mode];
   }
+  /* Focused read of the PROFILE LINK: small link text (e.g. the green "profile is public" box) is often misread
+     when the whole screenshot is read. Here every line that looks like the link is cut out, enlarged to ~40px
+     letter height and read again as one line using only the characters a link can contain. */
+  var lineWorker=null;
+  function getLineOcr(){
+    if(!lineWorker)lineWorker=getOcr().then(function(){return Tesseract.createWorker('eng');})
+      .then(function(w){return w.setParameters({tessedit_char_whitelist:'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:/._-',tessedit_pageseg_mode:'7'}).then(function(){return w;});})
+      .catch(function(e){lineWorker=null;throw e;});
+    return lineWorker;
+  }
+  /* cut>0: black/white at that cut-off; cut=0: grey only; cut=-1: grey, always inverted (light text on a dark bar).
+     A mostly dark image (dark mode, a cut-out of a dark address bar) is inverted first so text ends up dark on light. */
+  function binarize(cv,cut){
+    var cx=cv.getContext('2d'),d=cx.getImageData(0,0,cv.width,cv.height),p=d.data,i,sum=0,l;
+    for(i=0;i<p.length;i+=16)sum+=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];
+    var dark=cut<0||sum/(p.length/16)<128;
+    for(i=0;i<p.length;i+=4){l=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];if(dark)l=255-l;p[i]=p[i+1]=p[i+2]=cut>0?(l<cut?0:255):l;}
+    cx.putImageData(d,0,0);return cv;
+  }
+  function cropCanvas(im,sx,sy,sw,sh,k){
+    var cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(sw*k));cv.height=Math.max(1,Math.round(sh*k));
+    var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.imageSmoothingQuality='high';cx.drawImage(im,sx,sy,sw,sh,0,0,cv.width,cv.height);return cv;
+  }
+  var linkLineCache=new WeakMap();
+  /* done(text) is asked after every read; reading stops as soon as it returns true */
+  function ocrLinkLines(file,done){
+    var c=linkLineCache.get(file);if(c)return c;
+    c=Promise.all([getOcr(),getLineOcr(),loadImg(file)]).then(function(r){
+      var w=r[0],lw=r[1],im=r[2],k=im.width<2300?Math.min(3,2300/im.width):Math.min(1,3000/im.width),found=[];
+      /* 1) find the lines (in both contrast versions) that look like a Skills profile link */
+      var layouts=[0,200,-1].map(function(cut){var cv=cropCanvas(im,0,0,im.width,im.height,k);return cut?binarize(cv,cut):cv;});
+      var chain=Promise.resolve();
+      layouts.forEach(function(cv){chain=chain.then(function(){return w.recognize(cv,{},{blocks:true}).then(function(o){
+        (o.data.blocks||[]).forEach(function(b){(b.paragraphs||[]).forEach(function(p){(p.lines||[]).forEach(function(ln){
+          if(!/prof|publ|skil|goog/i.test(ln.text)||!/\//.test(ln.text))return;
+          var bb=ln.bbox,y0=bb.y0/k,y1=bb.y1/k;
+          if(found.some(function(f){return Math.abs(f.y0-y0)<(y1-y0)*0.6;}))return;   // same line seen in the other version
+          found.push({x0:bb.x0/k,x1:bb.x1/k,y0:y0,y1:y1});
+        });});});
+      });});});
+      /* 2) re-read each link line, enlarged, in three contrast versions */
+      var texts=[];
+      return chain.then(function(){
+        var reads=Promise.resolve(),stop=false;
+        found.slice(0,4).forEach(function(f){
+          var h=f.y1-f.y0,padY=h*0.35,padX=Math.max(6,h*0.5);
+          var sx=Math.max(0,f.x0-padX),sy=Math.max(0,f.y0-padY),sw=Math.min(im.width-sx,f.x1-f.x0+2*padX),sh=Math.min(im.height-sy,h+2*padY),kk=Math.min(10,Math.max(1,40/Math.max(1,sh)));
+          [0,170,200].forEach(function(cut){reads=reads.then(function(){
+            if(stop)return;
+            var cv=binarize(cropCanvas(im,sx,sy,sw,sh,kk),cut);
+            return lw.recognize(cv).then(function(o){var t=((o&&o.data&&o.data.text)||'').trim();if(t){texts.push(t);if(done&&done(texts.join('\n')))stop=true;}});
+          });});
+        });
+        return reads;
+      }).then(function(){return texts.join('\n');});
+    }).catch(function(e){linkLineCache.delete(file);throw e;});
+    linkLineCache.set(file,c);
+    return c;
+  }
   function squash(s){return String(s).toLowerCase().replace(/\s+/g,'').replace(/[©®]/g,'@').replace(/,/g,'.').replace(/[|!1ı]/g,'l').replace(/0/g,'o').replace(/rn/g,'m').replace(/vv/g,'w');}
   function fuzzyFind(p,t){ /* smallest edit distance between p and any substring of t */
     var m=p.length,prev=[],cur,i,j,best=m;
@@ -2481,12 +2540,51 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     }
     return {found:!!em.found,exact:false};
   }
-  /* PROFILE screenshot: the profile ID of the entered public profile link must be in it */
+  /* PROFILE LINK screenshot: the image must show the exact public profile link that was entered —
+     the Google Skills domain + /public_profiles/ + every character of the profile ID.
+     Profile IDs are hex UUIDs (0-9, a-f), so letters OCR invents in their place (o→0, l/i/|→1, s→5, z→2) can be
+     mapped back without ever turning one real ID into another. A link wrapped onto the next line is joined.
+     Returns {found, exact, read:'<ID seen>', near:true when the ID seen differs by 1-3 characters (blurry), conflict:'<other ID>'}. */
+  var UUID_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+  function hexFix(s){return s.toLowerCase().replace(/¢/g,'c').replace(/[o]/g,'0').replace(/[li|!]/g,'1').replace(/s/g,'5').replace(/z/g,'2').replace(/[—–_~]/g,'-');}
+  function editDist(a,b){var p=[],c,i,j;for(i=0;i<=b.length;i++)p[i]=i;for(i=1;i<=a.length;i++){c=[i];for(j=1;j<=b.length;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[b.length];}
+  function linkIdsIn(text,isUuid){
+    /* "public_profiles/" as OCR may read it (public_proles/, public profles/ …) */
+    var out=[],re=/pub[l1i|]ic[\s_\-.]{0,2}pro[a-z]{0,6}\s*\/\s*/gi,m;
+    while((m=re.exec(text))){
+      var before=text.slice(Math.max(0,m.index-60),m.index);
+      /* the Google Skills domain must come right before it (OCR look-alikes such as "skilts google" allowed; other sites are not) */
+      if(!/(?:^|[^a-z0-9.-]|[wv]{2,4}\s*[.,·_]?\s*)(?:sk[a-z1|!]{2,4}s?|cloudsk[a-z1|!]{4,10})\s*[.,·_]?\s*goog[l1i|]e\s*\/\s*$/i.test(before))continue;
+      var after=text.slice(re.lastIndex,re.lastIndex+120);
+      if(isUuid){
+        var flat=hexFix(after.replace(/\s+/g,'')).replace(/[^0-9a-f-].*$/,'');                  // join a wrapped link, stop at the first non-ID character
+        var hexOnly=flat.replace(/-/g,'');
+        if(hexOnly.length>=32){var h=hexOnly.slice(0,32);out.push(h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20));}
+        else if(flat.length>=8)out.push(flat);                                                    // partly readable
+      }else{
+        var w=(after.match(/^[A-Za-z0-9-]+/)||[''])[0];if(w.length>=8)out.push(w.toLowerCase());
+      }
+    }
+    return out;
+  }
   function matchLink(text,pid){
     if(!pid)return {found:false};
-    var lk=findIn('public_profiles/'+pid,text);if(!lk.found)lk=findIn(pid,text);
-    if(!lk.found){var noDash=pid.replace(/-/g,'');if(noDash.length>=16)lk=findIn(noDash,text.replace(/[-–—]/g,''));}
-    return {found:!!lk.found,exact:!!lk.exact};
+    var target=String(pid).toLowerCase(),isUuid=UUID_RE.test(target),ids=linkIdsIn(text,isUuid),near=null,other=null;
+    for(var i=0;i<ids.length;i++){
+      if(ids[i]===target)return {found:true,exact:true,read:ids[i]};
+      if(isUuid&&!UUID_RE.test(ids[i]))continue;                                                  // unreadable part: not evidence either way
+      var d=editDist(ids[i],target);
+      if(d<=3){if(!near)near=ids[i];}else if(!other)other=ids[i];
+    }
+    if(near)return {found:false,exact:false,near:true,read:near};
+    if(other)return {found:false,exact:false,conflict:other,read:other};
+    return {found:false,exact:false,read:ids[0]||''};
+  }
+  function linkScreenshotMessage(result){
+    if(result.exact)return '✓ Screenshot shows your exact public profile link';
+    if(result.conflict)return '✗ This screenshot shows a different public profile link (…/public_profiles/'+result.conflict+'). It must be the same link you entered above';
+    if(result.near)return '✗ The link in this screenshot does not fully match the link you entered (read …/public_profiles/'+result.read+'). Check every character of your link, or upload a sharper, zoomed-in screenshot';
+    return '✗ Your public profile link is not visible in this screenshot. Show the full link in the address bar or the green “Your profile is public” box';
   }
   var shot2=document.getElementById('shot2');
   var SLOT={
@@ -2500,14 +2598,14 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       need:function(){var u=checkProfileUrl(urlIn.value);return u.ok?u.id:'';},
       wait:'Enter your public profile link above — this screenshot will then be checked automatically.',
       checking:'⏳ Looking for your public profile link in this screenshot…',
-      match:matchLink,sure:function(m){return m.found;},
+      match:matchLink,sure:function(m){return m.exact;},
       msg:function(m){return m.found?'✓ Screenshot shows your public profile link':'✗ The public profile link you entered is not visible in this screenshot';}}
   };
   function runSlot(kind){
     var S=SLOT[kind],file=S.input.files[0],v=S.need();
     if(!file)return Promise.resolve(null);
     if(!v){stat(S.stat,'wait',S.wait);return Promise.resolve(null);}
-    var key=file.name+'|'+file.size+'|'+file.lastModified+'|'+String(v).toLowerCase();
+    var key=file.name+'|'+file.size+'|'+file.lastModified+'|'+(kind==='link'?v:v.toLowerCase());
     if(S.st.key===key&&S.st.res)return Promise.resolve(S.st.res);
     if(S.st.key===key&&S.st.running)return S.st.running;
     S.st.key=key;S.st.res=null;stat(S.stat,'wait',S.checking);
@@ -2516,11 +2614,17 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     var textP=ocrPass(file,0).then(function(t0){
       if(sure(t0))return t0;
       return ocrPass(file,1).then(function(t1){var t=t0+'\n'+t1;if(sure(t))return t;return ocrPass(file,2).then(function(t2){return t+'\n'+t2;});});
+    }).then(function(t){
+      /* profile link not read exactly yet: read the link line(s) again, cut out and enlarged */
+      if(kind!=='link'||sure(t))return t;
+      if(S.st.key===key)stat(S.stat,'wait','⏳ Reading your profile link closely…');
+      return ocrLinkLines(file,function(extra){return sure(t+'\n'+extra);}).then(function(extra){return t+'\n'+extra;},function(){return t;});
     });
     S.st.running=textP.then(function(text){
         var m=S.match(text,v);m.ran=true;
         if(S.st.key!==key)return m;
-        S.st.res=m;stat(S.stat,m.found?'ok':'bad',esc(S.msg(m,v)));
+        S.st.res=m;
+        stat(S.stat,m.found?'ok':'bad',esc(kind==='link'?linkScreenshotMessage(m):S.msg(m,v)));
         if(m.found)document.getElementById(S.drop).classList.remove('err');
         return m;
       },function(){
@@ -2614,10 +2718,15 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
       if(!mL||!mL.ran)return stop('error','Could not verify the profile link screenshot','The screenshot could not be read. Please check your internet connection and try again, or upload a clearer PNG/JPG image.',shot2);
       if(!mE.found)return stop('error','Email ID screenshot does not match','<div style="text-align:left">'+(mE.conflict?'This screenshot shows the email ID <b>'+esc(mE.conflict)+'</b>, but you registered with <b>'+esc(email)+'</b>. They must be the same.':'Your registered email ID <b>'+esc(email)+'</b> is not visible in screenshot 1.')+
         '<p style="margin:10px 0 0">Open <b>skills.google/my_account/profile</b> and upload a clear, uncropped screenshot that shows your <b>Email</b> field.</p></div>',shot);
-      if(!mL.found)return stop('error','Profile link screenshot does not match','<div style="text-align:left">The public profile link you entered (<b>'+esc(uc.url)+'</b>) is not visible in screenshot 2.'+
+      if(!mL.exact)return stop('error','Profile link screenshot does not match','<div style="text-align:left">'+
+        (mL.conflict?'Screenshot 2 shows a <b>different</b> public profile link:<br><code style="word-break:break-all">…/public_profiles/'+esc(mL.conflict)+'</code><br>You entered:<br><code style="word-break:break-all">'+esc(uc.url)+'</code>'
+        :mL.near?'The link in screenshot 2 does not exactly match the link you entered.<br>Read in screenshot: <code style="word-break:break-all">…/public_profiles/'+esc(mL.read)+'</code><br>You entered: <code style="word-break:break-all">'+esc(uc.url)+'</code><p style="margin:10px 0 0">Check every character of your link. If it is correct, upload a sharper, zoomed-in screenshot.</p>'
+        :'Screenshot 2 does not show the exact link you entered (<b style="word-break:break-all">'+esc(uc.url)+'</b>).')+
         '<p style="margin:10px 0 0">Upload a clear screenshot of your public profile page with the link in the address bar, or of the green box <b>“Your profile is public and accessible at …”</b> on your account settings page.</p></div>',shot2);
       /* final gate: only fully verified registrations are saved */
-      if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&mE.found&&mL.found))return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
+      if(!(ec.ok&&link&&link.ok&&!link.skipped&&link.name&&link.url===uc.url&&
+          checkProfileUrl(f.url.value).url===uc.url&&shot2.files[0]===file2&&mE.found&&mL.exact))
+        return stop('error','Not verified','Your details could not be fully verified, so the registration was not submitted. Please check them and try again.');
       var name=f.name.value.trim(),refNo=newRef();
       step('✅ Profile opens: <b>'+esc(link.name||'')+'</b><br>✅ Both screenshots match<br>⏳ Saving your registration…');
       var rec={'Ref No':refNo,_ts:Date.now(),'Submitted At':new Date().toLocaleString(),'Course':c.value,'Mapped Google Course':g.value,'Full Name':name,'Email':email,'Contact Number':f.phone.value.trim(),'Password Hash':hashStudentPw(f.pw.value),'Gender':f.gender.value,'Year Of Graduation':f.year.value,'Organisation':f.org.value.trim(),'Profile URL':uc.url,
