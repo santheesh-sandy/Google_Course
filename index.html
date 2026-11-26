@@ -921,7 +921,9 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   function saveAs(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();}
   function downloadCsv(rows){
     var h=[];rows.forEach(function(r){Object.keys(r).forEach(function(k){if(k.charAt(0)!=='_'&&k!=='Password Hash'&&h.indexOf(k)<0)h.push(k);});});
-    var csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    /* Google Sheet backend: screenshots are Drive files, so give a link that opens them (for the sheet owner) instead of a bare file ID */
+    var drive=MODE==='sheet'?function(k,v){return (k==='Verification Screenshot'||k==='Profile Screenshot')&&/^[A-Za-z0-9_-]{10,}$/.test(String(v||''))?'https://drive.google.com/file/d/'+v+'/view':v;}:function(k,v){return v;};
+    var csv=[h].concat(rows.map(function(r){return h.map(function(k){return drive(k,r[k]);});})).map(function(r){return r.map(function(v){v=String(v==null?'':v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
     saveAs(new Blob(['\ufeff'+csv],{type:'text/csv'}),'Course_Registrations.csv');
   }
   /* ================= Data layer =================
@@ -1222,7 +1224,8 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     if(!window.Swal)return Promise.resolve(confirm((o.title||'')+'\n'+(o.text||'')));
     return Swal.fire(Object.assign({icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',focusCancel:true},o)).then(function(r){return r.isConfirmed;});
   }
-  function busyBox(title){if(window.Swal)Swal.fire({title:title,allowOutsideClick:false,allowEscapeKey:false,didOpen:function(){Swal.showLoading();}});}
+  /* the spinner is switched on right away (not after the open animation): a fast reply that closes the box must never be followed by a late showLoading() that brings it back */
+  function busyBox(title){if(!window.Swal)return;Swal.fire({title:title,allowOutsideClick:false,allowEscapeKey:false,showConfirmButton:false});Swal.showLoading();}
   function dbErr(what){return function(e){console.error(e);if(window.Swal&&Swal.isVisible())Swal.close();if(e&&e.code==='AUTH'){Auth.logout().then(function(){showLogin('Your session expired. Please log in again.');});return;}say('error',what,(e&&e.message)||'Please check your internet connection and try again.');};}
   function loadRecs(){return A.all;}
   function findRec(ref){return A.all.find(function(x){return x['Ref No']===ref;});}
@@ -1488,7 +1491,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
   $a('ad-rej').addEventListener('click',function(){setStatus('Rejected');});
   $a('ad-del').addEventListener('click',function(){
     if(!guard())return;var ref=A.open,r=findRec(ref);if(!r)return;
-    confirmBox({title:'Delete this registration?',html:'<b>'+esc(r['Full Name'])+'</b> ('+esc(r['Email'])+') and the screenshot will be removed permanently.',confirmButtonText:'Delete'}).then(function(yes){
+    confirmBox({title:'Delete this registration?',html:'<b>'+esc(r['Full Name'])+'</b> ('+esc(r['Email'])+') and both screenshots will be removed permanently.',confirmButtonText:'Delete'}).then(function(yes){
       if(!yes)return;busyBox('Deleting…');
       Data.remove([r]).then(function(){delete A.sel[ref];closeDrawer();return reload();}).then(function(){Swal.close();toast('success','Registration deleted');}).catch(dbErr('Could not delete'));
     });
@@ -1741,7 +1744,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     if(!guard())return;
     var list=ovRecs(),G=groupsOf(list),rows=G.order.map(function(k){var c=count(G.groups[k]);return {'Course':k,'Registered':c.total,'Completed':c.done,'In progress':c.prog,'Not started':c.none,'Not checked':c.unk,'Pending':c.pending,'Completion %':pct(c.done,c.total)};});
     var T=count(list);rows.push({'Course':'All courses','Registered':T.total,'Completed':T.done,'In progress':T.prog,'Not started':T.none,'Not checked':T.unk,'Pending':T.pending,'Completion %':pct(T.done,T.total)});
-    var h=Object.keys(rows[0]),csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    var h=Object.keys(rows[0]),csv=[h].concat(rows.map(function(r){return h.map(function(k){return r[k];});})).map(function(r){return r.map(function(v){v=String(v==null?'':v);if(/^[=@\t\r]|^[+\-][^\d\s]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
     saveAs(new Blob(['﻿'+csv],{type:'text/csv'}),'Course_Summary'+(OV.range==='all'?'':'_last_'+OV.range+'_days')+'.csv');toast('success','Summary exported');
   });
   $a('ov-print').addEventListener('click',function(){if(guard())window.print();});
@@ -2099,7 +2102,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     e.preventDefault();
     var txt='<div style="text-align:left;font-size:15px;line-height:1.55"><ol style="padding-left:18px;margin:0">'+
       '<li>The details you submit are used only to register you for the selected course and to track your progress in the program.</li>'+
-      '<li>Your registered email must match the email of your Skills account, and the screenshot must show that same email.</li>'+
+      '<li>Your registered email must match the email of your Skills account, the email ID screenshot must show that same email, and the profile link screenshot must show your exact public profile link.</li>'+
       '<li>Your public Skills profile URL is used to check completed courses and skill badges.</li>'+
       '<li>Registrations with incorrect or mismatched details may be rejected.</li>'+
       '<li>Prizes and certificates are sent only to the registered email address.</li></ol></div>';
@@ -2694,7 +2697,7 @@ body.admin-mode>header.hero,body.admin-mode>main,body.admin-mode>footer.foot,bod
     busy=true;
     var link=null,submitBtn=f.querySelector('button[type=submit]');submitBtn.disabled=true;
     function stop(icon,title,html,el){Swal.close();if(el)markErr(el);return Swal.fire({icon:icon,title:title,html:html,confirmButtonColor:BTN}).then(function(){if(el)focusField(el);throw 'stop';});}
-    Swal.fire({title:'Verifying your details…',html:'<div id="vsteps" style="text-align:left;display:inline-block;line-height:1.9">⏳ Checking your registration…</div><br><small>This can take up to 30 seconds the first time.</small>',allowOutsideClick:false,allowEscapeKey:false,didOpen:function(){Swal.showLoading();}});
+    Swal.fire({title:'Verifying your details…',html:'<div id="vsteps" style="text-align:left;display:inline-block;line-height:1.9">⏳ Checking your registration…</div><br><small>This can take up to 30 seconds the first time.</small>',allowOutsideClick:false,allowEscapeKey:false,showConfirmButton:false});Swal.showLoading();
     function step(h){var el=document.getElementById('vsteps');if(el)el.innerHTML=h;}
     /* already registered? one registration per email ID and per profile link (online: asked of the server without exposing anyone's data) */
     Data.conflict(email,uc.url).then(function(k){
